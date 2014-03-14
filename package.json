@@ -1,0 +1,9 @@
+{
+  "name": "topdown.js",
+  "version": "0.1.1",
+  "description": "Top-down game engine based for node.js",
+  "devDependencies": {
+  },
+  "dependencies": {
+  }
+}
