@@ -21,12 +21,17 @@ module.exports = function(grunt) {
         files: {
           'client/topdown.js': [
             'client-js/fn.js',
+            'client-js/fn.is.js',
+            'client-js/obj.js',
             'client-js/dom.js',
             'client-js/onload.js',
             'client-js/game.js',
           ]
-        }
-      }
+        },
+        options: {
+          sourceMap: true
+        },
+      },
     },
     watch: {
       build: {

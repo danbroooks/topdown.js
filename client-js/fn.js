@@ -1,91 +1,50 @@
+
 var topdown = topdown || {};
+topdown.fn = topdown.fn || {};
 
-topdown.fn = {
-  is: {}
+topdown.fn.wrap = function(number, wrap) {
+  return ((number % wrap) + wrap) % wrap;
 };
 
-topdown.fn.is.type = function(obj) {
-  function classToType(str){
-    var class2type = {
-      "[object Boolean]"  : "boolean",
-      "[object Number]"   : "number",
-      "[object String]"   : "string",
-      "[object Function]" : "function",
-      "[object Array]"    : "array",
-      "[object Date]"     : "date",
-      "[object RegExp]"   : "regexp",
-      "[object Object]"   : "object"
-    };
+topdown.fn.rand = {};
 
-    var type = class2type[str];
-    return type ? type : false;
-  }
-
-  return obj === null ? String(obj) : classToType(({}).toString.call(obj)) || "object";
+topdown.fn.rand.oneIn = function (num) {
+  return (Math.ceil(Math.random() * num) % num) ? false : true;
 };
 
-topdown.fn.is.function = function(obj){
-  return this.type(obj) === "function";
+topdown.fn.rand.fromArray = function (array) {
+  var r = Math.floor(array.length * Math.random());
+  return array[r];
 };
 
-topdown.fn.is.array = Array.isArray || function(obj) {
-  return this.type(obj) === "array";
-};
+if (!Array.prototype.forEach) {
+  Array.prototype.forEach = function(){
+    'use strict';
+    var T, k;
 
-topdown.fn.is.in_array = function(needle, haystack) {
-  var length = haystack.length;
-  for(var i = 0; i < length; i++) {
-      if(haystack[i] == needle) return true;
-  }
-  return false;
-};
-
-topdown.fn.is.window = function(obj) {
-  return obj !== null && obj == obj.window;
-};
-
-topdown.fn.is.numeric = function(obj) {
-  return !isNaN(parseFloat(obj)) && isFinite(obj);
-};
-
-topdown.fn.is.string = function(obj) {
-  return this.type(obj) == 'string';
-};
-
-topdown.fn.is.plainObject = function(obj) {
-  if (!obj || this.type(obj) !== "object" || obj.nodeType) {
-    return false;
-  }
-  var hasOwn = Object.prototype.hasOwnProperty;
-  try {
-    if (obj.constructor && !hasOwn.call(obj, "constructor") && !hasOwn.call(obj.constructor.prototype, "isPrototypeOf")) {
-      return false;
+    if (this === null) {
+      throw new TypeError("this is null or not defined");
     }
-  } catch (e) {
-    return false;
-  }
-  var key;
-  for (key in obj) {}
-  return key === undefined || hasOwn.call(obj, key);
-};
 
-topdown.fn.is.set = function () {
-  var a = arguments,
-  l = a.length,
-  i = 0,
-  undef;
+    var kValue,
+        O = Object(this),
+        len = O.length >>> 0; // Hack to convert O.length to a UInt32
 
-  if (l === 0) {
-    throw new Error('Empty is.set');
-  }
-
-  while (i !== l) {
-    if (a[i] === undef || a[i] === null) {
-      return false;
+    if ({}.toString.call(callback) !== "[object Function]") {
+      throw new TypeError(callback + " is not a function");
     }
-    i++;
-  }
-  return true;
-};
 
+    if (arguments.length >= 2) {
+      T = thisArg;
+    }
 
+    k = 0;
+    while (k < len) {
+      if (k in O) {
+        kValue = O[k];
+        callback.call(T, kValue, k, O);
+      }
+      k++;
+    }
+  };
+}

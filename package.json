@@ -1,6 +1,6 @@
 {
   "name": "topdown.js",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Top-down game engine for node.js",
   "main": "topdown.js",
   "devDependencies": {
@@ -8,7 +8,7 @@
     "grunt-contrib-jshint": ">=0.6.4",
     "grunt-contrib-watch": ">=0.3.1",
     "grunt-contrib-sass": ">=0.5.0",
-    "grunt-contrib-uglify": ">=0.2.4"
+    "grunt-contrib-uglify": "~0.4.0"
   },
   "dependencies": {
     "mime": ">=1.2.9"
