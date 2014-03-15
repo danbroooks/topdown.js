@@ -1,14 +1,27 @@
 {
   "name": "topdown.js",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Top-down game engine for node.js",
   "main": "topdown.js",
+  "author": {
+    "name": "Dan Brooks",
+    "email": "danger.dan_@hotmail.co.uk"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dangerdan/topdown.js"
+  },
+  "bugs": {
+    "url": "https://github.com/dangerdan/topdown.js/issues"
+  },
   "devDependencies": {
     "grunt": ">=0.4.1",
     "grunt-contrib-jshint": ">=0.6.4",
     "grunt-contrib-watch": ">=0.3.1",
     "grunt-contrib-sass": ">=0.5.0",
-    "grunt-contrib-uglify": "~0.4.0"
+    "grunt-contrib-uglify": "~0.4.0",
+    "browserify": "~3.32.1",
+    "grunt-browserify": "~1.3.2"
   },
   "dependencies": {
     "mime": ">=1.2.9"

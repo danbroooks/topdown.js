@@ -1,32 +1,48 @@
+
 module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     sass: {
       dev: {
         files: [{
-          'client/styles.css': 'client-scss/styles.scss'
+          'public/styles.css': 'client/styles.scss'
         }],
         options: {
           style: 'compressed',
           compass: true,
-          cacheLocation: 'client-scss/.sass_cache'
+          cacheLocation: 'client/.sass_cache'
         }
       }
     },
     jshint: {
-      all: ['client-js/**/*.js']
+      all: ['client/**/*.js']
+    },
+    browserify: {
+      client: {
+        files: {
+          'public/topdown.js': [
+            'client/poly.js',
+            'client/fn.js',
+            'client/is.js',
+            'client/obj.js',
+            'client/dom.js',
+            'client/objects/*.js',
+            'client/core/game.js',
+            'client/onload.js',
+            'client/graphics/trig.js',
+            'client/graphics/Point.js',
+            'client/graphics/Shape.js',
+            'client/graphics/Polygon.js',
+            'client/graphics/gfx.js',
+            'client/graphics/camera.js'
+          ]
+        }
+      }
     },
     uglify: {
       client: {
         files: {
-          'client/topdown.js': [
-            'client-js/fn.js',
-            'client-js/fn.is.js',
-            'client-js/obj.js',
-            'client-js/dom.js',
-            'client-js/onload.js',
-            'client-js/game.js',
-          ]
+          'public/topdown.min.js': [ 'public/topdown.js' ]
         },
         options: {
           sourceMap: true
@@ -35,11 +51,11 @@ module.exports = function(grunt) {
     },
     watch: {
       build: {
-        files: ['client-js/**/*.js'],
-        tasks: ['jshint', 'uglify']
+        files: ['client/**/*.js'],
+        tasks: ['jshint', 'browserify', 'uglify']
       },
       styles: {
-        files: ['client-scss/*.scss'],
+        files: ['client/*.scss'],
         tasks: 'sass'
       },
     }
@@ -47,11 +63,12 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.registerTask('default', 'def', [
-    'sass', 'jshint', 'uglify', 'watch'
+    'sass', 'jshint', 'browserify', 'uglify', 'watch'
   ]);
 
 };

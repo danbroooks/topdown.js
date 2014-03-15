@@ -1,53 +1,86 @@
 
-topdown.obj = {};
 
-topdown.obj.indexOf = function (id, array) {
+/**
+ * Load dependencies
+ */
+var is = require('./is');
+
+
+
+/**
+ * object declaration
+ */
+var obj = {};
+
+
+/**
+ *
+ */
+obj.indexOf = function (id, array) {
   for (var i = 0; i < array.length; i++) {
     if (array[i].id == id) return i;
   }
 };
 
-topdown.obj.nextIdIn = function (array) {
+
+
+/**
+ *
+ */
+obj.nextIdIn = function (array) {
   return array.length > 0 ? array[array.length-1].id + 1 : 1;
 };
 
-(function () {
-  var toString = Object.prototype.toString,
-      hasOwnProperty = Object.prototype.hasOwnProperty,
-      hasDontEnumBug = !({toString: null}).propertyIsEnumerable('toString'),
-      dontEnums = [
-        'toString',
-        'toLocaleString',
-        'valueOf',
-        'hasOwnProperty',
-        'isPrototypeOf',
-        'propertyIsEnumerable',
-        'constructor'
-      ],
-      dontEnumsLength = dontEnums.length;
 
-  topdown.obj.keys = function (obj) {
-    if (typeof obj !== 'object' && typeof obj !== 'function' || obj === null) throw new TypeError('Object.keys called on non-object');
 
-    var result = [];
 
-    for (var prop in obj) {
-      if (hasOwnProperty.call(obj, prop)) result.push(prop);
+/**
+ *
+ */
+var hasOwnProp = hasOwnProperty || Object.prototype.hasOwnProperty;
+var toString = Object.prototype.toString,
+    hasDontEnumBug = !({toString: null}).propertyIsEnumerable('toString'),
+    dontEnums = [
+      'toString',
+      'toLocaleString',
+      'valueOf',
+      'hasOwnProperty',
+      'isPrototypeOf',
+      'propertyIsEnumerable',
+      'constructor'
+    ],
+    dontEnumsLength = dontEnums.length;
+
+
+
+/**
+ *
+ */
+obj.keys = function (obj) {
+  if (typeof obj !== 'object' && typeof obj !== 'function' || obj === null) throw new TypeError('Object.keys called on non-object');
+
+  var result = [];
+
+  for (var prop in obj) {
+    if (hasOwnProp.call(obj, prop)) result.push(prop);
+  }
+
+  if (hasDontEnumBug) {
+    for (var i=0; i < dontEnumsLength; i++) {
+      if (hasOwnProp.call(obj, dontEnums[i])) result.push(dontEnums[i]);
     }
+  }
+  return result;
+};
 
-    if (hasDontEnumBug) {
-      for (var i=0; i < dontEnumsLength; i++) {
-        if (hasOwnProperty.call(obj, dontEnums[i])) result.push(dontEnums[i]);
-      }
-    }
-    return result;
-  };
-})();
 
-topdown.obj.extend = function(){
+
+/**
+ *
+ */
+obj.extend = function(){
   var options, name, src, copy, copyIsArray, clone, target = arguments[0] || {},
   i = 1,
-  is = topdown.fn.is,
   length = arguments.length,
   deep = false;
   if (typeof target === "boolean") {
@@ -55,7 +88,7 @@ topdown.obj.extend = function(){
     target = arguments[1] || {};
     i = 2;
   }
-  if (typeof target !== "object" && !is.function(target)) {
+  if (typeof target !== "object" && !is.Function(target)) {
     target = {};
   }
   if (length === i) {
@@ -70,12 +103,12 @@ topdown.obj.extend = function(){
         if (target === copy) {
           continue;
         }
-        if (deep && copy && (is.plainObject(copy) || (copyIsArray = is.array(copy)))) {
+        if (deep && copy && (is.PlainObject(copy) || (copyIsArray = is.Array(copy)))) {
           if (copyIsArray) {
             copyIsArray = false;
-            clone = src && is.array(src) ? src : [];
+            clone = src && is.Array(src) ? src : [];
           } else {
-            clone = src && is.plainObject(src) ? src : {};
+            clone = src && is.PlainObject(src) ? src : {};
           }
           target[name] = extend(deep, clone, copy);
         } else if (copy !== undefined) {
@@ -87,11 +120,16 @@ topdown.obj.extend = function(){
   return target;
 };
 
-topdown.obj.construct = function (extend, initializer, methods) {
+
+
+/**
+ *
+ */
+obj.define = function (extend, initializer, methods) {
   var func, prototype = Object.create(extend && extend.prototype);
 
   if (methods) {
-    this.keys(methods).forEach(function (key){
+    obj.keys(methods).forEach(function (key){
       prototype[key] = methods[key];
     });
   }
@@ -101,14 +139,10 @@ topdown.obj.construct = function (extend, initializer, methods) {
     if (typeof initializer === 'function') {
       initializer.apply(that, arguments);
     }
-
-    if (that instanceof Actor) {
-      that.components = [];
-    }
     return that;
   };
 
-  this.keys(extend).forEach(function(key){
+  obj.keys(extend).forEach(function(key){
     func[key] = extend[key];
   });
 
@@ -117,7 +151,12 @@ topdown.obj.construct = function (extend, initializer, methods) {
   return func;
 };
 
-topdown.obj.identifier = function(seed){
+
+
+/**
+ *
+ */
+obj.identifier = function(seed){
   var m, chunk, plus, _id, mod;
   var digits = 6;
 
@@ -159,3 +198,17 @@ topdown.obj.identifier = function(seed){
 
   return _id;
 };
+
+
+
+/**
+ * Expose to browser
+ */
+window.obj = obj;
+
+
+
+/**
+ * Expose to other internal modules
+ */
+module.exports = obj;

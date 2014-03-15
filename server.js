@@ -16,14 +16,14 @@ var onFileFound = function(path, events) {
 var getURI = function (uri, callback, error) {
 
   function LookInCore(){
-    onFileFound(path.join(__dirname, 'client', uri), {
+    onFileFound(path.join(__dirname, 'public', uri), {
       success: function(path) { callback(path); },
       fail: function() { error() }
     });
   }
 
   function LookInProjectThenCore() {
-    onFileFound(path.join(process.cwd(), uri), {
+    onFileFound(path.join(process.cwd(), 'public', uri), {
       success: function(path) { callback(path); },
       fail: function() { LookInCore(); }
     });
