@@ -4,21 +4,17 @@ var url     = require("url"),
     mime    = require("mime"),
     http    = require("http");
 
-var isFrameworkRequest = function(uri) {
-  return ( [
-    'topdown.js'
-  ].indexOf(uri) );
-};
-
 var onFileFound = function(path, events) {
   fs.exists(path, function(exists){
-    if(!exists) events.fail();
-
-    events.success(path);
+    if(!exists)
+      events.fail();
+    else
+      events.success(path);
   });
 };
 
 var getURI = function (uri, callback, error) {
+
   function LookInCore(){
     onFileFound(path.join(__dirname, 'client', uri), {
       success: function(path) { callback(path); },
@@ -33,7 +29,11 @@ var getURI = function (uri, callback, error) {
     });
   }
 
-  if (isFrameworkRequest(uri)) {
+  var coreReq = new RegExp(/^\/topdown\//);
+  isCoreRequest = coreReq.test(uri);
+
+  if (isCoreRequest) {
+    uri = uri.substring(9);
     LookInCore();
   } else {
     LookInProjectThenCore();
