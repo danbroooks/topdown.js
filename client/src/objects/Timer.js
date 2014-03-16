@@ -109,6 +109,6 @@ Timer.str2ms = function(time){
 
 
 
-// Expose to other internal modules
+// Export module
 
 module.exports = Timer;

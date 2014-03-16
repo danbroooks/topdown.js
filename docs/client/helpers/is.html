@@ -101,7 +101,9 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              
+              <p>Returns type of any object passed to it,
+more reliable implementation of typeof</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -134,7 +136,8 @@ is.Type = <span class="hljs-function"><span class="hljs-keyword">function</span>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              
+              <p>Is object an array?</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -151,7 +154,8 @@ is.Array = <span class="hljs-built_in">Array</span>.isArray || <span class="hljs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              
+              <p>Is object a function?</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -168,7 +172,8 @@ is.Function = <span class="hljs-function"><span class="hljs-keyword">function</s
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              
+              <p>Is object in array?</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -189,7 +194,8 @@ is.inArray = <span class="hljs-function"><span class="hljs-keyword">function</sp
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              
+              <p>Is object the window?</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -206,7 +212,8 @@ is.Window = <span class="hljs-function"><span class="hljs-keyword">function</spa
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              
+              <p>Is object numeric?</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -223,7 +230,8 @@ is.Numeric = <span class="hljs-function"><span class="hljs-keyword">function</sp
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              
+              <p>You get the idea…</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -240,7 +248,8 @@ is.String = <span class="hljs-function"><span class="hljs-keyword">function</spa
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              
+              <p>Is variable set? Same as php’s <code>isset</code></p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -272,12 +281,14 @@ is.set = <span class="hljs-function"><span class="hljs-keyword">function</span> 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              
+              <p>Tests to see if object passed is an object, but one created as a literal,
+returns false if object was created with function constructor</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
-is.PlainObject = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj)</span> {</span>
-  <span class="hljs-keyword">if</span> (!obj || <span class="hljs-keyword">this</span>.type(obj) !== <span class="hljs-string">"object"</span> || obj.nodeType) {
+is.ObjectLiteral = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj)</span> {</span>
+  <span class="hljs-keyword">if</span> (!obj || is.Type(obj) !== <span class="hljs-string">"object"</span> || obj.nodeType) {
     <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
   }
   <span class="hljs-keyword">var</span> hasOwn = <span class="hljs-built_in">Object</span>.prototype.hasOwnProperty;
@@ -291,7 +302,9 @@ is.PlainObject = <span class="hljs-function"><span class="hljs-keyword">function
   <span class="hljs-keyword">var</span> key;
   <span class="hljs-keyword">for</span> (key <span class="hljs-keyword">in</span> obj) {}
   <span class="hljs-keyword">return</span> key === <span class="hljs-literal">undefined</span> || hasOwn.call(obj, key);
-};</pre></div></div>
+};
+
+is.PlainObject = is.ObjectLiteral;</pre></div></div>
             
         </li>
         

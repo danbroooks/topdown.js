@@ -14,7 +14,8 @@ var DOM = {};
 
 
 
-//
+// Array of elements, to check if a string represents a html tag
+// in `isLegalElement`
 
 var html5elements = ['html', 'body', 'script', 'div', 'span', 'object',
   'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'pre', 'abbr',
@@ -33,7 +34,8 @@ var isLegalElement = function(tag) {
 
 
 
-//
+// Audio support detection, not currently exported.
+// (may be moved to own module in future)
 
 var audioSupport = {
   mp3: false,
@@ -51,7 +53,7 @@ var audioSupport = {
 
 
 
-//
+// Private helper function, used in `make`
 
 var extractTag = function(tag) {
   var match = new RegExp(/^([a-zA-Z]*)([#.\-a-zA-Z]*)/).exec(tag);
@@ -64,7 +66,7 @@ var extractTag = function(tag) {
 
 
 
-//
+// Private helper function, also used in `make`
 
 var buildAttributes = function(attrs, selectors, multipleElements) {
   attrs = attrs || {};
@@ -96,14 +98,15 @@ var buildAttributes = function(attrs, selectors, multipleElements) {
 
 
 
-//
+// Add splice to object to allow for object to return it's selected array (like jQuery)
 
 DOM.splice = Array.prototype.splice;
 
 
 
 
-// Currently only looks for very basic string
+// Will generate new element based on arguments, pass a callback function to fire
+// once all elements have been added.
 
 DOM.make = function(selector, attrs, callback) {
   var tag = extractTag(selector);
@@ -160,8 +163,7 @@ DOM.make = function(selector, attrs, callback) {
 
 
 
-// A basic version of this for my own purposes:
-// http://james.padolsey.com/jquery/#v=1.7.2&fn=jQuery.fn.init
+// A very basic jQuery style element selector
 
 DOM.get = function(selector) {
   var target;
@@ -189,7 +191,7 @@ DOM.get = function(selector) {
 
 
 
-//
+// Loop through all selected elements and apply function to each
 
 DOM.each = function(func){
   for (var i = 0; i < this.length; i++) {
@@ -201,7 +203,7 @@ DOM.each = function(func){
 
 
 
-//
+// Add event listener to all selected elements
 
 DOM.on = function(action, func){
   DOM.each(function(e){
@@ -213,7 +215,7 @@ DOM.on = function(action, func){
 
 
 
-//
+// Hides all selected elements with display:none
 
 DOM.hide = function(){
   DOM.each(function(e){
@@ -225,7 +227,7 @@ DOM.hide = function(){
 
 
 
-//
+// The reverse of previous method
 
 DOM.show = function(){
   DOM.each(function(e){
@@ -237,7 +239,7 @@ DOM.show = function(){
 
 
 
-//
+// Return first element in selection
 
 DOM.first = function(){
   this.splice(1);
@@ -247,7 +249,7 @@ DOM.first = function(){
 
 
 
-//
+// Method for setting the content of each selected item
 
 DOM.html = function(value) {
   DOM.each(function(e){
@@ -259,7 +261,7 @@ DOM.html = function(value) {
 
 
 
-//
+// Set attribute on all selected items
 
 DOM.attr = function(attr, value) {
   DOM.each(function(e){
@@ -271,7 +273,7 @@ DOM.attr = function(attr, value) {
 
 
 
-//
+// Reverse of previous method
 
 DOM.removeAttr = function(attr) {
   DOM.each(function(e){
@@ -283,9 +285,9 @@ DOM.removeAttr = function(attr) {
 
 
 
-//
+// Set style property on each element
 
-DOM.css = function(property, value){
+DOM.style = function(property, value){
   DOM.each(function(e){
     var styles = e.getAttribute('style') || '';
     value += is.Numeric(value) ? 'px' : '';
@@ -293,11 +295,13 @@ DOM.css = function(property, value){
   });
 };
 
+// Alias for style
+
+DOM.css = DOM.style;
 
 
 
-
-// Expose to other internal modules
+// Export module
 
 module.exports = DOM;
 

@@ -1,4 +1,6 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"dE1Bu5":[function(require,module,exports){
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"core/game":[function(require,module,exports){
+module.exports=require('dE1Bu5');
+},{}],"dE1Bu5":[function(require,module,exports){
 
 
 // Load dependencies
@@ -130,9 +132,7 @@ var update = function() {
 module.exports = game;
 
 
-},{"core/gameConfig":"/JRJU7","is":"P9m7US","objects/Timer":"y3F4VZ"}],"core/game":[function(require,module,exports){
-module.exports=require('dE1Bu5');
-},{}],"/JRJU7":[function(require,module,exports){
+},{"core/gameConfig":"/JRJU7","is":"P9m7US","objects/Timer":"y3F4VZ"}],"/JRJU7":[function(require,module,exports){
 
 
 // Load dependencies
@@ -247,7 +247,8 @@ var DOM = {};
 
 
 
-//
+// Array of elements, to check if a string represents a html tag
+// in `isLegalElement`
 
 var html5elements = ['html', 'body', 'script', 'div', 'span', 'object',
   'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'pre', 'abbr',
@@ -266,7 +267,8 @@ var isLegalElement = function(tag) {
 
 
 
-//
+// Audio support detection, not currently exported.
+// (may be moved to own module in future)
 
 var audioSupport = {
   mp3: false,
@@ -284,7 +286,7 @@ var audioSupport = {
 
 
 
-//
+// Private helper function, used in `make`
 
 var extractTag = function(tag) {
   var match = new RegExp(/^([a-zA-Z]*)([#.\-a-zA-Z]*)/).exec(tag);
@@ -297,7 +299,7 @@ var extractTag = function(tag) {
 
 
 
-//
+// Private helper function, also used in `make`
 
 var buildAttributes = function(attrs, selectors, multipleElements) {
   attrs = attrs || {};
@@ -393,8 +395,7 @@ DOM.make = function(selector, attrs, callback) {
 
 
 
-// A basic version of this for my own purposes:
-// http://james.padolsey.com/jquery/#v=1.7.2&fn=jQuery.fn.init
+// A very basic jQuery style element selector
 
 DOM.get = function(selector) {
   var target;
@@ -422,7 +423,7 @@ DOM.get = function(selector) {
 
 
 
-//
+// Loop through all selected elements and apply function to each
 
 DOM.each = function(func){
   for (var i = 0; i < this.length; i++) {
@@ -434,7 +435,7 @@ DOM.each = function(func){
 
 
 
-//
+// Add event listener to all selected elements
 
 DOM.on = function(action, func){
   DOM.each(function(e){
@@ -446,7 +447,7 @@ DOM.on = function(action, func){
 
 
 
-//
+// Hides all selected elements with display:none
 
 DOM.hide = function(){
   DOM.each(function(e){
@@ -458,7 +459,7 @@ DOM.hide = function(){
 
 
 
-//
+// The reverse of previous method
 
 DOM.show = function(){
   DOM.each(function(e){
@@ -470,7 +471,7 @@ DOM.show = function(){
 
 
 
-//
+// Return first element in selection
 
 DOM.first = function(){
   this.splice(1);
@@ -480,7 +481,7 @@ DOM.first = function(){
 
 
 
-//
+// Method for setting the content of each selected item
 
 DOM.html = function(value) {
   DOM.each(function(e){
@@ -492,7 +493,7 @@ DOM.html = function(value) {
 
 
 
-//
+// Set attribute on all selected items
 
 DOM.attr = function(attr, value) {
   DOM.each(function(e){
@@ -504,7 +505,7 @@ DOM.attr = function(attr, value) {
 
 
 
-//
+// Reverse of previous method
 
 DOM.removeAttr = function(attr) {
   DOM.each(function(e){
@@ -516,9 +517,9 @@ DOM.removeAttr = function(attr) {
 
 
 
-//
+// Set style property on each element
 
-DOM.css = function(property, value){
+DOM.style = function(property, value){
   DOM.each(function(e){
     var styles = e.getAttribute('style') || '';
     value += is.Numeric(value) ? 'px' : '';
@@ -526,11 +527,13 @@ DOM.css = function(property, value){
   });
 };
 
+// Alias for style
+
+DOM.css = DOM.style;
 
 
 
-
-// Expose to other internal modules
+// Export module
 
 module.exports = DOM;
 
@@ -548,7 +551,9 @@ var fn = {};
 
 
 
-//
+// Function for wrapping a constantly incrementing number around another number.
+// For example `fn.wrap(7, 4)` returns 3, `fn.wrap(8, 4)` returns 0,
+// `fn.wrap(9, 4)` returns 1, and so on.
 
 fn.wrap = function(number, wrap) {
   return ((number % wrap) + wrap) % wrap;
@@ -558,30 +563,31 @@ fn.wrap = function(number, wrap) {
 
 
 
-//
+// Returns a random number between 1 and `max`
 
-fn.randNum = function (num) {
-  return (Math.ceil(Math.random() * num) % num);
+fn.randNum = function (max) {
+  return (Math.ceil(Math.random() * max) % max) + 1;
 };
 
 
 
 
 
-//
+// Returns true at odds 1/`oneIn`, so there would be a one in three chance of
+// `fn.chanceIn(3)` returning true. Could do with some better names here.
 
 fn.chanceIn = function (oneIn) {
-  return fn.randNum(oneIn) ? false : true;
+  return fn.randNum(oneIn) == 1 ? false : true;
 };
 
 
 
 
 
-//
+// Picks random element from an array.
 
 fn.fromArray = function (array) {
-  var r = fn.chanceIn(array.length);
+  var r = fn.randNum(array.length);
   return array[r];
 };
 
@@ -589,7 +595,7 @@ fn.fromArray = function (array) {
 
 
 
-// Expose to other modules
+// Export module
 
 module.exports = fn;
 
@@ -1184,6 +1190,8 @@ module.exports = Polygon;
 
 },{"graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Polygon":[function(require,module,exports){
 module.exports=require('S3SzPy');
+},{}],"graphics/Shape":[function(require,module,exports){
+module.exports=require('rB+uTR');
 },{}],"rB+uTR":[function(require,module,exports){
 
 
@@ -1253,9 +1261,7 @@ var Shape = obj.define(Object, function (options) {
 
 module.exports = Shape;
 
-},{"obj":"DOFYxp"}],"graphics/Shape":[function(require,module,exports){
-module.exports=require('rB+uTR');
-},{}],"k68hkO":[function(require,module,exports){
+},{"obj":"DOFYxp"}],"k68hkO":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1594,7 +1600,8 @@ var is = {};
 
 
 
-//
+// Returns type of any object passed to it,
+// more reliable implementation of typeof
 
 is.Type = function(obj) {
   function classToType(str){
@@ -1620,7 +1627,7 @@ is.Type = function(obj) {
 
 
 
-//
+// Is object an array?
 
 is.Array = Array.isArray || function(obj) {
   return is.Type(obj) === "array";
@@ -1630,7 +1637,7 @@ is.Array = Array.isArray || function(obj) {
 
 
 
-//
+// Is object a function?
 
 is.Function = function(obj){
   return is.Type(obj) === "function";
@@ -1640,7 +1647,7 @@ is.Function = function(obj){
 
 
 
-//
+// Is object in array?
 
 is.inArray = function(needle, haystack) {
   var length = haystack.length;
@@ -1654,7 +1661,7 @@ is.inArray = function(needle, haystack) {
 
 
 
-//
+// Is object the window?
 
 is.Window = function(object) {
   return object !== null && object == object.window;
@@ -1664,7 +1671,7 @@ is.Window = function(object) {
 
 
 
-//
+// Is object numeric?
 
 is.Numeric = function(obj) {
   return !isNaN(parseFloat(obj)) && isFinite(obj);
@@ -1674,7 +1681,7 @@ is.Numeric = function(obj) {
 
 
 
-//
+// You get the idea...
 
 is.String = function(obj) {
   return is.Type(obj) == 'string';
@@ -1684,7 +1691,7 @@ is.String = function(obj) {
 
 
 
-//
+// Is variable set? Same as php's `isset`
 
 is.set = function () {
   var a = arguments,
@@ -1709,10 +1716,11 @@ is.set = function () {
 
 
 
-//
+// Tests to see if object passed is an object, but one created as a literal,
+// returns false if object was created with function constructor
 
-is.PlainObject = function(obj) {
-  if (!obj || this.type(obj) !== "object" || obj.nodeType) {
+is.ObjectLiteral = function(obj) {
+  if (!obj || is.Type(obj) !== "object" || obj.nodeType) {
     return false;
   }
   var hasOwn = Object.prototype.hasOwnProperty;
@@ -1727,6 +1735,8 @@ is.PlainObject = function(obj) {
   for (key in obj) {}
   return key === undefined || hasOwn.call(obj, key);
 };
+
+is.PlainObject = is.ObjectLiteral;
 
 
 
@@ -1756,21 +1766,13 @@ var obj = {};
 
 
 
-//
+// Returns the index of an object in an array that has an id propery that matches the id argument.
+// This may end up moving into entities module when that is added in future release
 
 obj.indexOf = function (id, array) {
   for (var i = 0; i < array.length; i++) {
     if (array[i].id == id) return i;
   }
-};
-
-
-
-
-//
-
-obj.nextIdIn = function (array) {
-  return array.length > 0 ? array[array.length-1].id + 1 : 1;
 };
 
 
@@ -1795,7 +1797,7 @@ var toString = Object.prototype.toString,
 
 
 
-//
+// Returns an objects keys
 
 obj.keys = function (obj) {
   if (typeof obj !== 'object' && typeof obj !== 'function' || obj === null) throw new TypeError('Object.keys called on non-object');
@@ -1817,7 +1819,8 @@ obj.keys = function (obj) {
 
 
 
-//
+// Allows extension of an object, taken from jQuery.
+// Was used in early prototypes, not sure if needed any more, may remove.
 
 obj.extend = function(){
   var options, name, src, copy, copyIsArray, clone, target = arguments[0] || {},
@@ -1864,7 +1867,9 @@ obj.extend = function(){
 
 
 
-//
+// A crockford pattern - useful for creating constuctors for objects,
+// while supporting inheritance. Allows for instanceof checks that actually work.
+// May simplify for my use as `initializer` argument is rarely used.
 
 obj.define = function (extend, initializer, methods) {
   var func, prototype = Object.create(extend && extend.prototype);
@@ -1895,7 +1900,8 @@ obj.define = function (extend, initializer, methods) {
 
 
 
-//
+// ID generator, spits out seemingly random hex value, but if you put in the same seed number
+// you'll get the same string back every time. You won't get a collision until you reach 16,777,217
 
 obj.identifier = function(seed){
   var m, chunk, plus, _id, mod;
@@ -1944,7 +1950,7 @@ obj.identifier = function(seed){
 
 
 
-// Expose to other internal modules
+// Export module
 
 module.exports = obj;
 
@@ -2060,7 +2066,7 @@ Timer.str2ms = function(time){
 
 
 
-// Expose to other internal modules
+// Export module
 
 module.exports = Timer;
 

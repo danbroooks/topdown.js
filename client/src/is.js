@@ -8,7 +8,8 @@ var is = {};
 
 
 
-//
+// Returns type of any object passed to it,
+// more reliable implementation of typeof
 
 is.Type = function(obj) {
   function classToType(str){
@@ -34,7 +35,7 @@ is.Type = function(obj) {
 
 
 
-//
+// Is object an array?
 
 is.Array = Array.isArray || function(obj) {
   return is.Type(obj) === "array";
@@ -44,7 +45,7 @@ is.Array = Array.isArray || function(obj) {
 
 
 
-//
+// Is object a function?
 
 is.Function = function(obj){
   return is.Type(obj) === "function";
@@ -54,7 +55,7 @@ is.Function = function(obj){
 
 
 
-//
+// Is object in array?
 
 is.inArray = function(needle, haystack) {
   var length = haystack.length;
@@ -68,7 +69,7 @@ is.inArray = function(needle, haystack) {
 
 
 
-//
+// Is object the window?
 
 is.Window = function(object) {
   return object !== null && object == object.window;
@@ -78,7 +79,7 @@ is.Window = function(object) {
 
 
 
-//
+// Is object numeric?
 
 is.Numeric = function(obj) {
   return !isNaN(parseFloat(obj)) && isFinite(obj);
@@ -88,7 +89,7 @@ is.Numeric = function(obj) {
 
 
 
-//
+// You get the idea...
 
 is.String = function(obj) {
   return is.Type(obj) == 'string';
@@ -98,7 +99,7 @@ is.String = function(obj) {
 
 
 
-//
+// Is variable set? Same as php's `isset`
 
 is.set = function () {
   var a = arguments,
@@ -123,10 +124,11 @@ is.set = function () {
 
 
 
-//
+// Tests to see if object passed is an object, but one created as a literal,
+// returns false if object was created with function constructor
 
-is.PlainObject = function(obj) {
-  if (!obj || this.type(obj) !== "object" || obj.nodeType) {
+is.ObjectLiteral = function(obj) {
+  if (!obj || is.Type(obj) !== "object" || obj.nodeType) {
     return false;
   }
   var hasOwn = Object.prototype.hasOwnProperty;
@@ -141,6 +143,8 @@ is.PlainObject = function(obj) {
   for (key in obj) {}
   return key === undefined || hasOwn.call(obj, key);
 };
+
+is.PlainObject = is.ObjectLiteral;
 
 
 

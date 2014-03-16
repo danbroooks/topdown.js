@@ -15,21 +15,13 @@ var obj = {};
 
 
 
-//
+// Returns the index of an object in an array that has an id propery that matches the id argument.
+// This may end up moving into entities module when that is added in future release
 
 obj.indexOf = function (id, array) {
   for (var i = 0; i < array.length; i++) {
     if (array[i].id == id) return i;
   }
-};
-
-
-
-
-//
-
-obj.nextIdIn = function (array) {
-  return array.length > 0 ? array[array.length-1].id + 1 : 1;
 };
 
 
@@ -54,7 +46,7 @@ var toString = Object.prototype.toString,
 
 
 
-//
+// Returns an objects keys
 
 obj.keys = function (obj) {
   if (typeof obj !== 'object' && typeof obj !== 'function' || obj === null) throw new TypeError('Object.keys called on non-object');
@@ -76,7 +68,8 @@ obj.keys = function (obj) {
 
 
 
-//
+// Allows extension of an object, taken from jQuery.
+// Was used in early prototypes, not sure if needed any more, may remove.
 
 obj.extend = function(){
   var options, name, src, copy, copyIsArray, clone, target = arguments[0] || {},
@@ -123,7 +116,9 @@ obj.extend = function(){
 
 
 
-//
+// A crockford pattern - useful for creating constuctors for objects,
+// while supporting inheritance. Allows for instanceof checks that actually work.
+// May simplify for my use as `initializer` argument is rarely used.
 
 obj.define = function (extend, initializer, methods) {
   var func, prototype = Object.create(extend && extend.prototype);
@@ -154,7 +149,8 @@ obj.define = function (extend, initializer, methods) {
 
 
 
-//
+// ID generator, spits out seemingly random hex value, but if you put in the same seed number
+// you'll get the same string back every time. You won't get a collision until you reach 16,777,217
 
 obj.identifier = function(seed){
   var m, chunk, plus, _id, mod;
@@ -203,6 +199,6 @@ obj.identifier = function(seed){
 
 
 
-// Expose to other internal modules
+// Export module
 
 module.exports = obj;

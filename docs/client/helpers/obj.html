@@ -117,7 +117,9 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              
+              <p>Returns the index of an object in an array that has an id propery that matches the id argument.
+This may end up moving into entities module when that is added in future release</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -140,23 +142,6 @@ obj.indexOf = <span class="hljs-function"><span class="hljs-keyword">function</s
             </div>
             
             <div class="content"><div class='highlight'><pre>
-obj.nextIdIn = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(array)</span> {</span>
-  <span class="hljs-keyword">return</span> array.length &gt; <span class="hljs-number">0</span> ? array[array.length-<span class="hljs-number">1</span>].id + <span class="hljs-number">1</span> : <span class="hljs-number">1</span>;
-};</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-6">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>
 <span class="hljs-keyword">var</span> hasOwnProp = hasOwnProperty || <span class="hljs-built_in">Object</span>.prototype.hasOwnProperty;
 <span class="hljs-keyword">var</span> toString = <span class="hljs-built_in">Object</span>.prototype.toString,
     hasDontEnumBug = !({toString: <span class="hljs-literal">null</span>}).propertyIsEnumerable(<span class="hljs-string">'toString'</span>),
@@ -174,13 +159,14 @@ obj.nextIdIn = <span class="hljs-function"><span class="hljs-keyword">function</
         </li>
         
         
-        <li id="section-7">
+        <li id="section-6">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              
+              <p>Returns an objects keys</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -204,13 +190,15 @@ obj.keys = <span class="hljs-function"><span class="hljs-keyword">function</span
         </li>
         
         
-        <li id="section-8">
+        <li id="section-7">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              
+              <p>Allows extension of an object, taken from jQuery.
+Was used in early prototypes, not sure if needed any more, may remove.</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -259,13 +247,16 @@ obj.extend = <span class="hljs-function"><span class="hljs-keyword">function</sp
         </li>
         
         
-        <li id="section-9">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              
+              <p>A crockford pattern - useful for creating constuctors for objects,
+while supporting inheritance. Allows for instanceof checks that actually work.
+May simplify for my use as <code>initializer</code> argument is rarely used.</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -298,13 +289,15 @@ obj.define = <span class="hljs-function"><span class="hljs-keyword">function</sp
         </li>
         
         
-        <li id="section-10">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              
+              <p>ID generator, spits out seemingly random hex value, but if you put in the same seed number
+you’ll get the same string back every time. You won’t get a collision until you reach 16,777,217</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -326,11 +319,11 @@ obj.identifier = <span class="hljs-function"><span class="hljs-keyword">function
         </li>
         
         
-        <li id="section-11">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>invert all even seeds.</p>
 
@@ -366,13 +359,13 @@ obj.identifier = <span class="hljs-function"><span class="hljs-keyword">function
         </li>
         
         
-        <li id="section-12">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p>Expose to other internal modules</p>
+              <p>Export module</p>
 
             </div>
             

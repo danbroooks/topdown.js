@@ -117,7 +117,9 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              
+              <p>Array of elements, to check if a string represents a html tag
+in <code>isLegalElement</code></p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -144,7 +146,9 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              
+              <p>Audio support detection, not currently exported.
+(may be moved to own module in future)</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -170,7 +174,8 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              
+              <p>Private helper function, used in <code>make</code></p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -191,7 +196,8 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              
+              <p>Private helper function, also used in <code>make</code></p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -312,8 +318,7 @@ DOM.make = <span class="hljs-function"><span class="hljs-keyword">function</span
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>A basic version of this for my own purposes:
-<a href="http://james.padolsey.com/jquery/#v=1.7.2&amp;fn=jQuery.fn.init">http://james.padolsey.com/jquery/#v=1.7.2&amp;fn=jQuery.fn.init</a></p>
+              <p>A very basic jQuery style element selector</p>
 
             </div>
             
@@ -350,7 +355,8 @@ DOM.get = <span class="hljs-function"><span class="hljs-keyword">function</span>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              
+              <p>Loop through all selected elements and apply function to each</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -370,7 +376,8 @@ DOM.each = <span class="hljs-function"><span class="hljs-keyword">function</span
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              
+              <p>Add event listener to all selected elements</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -390,7 +397,8 @@ DOM.on = <span class="hljs-function"><span class="hljs-keyword">function</span><
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              
+              <p>Hides all selected elements with display:none</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -410,7 +418,8 @@ DOM.hide = <span class="hljs-function"><span class="hljs-keyword">function</span
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              
+              <p>The reverse of previous method</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -430,7 +439,8 @@ DOM.show = <span class="hljs-function"><span class="hljs-keyword">function</span
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              
+              <p>Return first element in selection</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -448,7 +458,8 @@ DOM.first = <span class="hljs-function"><span class="hljs-keyword">function</spa
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              
+              <p>Method for setting the content of each selected item</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -468,7 +479,8 @@ DOM.html = <span class="hljs-function"><span class="hljs-keyword">function</span
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              
+              <p>Set attribute on all selected items</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -488,7 +500,8 @@ DOM.attr = <span class="hljs-function"><span class="hljs-keyword">function</span
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              
+              <p>Reverse of previous method</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
@@ -508,11 +521,12 @@ DOM.removeAttr = <span class="hljs-function"><span class="hljs-keyword">function
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              
+              <p>Set style property on each element</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
-DOM.css = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(property, value)</span>{</span>
+DOM.style = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(property, value)</span>{</span>
   DOM.each(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span>{</span>
     <span class="hljs-keyword">var</span> styles = e.getAttribute(<span class="hljs-string">'style'</span>) || <span class="hljs-string">''</span>;
     value += is.Numeric(value) ? <span class="hljs-string">'px'</span> : <span class="hljs-string">''</span>;
@@ -529,7 +543,23 @@ DOM.css = <span class="hljs-function"><span class="hljs-keyword">function</span>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
-              <p>Expose to other internal modules</p>
+              <p>Alias for style</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+DOM.css = DOM.style;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>Export module</p>
 
             </div>
             
