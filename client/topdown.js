@@ -1,0 +1,2228 @@
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+
+
+// Load dependencies
+
+var obj = require('../obj');
+var is = require('../is');
+
+
+
+
+
+// Object definition
+
+var GameConfig = obj.define(Object, function(options){
+
+
+
+
+
+// Object properties & methods
+
+}, {
+
+
+
+
+
+  // Canvas array & primary canvas
+
+  canvases: [],
+  primaryCanvas: undefined,
+
+
+
+
+
+  // Set primary canvas, adds to canvases array if not already in there
+
+  setPrimaryCanvas: function(canvas) {
+    if (!is.inArray(canvas, this.canvases)) {
+      this.canvases.push(canvas);
+    }
+    this.primaryCanvas = canvas;
+  }
+});
+
+
+
+
+
+// Expose to browser
+
+window.GameConfig = GameConfig;
+
+
+
+
+
+// Expose to other internal modules
+
+module.exports = GameConfig;
+
+},{"../is":11,"../obj":12}],2:[function(require,module,exports){
+
+
+// Load dependencies
+
+var is = require('../is');
+var GameConfig = require('./GameConfig');
+
+
+
+
+
+// Object declaration
+
+var game = {};
+
+
+
+
+
+// Declare function arrays for initialization extension
+
+var init = [];
+var beforeInit = [];
+var afterInit = [];
+
+
+
+
+
+// Private variable for game timer
+
+var time;
+
+
+
+
+
+// Game configuration object
+
+game.config = GameConfig();
+
+
+
+
+
+//
+
+game.init = function(){
+  var execute = function(func){ func(); };
+  beforeInit.forEach(execute);
+  init.forEach(execute);
+  afterInit.forEach(execute);
+
+  time = Timer();
+  render();
+  setInterval(update, 50); // fixed update *20 a second
+};
+
+
+
+
+
+//
+
+game.onInit = function(func){
+  if (!is.Function(func)) {
+    console.log("onInit only accepts functions");
+    return;
+  }
+  init.push(func);
+};
+
+
+
+
+
+//
+
+game.onBeforeInit = function(func) {
+  if (!is.Function(func)) {
+    console.log("onInit only accepts functions");
+    return;
+  }
+  beforeInit.push(func);
+};
+
+
+
+
+
+//
+
+game.onAfterInit = function(func) {
+  if (!is.Function(func)) {
+    console.log("onInit only accepts functions");
+    return;
+  }
+  afterInit.push(func);
+};
+
+
+
+
+
+//
+
+var frame = 0;
+var fps = {
+  current: 0,
+  previous: 0,
+  last: 0,
+  value: function() {
+    var v = (this.current + this.previous + this.last ) / 3;
+    v = Math.floor(v*10)/10;
+    return v;
+  },
+  set: function(value) {
+    this.last = this.previous;
+    this.previous = this.current;
+    this.current = value;
+  }
+};
+
+
+
+
+
+//
+
+game.fps = function(){
+  return fps.value();
+};
+
+
+
+
+
+//
+
+game.timeElapsed = function(){
+  return time.secondsElapsed();
+};
+
+
+
+
+
+//
+
+game.render = function(delta) {};
+
+
+
+
+
+//
+
+var render = function() {
+  fps.set(1000/time.delta());
+  game.render(time.delta());
+  frame++;
+  requestAnimationFrame(render);
+};
+
+
+
+
+
+//
+
+game.update = function() {};
+
+
+
+
+
+//
+
+var update = function() {
+  game.update();
+};
+
+
+
+
+
+// Expose to browser
+
+window.game = game;
+
+
+
+
+
+// Expose to other internal modules
+
+module.exports = game;
+
+
+},{"../is":11,"./GameConfig":1}],3:[function(require,module,exports){
+
+
+// Load dependencies
+
+var is = require('./is');
+
+
+
+
+// Declare object
+
+var DOM = {};
+
+
+
+
+//
+
+var html5elements = ['html', 'body', 'script', 'div', 'span', 'object',
+  'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'pre', 'abbr',
+  'address', 'cite', 'code', 'del', 'dfn', 'em', 'img', 'ins', 'kbd',
+  'q', 'samp', 'small', 'strong', 'sub', 'sup', 'var', 'b', 'i', 'dl',
+  'dt', 'dd', 'ol', 'ul', 'li', 'fieldset', 'form', 'label', 'legend',
+  'table', 'caption', 'tbody', 'tfoot', 'thead', 'tr', 'th', 'td',
+  'article', 'aside', 'canvas', 'details', 'figcaption', 'figure',
+  'footer', 'header', 'hgroup', 'menu', 'nav', 'section', 'summary',
+  'iframe', 'time', 'mark', 'audio', 'video', 'link', 'input'];
+
+var isLegalElement = function(tag) {
+  return is.inArray(tag, html5elements);
+};
+
+
+
+
+//
+
+var audioSupport = {
+  mp3: false,
+  ogg: false
+};
+
+(function(){
+  var audio = document.createElement('audio');
+  if (audio.canPlayType) {
+    audioSupport.mp3 = "" !== audio.canPlayType('audio/mpeg');
+    audioSupport.ogg = "" !== audio.canPlayType('audio/ogg; codecs="vorbis"');
+  }
+})();
+
+
+
+
+//
+
+var extractTag = function(tag) {
+  var match = new RegExp(/^([a-zA-Z]*)([#.\-a-zA-Z]*)/).exec(tag);
+  return {
+    name: match[1],
+    selectors: match[2]
+  };
+};
+
+
+
+
+//
+
+var buildAttributes = function(attrs, selectors, multipleElements) {
+  attrs = attrs || {};
+  var id, classes = [];
+
+  while((selectors = new RegExp(/^([#|.][\-a-zA-Z]+)/).exec(selectors)) !== null) {
+    var match = selectors[0];
+    selectors = selectors.input.replace(match, '');
+
+    if (match.charAt(0) == "#") {
+      if (multipleElements) {
+        console.log('An id should be unique to one element!');
+      } else if (!id) {
+        id = match.substring(1);
+      } else {
+        console.log('An element should only have a maximum of one id!');
+      }
+    } else if (match.charAt(0) == ".") {
+      classes.push(match.substring(1));
+    }
+  }
+
+  return {
+    id: id,
+    classes: classes
+  };
+};
+
+
+
+
+//
+
+DOM.splice = Array.prototype.splice;
+
+
+
+
+// Currently only looks for very basic string
+
+DOM.make = function(selector, attrs, callback) {
+  var tag = extractTag(selector);
+  attrs = attrs || {};
+
+  if(!isLegalElement(tag.name)) {
+    throw new Error('Illegal tag name "'+tag.name+'" passed to topdown.DOM.make');
+  }
+
+  var elements = (is.Array(attrs)) ? attrs : [attrs];
+  var multipleElements = elements.length > 1;
+  callback = callback || function(){};
+  attrs = buildAttributes(attrs, tag.selectors, multipleElements);
+  var id = attrs.id;
+  var classes = attrs.classes;
+
+  function append(array, callback) {
+    var properties = array[0],
+        e = document.createElement(tag.name),
+        appendto;
+
+    if (properties.appendto){
+      appendto = properties.appendto;
+      delete properties.appendto;
+    }
+
+    for (var att in properties) {
+      if (properties.hasOwnProperty(att)) {
+        e.setAttribute(att, properties[att]);
+      }
+    }
+
+    e.onload = e.onreadystatechange = function(e){
+      array.shift();
+      if(array.length) {
+        append(array, callback);
+      } else {
+        callback();
+      }
+    };
+
+    if (id) e.id = id;
+    for ( var n = 0, file; ($class = classes[n]); n++ ) {
+      e.classList.add($class);
+    }
+
+    appendto = appendto || 'body';
+    return DOM.get(appendto)[0].appendChild(e);
+  }
+
+  return append(elements, callback);
+};
+
+
+
+
+// A basic version of this for my own purposes:
+// http://james.padolsey.com/jquery/#v=1.7.2&fn=jQuery.fn.init
+
+DOM.get = function(selector) {
+  var target;
+  var selected = [];
+  if (selector) {
+    if(typeof(selector) === "string") {
+      if(selector.charAt(0) === "#") {
+        target = selector.slice(1);
+        var id = document.getElementById(target);
+        selected = id ? [id] : [];
+      } else if(selector.charAt(0) === ".") {
+        target = selector.slice(1);
+        selected = document.getElementsByClassName(target);
+      } else {
+        selected = document.getElementsByTagName(selector);
+      }
+    }
+  }
+
+  this.splice(0);
+  Array.prototype.push.apply( this, selected );
+  return this;
+};
+
+
+
+
+//
+
+DOM.each = function(func){
+  for (var i = 0; i < this.length; i++) {
+    func(this[i]);
+  }
+  return this;
+};
+
+
+
+
+//
+
+DOM.on = function(action, func){
+  DOM.each(function(e){
+    e.addEventListener(action, func);
+  });
+  return this;
+};
+
+
+
+
+//
+
+DOM.hide = function(){
+  DOM.each(function(e){
+    e.style.display = 'none';
+  });
+  return this;
+};
+
+
+
+
+//
+
+DOM.show = function(){
+  DOM.each(function(e){
+    e.style.display = '';
+  });
+  return this;
+};
+
+
+
+
+//
+
+DOM.first = function(){
+  this.splice(1);
+  return this;
+};
+
+
+
+
+//
+
+DOM.html = function(value) {
+  DOM.each(function(e){
+    e.innerHTML = value;
+  });
+  return this;
+};
+
+
+
+
+//
+
+DOM.attr = function(attr, value) {
+  DOM.each(function(e){
+    e.setAttribute(attr, ""+value);
+  });
+  return this;
+};
+
+
+
+
+//
+
+DOM.removeAttr = function(attr) {
+  DOM.each(function(e){
+    e.removeAttribute(attr);
+  });
+  return this;
+};
+
+
+
+
+//
+
+DOM.css = function(property, value){
+  DOM.each(function(e){
+    var styles = e.getAttribute('style') || '';
+    value += is.Numeric(value) ? 'px' : '';
+    e.setAttribute('style', styles + ' ' + property + ': ' + value + ';');
+  });
+};
+
+
+
+
+// Expose to browser
+
+window.DOM = DOM;
+
+
+
+
+// Expose to other internal modules
+
+module.exports = DOM;
+
+
+},{"./is":11}],4:[function(require,module,exports){
+
+
+// Object declaration
+
+var fn = {};
+
+
+
+
+
+//
+
+fn.wrap = function(number, wrap) {
+  return ((number % wrap) + wrap) % wrap;
+};
+
+
+
+
+
+//
+
+fn.randNum = function (num) {
+  return (Math.ceil(Math.random() * num) % num);
+};
+
+
+
+
+
+//
+
+fn.chanceIn = function (oneIn) {
+  return fn.randNum(oneIn) ? false : true;
+};
+
+
+
+
+
+//
+
+fn.fromArray = function (array) {
+  var r = fn.chanceIn(array.length);
+  return array[r];
+};
+
+
+
+
+
+// Expose to browser
+
+window.fn = fn;
+
+
+
+
+
+// Expose to other internal modules
+
+module.exports = fn;
+
+},{}],5:[function(require,module,exports){
+
+
+// Load dependencies
+
+var obj = require('../obj');
+
+
+
+
+
+// Object definition
+
+var Point = obj.define(Object, function(x, y){
+
+
+
+
+
+  // Constructor
+
+  var point = {};
+  x = x || {};
+
+  if (!y) {
+    if (x.length == 2) {
+      point.x = x[0];
+      point.y = x[1];
+    } else {
+      point.x = x.x || 0;
+      point.y = x.y || 0;
+    }
+  } else {
+    point.x = x;
+    point.y = y;
+  }
+
+  this.x = point.x;
+  this.y = point.y;
+
+
+
+
+
+// Object properties & methods
+
+}, {
+
+
+
+
+
+  // Rotate point around another point
+
+  rotate: function (axis, theta) {
+    if (false === axis instanceof Point)
+      throw new Error('You can only rotate a point around another Point.');
+
+    var cos = Math.cos(theta),
+        sin = Math.sin(theta);
+
+    var transform = {
+      x: this.x - axis.x,
+      y: this.y - axis.y
+    };
+
+    var rotate = {
+      x: transform.x * cos - transform.y * sin,
+      y: transform.x * sin + transform.y * cos
+    };
+
+    this.x = rotate.x + axis.x;
+    this.y = rotate.y + axis.y;
+  },
+
+
+
+
+
+  // Add vector to point
+
+  add: function (point, returnNewInstance) {
+    if (false === point instanceof Point)
+      throw new Error('You can only add a another Point to Point object.');
+
+    if (returnNewInstance) {
+      var x = this.x + point.x;
+      var y = this.y + point.y;
+      return Point(x, y);
+    } else {
+      this.x += point.x;
+      this.y += point.y;
+      return this;
+    }
+  },
+
+
+
+
+
+  // Subtract vector from point
+
+  sub: function (point, returnNewInstance) {
+    if (false === point instanceof Point)
+      throw new Error('You can only subtract a another Point to Point object.');
+
+    if (returnNewInstance) {
+      var x = this.x - point.x;
+      var y = this.y - point.y;
+      return Point(x, y);
+    } else {
+      this.x -= point.x;
+      this.y -= point.y;
+      return this;
+    }
+  },
+
+
+
+
+
+  // Returns inverted point
+
+  invert: function () {
+    return Point( -this.x, -this.y );
+  },
+
+});
+
+
+
+
+
+// Expose to browser
+
+window.Point = Point;
+
+
+
+
+
+// Expose to other internal modules
+
+module.exports = Point;
+
+},{"../obj":12}],6:[function(require,module,exports){
+
+
+// Load dependencies
+
+var obj = require('../obj');
+var Shape = require('./Shape');
+
+
+
+
+
+// Object definition
+
+var Polygon = obj.define(Shape, function (options) {
+
+
+
+
+
+  // Constructor
+
+  options = options || {};
+/*
+  function checkPoints(points, size) {
+    points.forEach(function(point){
+      if (point.length != size) throw new Error('Array contains incorrect amount of points required ('+size+').');
+    });
+
+    return true;
+  }
+
+  var _default = {
+    points: [
+      [ 20, 20 ],
+      [ 20, 40 ],
+      [ 40, 40 ],
+      [ 40, 20 ]
+    ],
+    position: [20, 20]
+  };
+
+  var points = ( options.points !== undefined ) ? options.points : _default.points;
+  var position = ( options.position !== undefined ) ? options.position : _default.position;
+
+  this.points = (function(){
+
+    Points = (checkPoints(points, 2)) ? points : [];
+    PointArray = [];
+
+    Points.forEach(function(point){
+      PointArray.push( Point( point ));
+    });
+
+    return PointArray;
+
+  }());
+
+  this.move(this.centroid().invert());
+  this.move(Point(position));
+  this.position = this.centroid();
+
+  this.stroke = options.stroke || this.stroke;
+  this.angle = options.angle || this.angle;
+  this.fill = options.fill || this.fill;
+
+*/
+
+
+
+
+
+// Object properties & methods
+
+}, {
+
+
+
+
+
+  // Iterates over points. If at least one of a shape's points are in shot, then draw.
+  // If they're all less than 0 or greater than canvas edge on x or y axis, do not draw.
+
+  inShot: function() {
+    /*
+    canvas_size = topdown.gfx.getCanvasSize();
+
+    var modx = topdown.gfx.camera.mod.x;
+        mody = topdown.gfx.camera.mod.y;
+
+    var viewport = {
+      x:{
+        lt: true, gt: true,
+        min: modx(0),
+        max: modx(canvas_size.x)
+      },
+      y: {
+        lt: true, gt: true,
+        min: mody(0),
+        max: mody(canvas_size.y)
+      }
+    };
+
+    for (var i = 0; i < this.points.length; i++) {
+      if(this.points[i].inShot()) return true;
+
+      var points = this.points[i];
+
+      viewport.x.lt = ( viewport.x.lt && (points.x < viewport.x.min) ) ? true : false;
+      viewport.x.gt = ( viewport.x.gt && (points.x > viewport.x.max) ) ? true : false;
+      viewport.y.lt = ( viewport.y.lt && (points.y < viewport.y.min) ) ? true : false;
+      viewport.y.gt = ( viewport.y.gt && (points.y > viewport.y.max) ) ? true : false;
+    }
+
+    if (viewport.x.lt || viewport.y.lt || viewport.x.gt || viewport.y.gt) return false;
+    */
+
+    // consider case when points are off shot but shape is not
+
+    // More complex tests arise when a shape's points are out of the bounds
+    // of camera, but part of the shape will still fall in shot, ie a rotated
+    // square or a triangle.
+
+    //   denom = ((LineB2.Y – LineB1.Y) * (LineA2.X – LineA1.X)) –
+    //     ((LineB2.X – lineB1.X) * (LineA2.Y - LineA1.Y))
+    //   return denom != 0
+
+    // alternatively generate bounding sphere and use that to calculate wether
+    // or not to draw shape, less exact but possibly more efficient.
+
+    // http://devmag.org.za/2009/04/13/basic-collision-detection-in-2d-part-1/
+
+
+    // see also:
+    //   https://github.com/robhawkes/rawkets/blob/master/public/js/Game.js#L440
+
+    // Without a final algorithm it's worth rendering this
+    // content anyway incase it overlaps into the viewport.
+    return true;
+  },
+
+
+
+  // Calls graphics method to render shape
+
+  render: function () {
+    /*
+    if (!this.inShot()) return false;
+
+    var
+    ctx = topdown.gfx.getContext(),
+    mod = topdown.gfx.camera.mod;
+
+    ctx.fillStyle = this.fill;
+    ctx.strokeStyle = this.stroke;
+    ctx.beginPath();
+
+    for(i = 0; i < this.points.length; i++) {
+      var point = this.points[i];
+      var func = i ? 'lineTo' : 'moveTo';
+      ctx[func](mod.x(point.x), mod.y(point.y));
+    }
+
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    */
+  },
+
+
+
+
+
+  // Iterates over points to move them by vector supplied in argument
+
+  move: function () {
+    /*
+    var args = arguments;
+    var vector;
+
+    if(!args.length || args.length > 2) return false;
+    if(args.length == 1) vector = args[0];
+
+    if(args.length == 2) {
+      if( isNaN( args[0] ) || isNaN( args[1] ) ) return false;
+      vector = Point(args);
+    }
+
+    if (false === vector instanceof Point)
+      throw new Error('You can only move a point by the vector of another Point.');
+
+    this.points.forEach(function(point){
+      point.add(vector);
+    });
+
+    this.position = this.centroid();
+
+    topdown.gfx.refreshBackground = true;
+    */
+  },
+
+
+
+
+
+  //
+
+  teleport: function (point) {
+    /*
+    var current = this.centroid();
+    this.move(point.sub(current));
+    */
+  },
+
+
+
+
+
+  // Iterates over points to rotate them by angle supplied in argument
+
+  rotate: function (theta) {
+    /*
+    var axis = this.position;
+
+    this.points.forEach(function(point){
+      point.rotate(axis, theta);
+    });
+
+    angle = (this.angle + theta) % (Math.PI*2);
+
+    while(angle < 0) angle += (Math.PI*2);
+
+    this.angle = angle;
+
+    topdown.gfx.refreshBackground = true;
+    */
+  },
+
+
+
+
+
+  //
+
+  setAngle: function (angle) {
+    /*
+    var axis = this.position;
+    var theta = angle - this.angle;
+
+    this.points.forEach(function(point){
+      point.rotate(axis, theta);
+    });
+
+    this.angle = angle;
+
+    topdown.gfx.refreshBackground = true;
+    */
+  },
+
+
+
+
+
+  //
+
+  pointInPolygon: function(point){
+    /*
+    var
+    counter = 0,
+    x_inter,
+    points = this.points;
+
+    var p1 = points[0];
+    for (var i = 1, l = points.length; i <= l; i++) {
+      var p2 = points[i%l];
+
+      if (
+        point.y > Math.min(p1.y, p2.y) &&
+        point.y <= Math.max(p1.y, p2.y) &&
+        point.x <= Math.max(p1.x, p2.x) &&
+        p1.y != p2.y
+      ) {
+        x_inter = (point.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
+        if ( p1.x == p2.x || point.x <= x_inter) {
+          counter++;
+        }
+      }
+      p1 = p2;
+    }
+
+    return ( counter % 2 == 1 );
+    */
+  },
+
+
+
+
+
+  // Collision algorithm
+
+  detectCollision: function () {
+    /*
+    var args = arguments;
+
+    if(args.length != 2) {
+      throw new Error('Invalid number of arguments provided.');
+    } else if ( !args[0] instanceof Point || !args[1] instanceof Point ) {
+      throw new Error('Function requires two points to detect collision.');
+    }
+
+    var
+    B1 = args[0],
+    B2 = args[1],
+    collision = false,
+    points = this.points;
+
+    if (this.pointInPolygon(B1) || this.pointInPolygon(B2)) {
+      return true;
+    }
+
+    for(var i = 0, nPts = points.length; i < nPts; i++) {
+      var this_point = points[i];
+      var next_point = points[(i+1)%nPts];
+
+      var A1 = {
+        x: this_point.x,
+        y: this_point.y
+      },
+      A2 = {
+        x: next_point.x,
+        y: next_point.y
+      };
+
+      collision = ( collision || this.doesLineIntersect(A1, A2, B1, B2) );
+    }
+
+    return collision;
+    */
+  },
+
+
+
+
+
+  //
+
+  getLineIntersectionPoint: function(A1, A2, B1, B2) {
+    /*
+    var s1_x, s1_y, s2_x, s2_y;
+    s1_x = A2.x - A1.x;
+    s1_y = A2.y - A1.y;
+    s2_x = B2.x - B1.x;
+    s2_y = B2.y - B1.y;
+    var s, t;
+    s = (-s1_y * (A1.x - B1.x) + s1_x * (A1.y - B1.y)) / (-s2_x * s1_y + s1_x * s2_y);
+    t = ( s2_x * (A1.y - B1.y) - s2_y * (A1.x - B1.x)) / (-s2_x * s1_y + s1_x * s2_y);
+
+    if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
+      // Collision detected
+      return Point({
+        x: A1.x + (t * s1_x),
+        y: A1.y + (t * s1_y)
+      });
+    }
+
+    // No collision
+    return false;
+    */
+  },
+
+
+
+
+
+  //
+
+  doesLineIntersect: function(A1, A2, B1, B2) {
+    return this.getLineIntersectionPoint(A1, A2, B1, B2) !== false;
+  },
+
+
+
+
+
+  // Returns the center point of shape.
+  // TODO: doesnt calculate with only two points (ie straight line)
+
+  centroid: function() {
+    /*
+    var pts  = this.points;
+    var nPts = pts.length;
+    var x = 0; var y = 0;
+    var f;
+    var j = nPts - 1;
+    var p1; var p2;
+
+    for (var i = 0; i < nPts; j = i++) {
+      p1 = pts[i];
+      p2 = pts[j];
+      f  = p1.x * p2.y - p2.x * p1.y;
+      x += (p1.x + p2.x) * f;
+      y += (p1.y + p2.y) * f;
+    }
+
+    f = this.area() * 6;
+
+    return Point([ x/f, y/f ]);
+    */
+  },
+
+
+
+
+
+  // Returns area of shape
+
+  area: function() {
+    /*
+    var
+    area = 0,
+    pts = this.points,
+    p1, p2;
+
+    for (var i=0, nPts = pts.length, j = nPts - 1; i < nPts; j = i++) {
+      p1 = pts[i];
+      p2 = pts[j];
+      area += p1.x * p2.y;
+      area -= p1.y * p2.x;
+    }
+
+    area /= 2;
+
+    return area;
+    */
+  },
+
+});
+
+
+
+
+
+// Expose to browser
+
+window.Polygon = Polygon;
+
+
+
+
+
+// Expose to other internal modules
+
+module.exports = Polygon;
+
+
+},{"../obj":12,"./Shape":7}],7:[function(require,module,exports){
+
+
+// Load dependencies
+
+var obj = require('../obj');
+
+
+
+
+
+// Object definition
+
+var Shape = obj.define(Object, function (options) {
+
+
+
+
+
+  // Constructor
+
+  throw new Error("This class isn't meant for direct instantiation");
+
+
+
+
+
+// Object properties & methods
+
+}, {
+
+
+
+
+
+  //
+
+  stroke: '698796',
+  fill: '132132',
+  angle: Math.PI*2,
+
+
+
+
+
+  //
+
+  inShot: function(){
+    return false;
+  },
+
+
+
+
+
+  //
+
+  render: function(){}
+
+});
+
+
+
+
+
+// Expose to other internal modules
+
+module.exports = Shape;
+
+},{"../obj":12}],8:[function(require,module,exports){
+
+
+// Load dependencies
+
+var gfx = require('./gfx');
+var Point = require('./Point');
+
+
+
+
+
+// Object declaration
+
+var camera = {};
+
+
+
+
+
+// Camera position stored as Point
+
+var position = Point([0,0]);
+
+
+
+
+
+//
+
+camera.get = function() {
+  return { x: position.x, y: position.y };
+};
+
+
+
+
+
+//
+
+camera.modX = function(x) {
+  return x - position.x;
+};
+
+
+
+
+
+//
+
+camera.modY = function(y) {
+  return y - position.y;
+};
+
+
+
+
+
+//
+
+camera.move = function(point) {
+  position.add(point);
+};
+
+
+
+
+
+//
+
+camera.set = function(point) {
+  position.add(point.sub(position));
+};
+
+
+
+
+
+//
+
+camera.offset = function(point) {
+  return point.add(position, true);
+};
+
+
+
+
+
+//
+
+camera.noffset = function(point) {
+  return point.sub(position, true);
+};
+
+
+
+
+
+// Returns true if point is inside camera
+
+camera.pointInShot = function (point) {
+  /*
+  var cam = {
+    x: camera.modX(point.x),
+    y: camera.modY(point.y)
+  };
+  */
+  var cam = camera.noffset(point);
+
+  var canvas = gfx.getCanvasSize();
+
+  if ( cam.x < 0 || cam.x > canvas.x || cam.y < 0 || cam.y > canvas.y ) {
+    return false;
+  }
+  return true;
+};
+
+
+
+
+
+//
+
+camera.track = function(object) {
+  /*
+   if (is.string(object) && object == 'off') {
+     game.onBeforeLoop.remove('camera_track');
+   }
+
+  if (object instanceof Actor) {
+    game.onBeforeLoop.add('camera_track', function(){
+      camera.set(object.shape.centroid().sub(graphics.getCanvasCenter()));
+    });
+  }
+  */
+};
+
+
+
+
+
+// Expose to browser
+
+window.camera = camera;
+
+
+
+
+
+// Expose to other internal modules
+
+module.exports = camera;
+
+
+},{"./Point":5,"./gfx":9}],9:[function(require,module,exports){
+
+
+// Load dependencies
+
+var is = require('../is');
+var Point = require('./Point');
+
+
+
+
+
+// Object declaration
+
+var gfx = {};
+
+
+
+
+
+//
+
+var canvas, context, ctx;
+var canvasStack = {};
+
+
+
+
+
+//
+
+gfx.pushCanvas = function(name, element) {
+  canvasStack[name] = element;
+};
+
+
+
+
+
+//
+
+gfx.setCanvas = function(name){
+  canvas = name ? canvasStack[name] : canvas;
+  ctx = context = canvas ? canvas.getContext('2d') : undefined;
+};
+
+
+
+
+
+//
+
+gfx.cling = function(canvRef) {
+  canvRef = canvRef || canvas;
+  if (canvRef) {
+    canvRef.width = window.innerWidth;
+    canvRef.height = window.innerHeight;
+  }
+};
+
+
+
+
+
+//
+
+gfx.clearContext = function(ctxRef) {
+  ctxRef = ctxRef || context;
+  if (ctxRef) {
+    ctxRef.clearRect(0,0,canvas.width,canvas.height);
+  }
+};
+
+
+
+
+
+//
+
+gfx.getContext = function(){
+  return context;
+};
+
+
+
+
+
+//
+
+gfx.getCanvasSize = function() {
+  if (canvas) {
+    return { x: canvas.width, y: canvas.height };
+  }
+};
+
+
+
+
+
+//
+
+gfx.getCanvasCenter = function(){
+  if (canvas) {
+    var size = gfx.getCanvasSize();
+    return Point([size.x/2, size.y/2]);
+  }
+};
+
+
+
+
+
+//
+
+gfx.render = function(shape) {
+/*
+  if (!shape instanceof Shape) {
+    throw new Error('Only pass shape objects to render.');
+  }
+
+  if (shape.inShot()) {
+    shape.render();
+  }
+*/
+};
+
+
+
+
+
+//
+
+gfx.loadImage = function(src, callback) {
+  var image = new Image();
+  image.src = src;
+  if (callback) {
+    image.onload = callback;
+  }
+  return image;
+};
+
+
+
+
+
+//
+
+gfx.text = function(text, position){
+  context.fillStyle = 'FFFFFF';
+  context.fillText(text, position.x-25, position.y+5);
+};
+
+
+
+
+
+//
+
+gfx.refresh = true;
+
+
+
+
+
+// Expose to browser
+
+window.gfx = gfx;
+
+
+
+
+
+// Expose to other internal modules
+
+module.exports = gfx;
+
+},{"../is":11,"./Point":5}],10:[function(require,module,exports){
+
+},{}],11:[function(require,module,exports){
+
+
+// Object declaration
+
+var is = {};
+
+
+
+
+
+//
+
+is.Type = function(obj) {
+  function classToType(str){
+    var class2type = {
+      "[object Boolean]"  : "boolean",
+      "[object Number]"   : "number",
+      "[object String]"   : "string",
+      "[object Function]" : "function",
+      "[object Array]"    : "array",
+      "[object Date]"     : "date",
+      "[object RegExp]"   : "regexp",
+      "[object Object]"   : "object"
+    };
+
+    var type = class2type[str];
+    return type ? type : false;
+  }
+
+  return obj === null ? String(obj) : classToType(({}).toString.call(obj)) || "object";
+};
+
+
+
+
+
+//
+
+is.Array = Array.isArray || function(obj) {
+  return is.Type(obj) === "array";
+};
+
+
+
+
+
+//
+
+is.Function = function(obj){
+  return is.Type(obj) === "function";
+};
+
+
+
+
+
+//
+
+is.inArray = function(needle, haystack) {
+  var length = haystack.length;
+  for(var i = 0; i < length; i++) {
+      if(haystack[i] == needle) return true;
+  }
+  return false;
+};
+
+
+
+
+
+//
+
+is.Window = function(object) {
+  return object !== null && object == object.window;
+};
+
+
+
+
+
+//
+
+is.Numeric = function(obj) {
+  return !isNaN(parseFloat(obj)) && isFinite(obj);
+};
+
+
+
+
+
+//
+
+is.String = function(obj) {
+  return is.Type(obj) == 'string';
+};
+
+
+
+
+
+//
+
+is.set = function () {
+  var a = arguments,
+  l = a.length,
+  i = 0,
+  undef;
+
+  if (l === 0) {
+    throw new Error('Empty is.set');
+  }
+
+  while (i !== l) {
+    if (a[i] === undef || a[i] === null) {
+      return false;
+    }
+    i++;
+  }
+  return true;
+};
+
+
+
+
+
+//
+
+is.PlainObject = function(obj) {
+  if (!obj || this.type(obj) !== "object" || obj.nodeType) {
+    return false;
+  }
+  var hasOwn = Object.prototype.hasOwnProperty;
+  try {
+    if (obj.constructor && !hasOwn.call(obj, "constructor") && !hasOwn.call(obj.constructor.prototype, "isPrototypeOf")) {
+      return false;
+    }
+  } catch (e) {
+    return false;
+  }
+  var key;
+  for (key in obj) {}
+  return key === undefined || hasOwn.call(obj, key);
+};
+
+
+
+
+
+// Expose to browser
+
+window.is = is;
+
+
+
+
+
+// Expose to other internal modules
+
+module.exports = is;
+
+},{}],12:[function(require,module,exports){
+
+
+// Load dependencies
+
+var is = require('./is');
+
+
+
+
+
+// Object declaration
+
+var obj = {};
+
+
+
+
+//
+
+obj.indexOf = function (id, array) {
+  for (var i = 0; i < array.length; i++) {
+    if (array[i].id == id) return i;
+  }
+};
+
+
+
+
+//
+
+obj.nextIdIn = function (array) {
+  return array.length > 0 ? array[array.length-1].id + 1 : 1;
+};
+
+
+
+
+//
+
+var hasOwnProp = hasOwnProperty || Object.prototype.hasOwnProperty;
+var toString = Object.prototype.toString,
+    hasDontEnumBug = !({toString: null}).propertyIsEnumerable('toString'),
+    dontEnums = [
+      'toString',
+      'toLocaleString',
+      'valueOf',
+      'hasOwnProperty',
+      'isPrototypeOf',
+      'propertyIsEnumerable',
+      'constructor'
+    ],
+    dontEnumsLength = dontEnums.length;
+
+
+
+
+//
+
+obj.keys = function (obj) {
+  if (typeof obj !== 'object' && typeof obj !== 'function' || obj === null) throw new TypeError('Object.keys called on non-object');
+
+  var result = [];
+
+  for (var prop in obj) {
+    if (hasOwnProp.call(obj, prop)) result.push(prop);
+  }
+
+  if (hasDontEnumBug) {
+    for (var i=0; i < dontEnumsLength; i++) {
+      if (hasOwnProp.call(obj, dontEnums[i])) result.push(dontEnums[i]);
+    }
+  }
+  return result;
+};
+
+
+
+
+//
+
+obj.extend = function(){
+  var options, name, src, copy, copyIsArray, clone, target = arguments[0] || {},
+  i = 1,
+  length = arguments.length,
+  deep = false;
+  if (typeof target === "boolean") {
+    deep = target;
+    target = arguments[1] || {};
+    i = 2;
+  }
+  if (typeof target !== "object" && !is.Function(target)) {
+    target = {};
+  }
+  if (length === i) {
+    target = this;
+    --i;
+  }
+  for (i; i < length; i++) {
+    if ((options = arguments[i]) !== null) {
+      for (name in options) {
+        src = target[name];
+        copy = options[name];
+        if (target === copy) {
+          continue;
+        }
+        if (deep && copy && (is.PlainObject(copy) || (copyIsArray = is.Array(copy)))) {
+          if (copyIsArray) {
+            copyIsArray = false;
+            clone = src && is.Array(src) ? src : [];
+          } else {
+            clone = src && is.PlainObject(src) ? src : {};
+          }
+          target[name] = extend(deep, clone, copy);
+        } else if (copy !== undefined) {
+          target[name] = copy;
+        }
+      }
+    }
+  }
+  return target;
+};
+
+
+
+
+//
+
+obj.define = function (extend, initializer, methods) {
+  var func, prototype = Object.create(extend && extend.prototype);
+
+  if (methods) {
+    obj.keys(methods).forEach(function (key){
+      prototype[key] = methods[key];
+    });
+  }
+
+  func = function () {
+    var that = Object.create(prototype);
+    if (typeof initializer === 'function') {
+      initializer.apply(that, arguments);
+    }
+    return that;
+  };
+
+  obj.keys(extend).forEach(function(key){
+    func[key] = extend[key];
+  });
+
+  func.prototype = prototype;
+  prototype.constructor = func;
+  return func;
+};
+
+
+
+
+//
+
+obj.identifier = function(seed){
+  var m, chunk, plus, _id, mod;
+  var digits = 6;
+
+  m = 1;
+  for (var d = 0; d < digits; d++) {
+    m *= 16;
+  }
+
+  if (!seed && seed !== 0) {
+    seed = Math.floor(Math.random()*m);
+  }
+
+  seed = (seed >= m) ? m-1 : (seed < 0) ? Math.abs(seed) : seed;
+
+  // invert all even seeds.
+  if (seed % 2) seed = m-seed;
+
+  chunk = (seed % 16);
+  chunk = Math.abs( (chunk%2?7:0) + Math.floor(chunk/2) );
+  seed += m / 16 * chunk;
+  seed %= m;
+
+  mod = m/16/16;
+  for (var i = 0; i < 3; i++) {
+    seed += ((seed % 16)+i)*mod;
+    p = 4 - i;
+    seed += ((seed % 256)+(p*5))*mod;
+    p %= 2;
+    seed += ((seed % 16)+(p*7))*mod;
+    mod /= 16;
+  }
+
+  seed %= m;
+
+  _id = seed.toString(16);
+  while(_id.length < 6){
+    _id = '0'+_id;
+  }
+
+  return _id;
+};
+
+
+
+
+// Expose to browser
+
+window.obj = obj;
+
+
+
+
+// Expose to other internal modules
+
+module.exports = obj;
+
+},{"./is":11}],13:[function(require,module,exports){
+
+
+// Load dependencies
+
+var obj = require('../obj');
+
+
+
+
+
+// Object definition
+
+var Timer = obj.define(Object, function(options){
+
+
+
+
+
+// Object properties & methods
+
+}, {
+
+
+
+
+
+  //
+
+  start: new Date().getTime(),
+
+
+
+
+
+  //
+
+  restart: function(){
+    this.start = new Date().getTime();
+  },
+
+
+
+
+
+  //
+
+  elapsed: function () {
+    return new Date().getTime() - this.start;
+  },
+
+
+
+
+
+  //
+
+  secondsElapsed: function() {
+    return Math.floor(this.elapsed()/100)/10;
+  },
+
+
+
+
+
+  //
+
+  lastDelta: undefined,
+  delta: function(){
+    if (!this.lastDelta) this.lastDelta = this.start;
+    var now = new Date().getTime();
+    var delta = now - this.lastDelta;
+    this.lastDelta = now;
+    return delta;
+  },
+
+});
+
+
+
+
+
+// Static methods
+
+Timer.str2ms = function(time){
+  if (typeof(time) == 'string') {
+    var ms, lastChar, stripped;
+
+    ms = time.substring(time.length - 2) == 'ms';
+    lastChar = time.substring(time.length - 1);
+    stripped = parseInt(time.replace(/[^0-9]/g, ''), 10);
+
+    number = (typeof(stripped) === 'number' && !isNaN(stripped)) ? stripped : 0;
+
+    // ms is ignored because final number is in ms anyway
+    if (lastChar == 'm' && !ms) {
+      time = number * 1000 * 60;
+    } else if (lastChar == 's' && !ms) {
+      time = number * 1000;
+    } else {
+      time = number;
+    }
+
+    return time;
+  }
+};
+
+
+
+
+
+// Expose to browser
+
+window.Timer = Timer;
+
+
+
+
+
+// Expose to other internal modules
+
+module.exports = Timer;
+
+},{"../obj":12}],14:[function(require,module,exports){
+
+
+// Load dependencies
+
+var dom = require('./dom');
+var game = require('./core/game');
+
+
+// onload event
+
+window.onload = function(){
+  DOM.make('script', {
+    src: 'script.js',
+    type: "text/javascript"
+  }, function(){
+    game.init();
+  });
+};
+
+},{"./core/game":2,"./dom":3}],15:[function(require,module,exports){
+
+
+// Array forEach function polyfill
+
+if (!Array.prototype.forEach) {
+  Array.prototype.forEach = function(){
+    'use strict';
+    var T, k;
+
+    if (this === null) {
+      throw new TypeError("this is null or not defined");
+    }
+
+    var kValue,
+        O = Object(this),
+        len = O.length >>> 0; // Hack to convert O.length to a UInt32
+
+    if ({}.toString.call(callback) !== "[object Function]") {
+      throw new TypeError(callback + " is not a function");
+    }
+
+    if (arguments.length >= 2) {
+      T = thisArg;
+    }
+
+    k = 0;
+    while (k < len) {
+      if (k in O) {
+        kValue = O[k];
+        callback.call(T, kValue, k, O);
+      }
+      k++;
+    }
+  };
+}
+
+
+
+// requestAnimationFrame polyfill
+
+var lastTime = 0;
+var vendors = [ 'ms', ';', 'webkit', 'o'];
+
+for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+  window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+  window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] ||
+                                window[vendors[x] + 'CancelRequestAnimationFrame'];
+}
+
+if(!window.requestAnimationFrame) {
+  window.requestAnimationFrame = function(callback, element) {
+    var currTime = new Date().getTime();
+    var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+    var id = window.setTimeout(function() {
+      callback(currTime + timeToCall);
+    }, timeToCall);
+    lastTime = currTime + timeToCall;
+    return id;
+  };
+}
+
+if(!window.cancelAnimationFrame){
+  window.cancelAnimationFrame = function(id) {
+    clearTimeout(id);
+  };
+}
+
+},{}]},{},[15,4,11,12,3,13,2,14,10,5,7,6,9,8])

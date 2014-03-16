@@ -15,26 +15,26 @@ module.exports = function(grunt) {
       }
     },
     jshint: {
-      all: ['client/**/*.js']
+      all: ['client/src/**/*.js']
     },
     browserify: {
       client: {
         files: {
-          'public/topdown.js': [
-            'client/poly.js',
-            'client/fn.js',
-            'client/is.js',
-            'client/obj.js',
-            'client/dom.js',
-            'client/objects/*.js',
-            'client/core/game.js',
-            'client/onload.js',
-            'client/graphics/trig.js',
-            'client/graphics/Point.js',
-            'client/graphics/Shape.js',
-            'client/graphics/Polygon.js',
-            'client/graphics/gfx.js',
-            'client/graphics/camera.js'
+          'client/topdown.js': [
+            'client/src/poly.js',
+            'client/src/fn.js',
+            'client/src/is.js',
+            'client/src/obj.js',
+            'client/src/dom.js',
+            'client/src/objects/*.js',
+            'client/src/core/game.js',
+            'client/src/onload.js',
+            'client/src/graphics/trig.js',
+            'client/src/graphics/Point.js',
+            'client/src/graphics/Shape.js',
+            'client/src/graphics/Polygon.js',
+            'client/src/graphics/gfx.js',
+            'client/src/graphics/camera.js'
           ]
         }
       }
@@ -42,17 +42,38 @@ module.exports = function(grunt) {
     uglify: {
       client: {
         files: {
-          'public/topdown.min.js': [ 'public/topdown.js' ]
+          'public/topdown.min.js': [ 'client/topdown.js' ]
         },
         options: {
           sourceMap: true
         },
       },
     },
+    docco: {
+      helpers: {
+        src: [ 'client/src/*.js', 'client/src/objects/**/*.js'],
+        options: {
+          output: 'docs/client/helpers'
+        }
+      },
+      core: {
+        src: ['client/src/core/**/*.js'],
+        options: {
+          output: 'docs/client/core'
+        }
+      },
+      graphics: {
+        src: ['client/src/graphics/**/*.js'],
+        options: {
+          output: 'docs/client/graphics'
+        }
+      }
+    },
+    clean: ["docs/"],
     watch: {
       build: {
         files: ['client/**/*.js'],
-        tasks: ['jshint', 'browserify', 'uglify']
+        tasks: ['jshint', 'browserify', 'uglify', 'docco']
       },
       styles: {
         files: ['client/*.scss'],
@@ -65,10 +86,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-docco');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.registerTask('default', 'def', [
-    'sass', 'jshint', 'browserify', 'uglify', 'watch'
+    'sass', 'jshint', 'browserify', 'uglify', 'clean', 'docco', 'watch'
   ]);
 
 };
