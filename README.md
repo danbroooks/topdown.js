@@ -6,7 +6,11 @@ and is effectively just a small collection of client-side modules.
 
 ## Documentation
 
-See `/docs` for docco generated documentation.
+[Core](http://dangerdan.github.io/topdown.js/docs/client/core/game.html)
+
+[Graphics](http://dangerdan.github.io/topdown.js/docs/client/graphics/gfx.html)
+
+[Helpers](https://github.com/dangerdan/topdown.js/tree/gh-pages/docs/client/helpers)
 
 ## Demo projects
 
