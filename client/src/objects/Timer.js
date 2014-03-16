@@ -24,7 +24,7 @@ var Timer = obj.define(Object, function(options){
 
 
 
-  //
+  // Start time of timer
 
   start: new Date().getTime(),
 
@@ -32,7 +32,7 @@ var Timer = obj.define(Object, function(options){
 
 
 
-  //
+  // Reset the timer
 
   restart: function(){
     this.start = new Date().getTime();
@@ -42,7 +42,7 @@ var Timer = obj.define(Object, function(options){
 
 
 
-  //
+  // Returns time elapsed since timer was started
 
   elapsed: function () {
     return new Date().getTime() - this.start;
@@ -52,7 +52,7 @@ var Timer = obj.define(Object, function(options){
 
 
 
-  //
+  // As above but rounded down to seconds
 
   secondsElapsed: function() {
     return Math.floor(this.elapsed()/100)/10;
@@ -62,7 +62,7 @@ var Timer = obj.define(Object, function(options){
 
 
 
-  //
+  // Length of time since last delta was called
 
   lastDelta: undefined,
   delta: function(){

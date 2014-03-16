@@ -20,7 +20,7 @@ var Polygon = obj.define(Shape, function (options) {
   // Constructor
 
   options = options || {};
-/*
+
   function checkPoints(points, size) {
     points.forEach(function(point){
       if (point.length != size) throw new Error('Array contains incorrect amount of points required ('+size+').');
@@ -29,6 +29,7 @@ var Polygon = obj.define(Shape, function (options) {
     return true;
   }
 
+/*
   var _default = {
     points: [
       [ 20, 20 ],

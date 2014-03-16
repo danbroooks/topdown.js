@@ -165,17 +165,24 @@ obj.identifier = function(seed){
     seed = Math.floor(Math.random()*m);
   }
 
-  seed = (seed >= m) ? m-1 : (seed < 0) ? Math.abs(seed) : seed;
+  if (seed >= m) {
+    seed = m-1;
+  } else {
+    seed = ( (seed < 0) ? Math.abs(seed) : seed );
+  }
 
-  // invert all even seeds.
-  if (seed % 2) seed = m-seed;
+  // Invert all even seeds.
+  if (seed % 2) {
+    seed = m-seed;
+  }
 
   chunk = (seed % 16);
-  chunk = Math.abs( (chunk%2?7:0) + Math.floor(chunk/2) );
+  chunk = Math.abs( (chunk % 2 ? 7 : 0) + Math.floor(chunk / 2) );
   seed += m / 16 * chunk;
   seed %= m;
 
   mod = m/16/16;
+
   for (var i = 0; i < 3; i++) {
     seed += ((seed % 16)+i)*mod;
     p = 4 - i;
@@ -188,6 +195,7 @@ obj.identifier = function(seed){
   seed %= m;
 
   _id = seed.toString(16);
+
   while(_id.length < 6){
     _id = '0'+_id;
   }

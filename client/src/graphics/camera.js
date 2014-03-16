@@ -25,7 +25,7 @@ var position = Point([0,0]);
 
 
 
-//
+// Return object literal with position co-ordinates
 
 camera.get = function() {
   return { x: position.x, y: position.y };
@@ -35,7 +35,7 @@ camera.get = function() {
 
 
 
-//
+// Offsets a value by the X position of camera
 
 camera.modX = function(x) {
   return x - position.x;
@@ -45,7 +45,7 @@ camera.modX = function(x) {
 
 
 
-//
+// Offsets a value by the Y position of camera
 
 camera.modY = function(y) {
   return y - position.y;
@@ -55,7 +55,7 @@ camera.modY = function(y) {
 
 
 
-//
+// Move camera by a point
 
 camera.move = function(point) {
   position.add(point);
@@ -65,7 +65,7 @@ camera.move = function(point) {
 
 
 
-//
+// Set camera to position of a point
 
 camera.set = function(point) {
   position.add(point.sub(position));
@@ -75,7 +75,7 @@ camera.set = function(point) {
 
 
 
-//
+// Offsets a point by camera position, returns new point instance
 
 camera.offset = function(point) {
   return point.add(position, true);
@@ -85,7 +85,7 @@ camera.offset = function(point) {
 
 
 
-//
+// Negatively offsets a point by camera position, returns new point instance
 
 camera.noffset = function(point) {
   return point.sub(position, true);
@@ -98,12 +98,6 @@ camera.noffset = function(point) {
 // Returns true if point is inside camera
 
 camera.pointInShot = function (point) {
-  /*
-  var cam = {
-    x: camera.modX(point.x),
-    y: camera.modY(point.y)
-  };
-  */
   var cam = camera.noffset(point);
 
   var canvas = gfx.getCanvasSize();
@@ -118,7 +112,7 @@ camera.pointInShot = function (point) {
 
 
 
-//
+// Used for tracking an object with camera, disabled for now.
 
 camera.track = function(object) {
   /*
@@ -138,7 +132,7 @@ camera.track = function(object) {
 
 
 
-// Expose to other internal modules
+// Export module
 
 module.exports = camera;
 

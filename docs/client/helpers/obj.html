@@ -314,7 +314,11 @@ obj.identifier = <span class="hljs-function"><span class="hljs-keyword">function
     seed = <span class="hljs-built_in">Math</span>.floor(<span class="hljs-built_in">Math</span>.random()*m);
   }
 
-  seed = (seed &gt;= m) ? m-<span class="hljs-number">1</span> : (seed &lt; <span class="hljs-number">0</span>) ? <span class="hljs-built_in">Math</span>.abs(seed) : seed;</pre></div></div>
+  <span class="hljs-keyword">if</span> (seed &gt;= m) {
+    seed = m-<span class="hljs-number">1</span>;
+  } <span class="hljs-keyword">else</span> {
+    seed = ( (seed &lt; <span class="hljs-number">0</span>) ? <span class="hljs-built_in">Math</span>.abs(seed) : seed );
+  }</pre></div></div>
             
         </li>
         
@@ -325,18 +329,21 @@ obj.identifier = <span class="hljs-function"><span class="hljs-keyword">function
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>invert all even seeds.</p>
+              <p>Invert all even seeds.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">if</span> (seed % <span class="hljs-number">2</span>) seed = m-seed;
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">if</span> (seed % <span class="hljs-number">2</span>) {
+    seed = m-seed;
+  }
 
   chunk = (seed % <span class="hljs-number">16</span>);
-  chunk = <span class="hljs-built_in">Math</span>.abs( (chunk%<span class="hljs-number">2</span>?<span class="hljs-number">7</span>:<span class="hljs-number">0</span>) + <span class="hljs-built_in">Math</span>.floor(chunk/<span class="hljs-number">2</span>) );
+  chunk = <span class="hljs-built_in">Math</span>.abs( (chunk % <span class="hljs-number">2</span> ? <span class="hljs-number">7</span> : <span class="hljs-number">0</span>) + <span class="hljs-built_in">Math</span>.floor(chunk / <span class="hljs-number">2</span>) );
   seed += m / <span class="hljs-number">16</span> * chunk;
   seed %= m;
 
   mod = m/<span class="hljs-number">16</span>/<span class="hljs-number">16</span>;
+
   <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">3</span>; i++) {
     seed += ((seed % <span class="hljs-number">16</span>)+i)*mod;
     p = <span class="hljs-number">4</span> - i;
@@ -349,6 +356,7 @@ obj.identifier = <span class="hljs-function"><span class="hljs-keyword">function
   seed %= m;
 
   _id = seed.toString(<span class="hljs-number">16</span>);
+
   <span class="hljs-keyword">while</span>(_id.length &lt; <span class="hljs-number">6</span>){
     _id = <span class="hljs-string">'0'</span>+_id;
   }

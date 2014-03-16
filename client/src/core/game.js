@@ -22,9 +22,9 @@ var game = {};
 
 var time;
 
-// exposing time elapsed as readonly property
+// Expose time elapsed as readonly property
 
-game.__defineGetter__('fps', function(){ return time.secondsElapsed(); });
+game.__defineGetter__('time', function(){ return time.secondsElapsed(); });
 
 
 
@@ -39,7 +39,7 @@ game.__defineGetter__('config', function(){ return gameConfig; });
 
 
 
-// framerate object (could be turned into module?)
+// Framerate/FPS object (could be turned into module?)
 
 var frame = 0;
 var fps = {
@@ -58,7 +58,7 @@ var fps = {
   }
 };
 
-// exposing framerate as readonly property
+// Expose framerate as readonly property
 
 game.__defineGetter__('fps', function(){ return fps.value(); });
 
@@ -66,18 +66,19 @@ game.__defineGetter__('fps', function(){ return fps.value(); });
 
 
 
-//
+// Game initializer
 
 var init = function(){
+
   game.beforeInit();
-
   gameConfig.setUp();
-
   game.afterInit();
 
   time = Timer();
   render();
-  setInterval(update, 50); // fixed update *20 a second
+
+  // Fixed interval update 20 times a second
+  setInterval(update, 50);
 };
 
 // expose as readonly
@@ -87,8 +88,8 @@ game.__defineGetter__('init', function(){ return init; });
 
 
 
-// Public methods for hooking into the main game.init method.
-// To allow for setup specific to project
+// Public methods for hooking into the main `game.init` method,
+// to allow for setup routine specific to project
 
 game.beforeInit = function() {};
 game.afterInit = function() {};
@@ -97,13 +98,22 @@ game.afterInit = function() {};
 
 
 
-//
+// Function called every frame. `game.render` should be defined in project as
+// a way to hook into the main loop
 
 game.render = function(delta) {};
 
 var render = function() {
-  fps.set(1000/time.delta());
-  game.render(time.delta());
+
+  // get time since render was last called
+  var delta = time.delta();
+
+  // set current framerate based on that time
+  fps.set(1000/delta);
+
+  // call project render function
+  game.render(delta);
+
   frame++;
   requestAnimationFrame(render);
 };
@@ -112,7 +122,8 @@ var render = function() {
 
 
 
-//
+// Function called every 50ms interval. `game.update` should be defined in project as
+// a way to hook into the main loop, like `game.render`
 
 game.update = function() {};
 
@@ -124,7 +135,7 @@ var update = function() {
 
 
 
-// Expose to other internal modules
+// Export module
 
 module.exports = game;
 
