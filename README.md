@@ -10,7 +10,7 @@ and is effectively just a small collection of client-side modules.
 
 [Graphics](http://dangerdan.github.io/topdown.js/docs/client/graphics/gfx.html)
 
-[Helpers](https://github.com/dangerdan/topdown.js/tree/gh-pages/docs/client/helpers)
+[Helpers](http://dangerdan.github.io/topdown.js/docs/client/helpers/dom.html)
 
 ## Demo projects
 
@@ -56,21 +56,14 @@ This will be added to this readme when the process becomes more stable.
 
  - Add in entity management
 
- - Write docs and add demo branch in `topdown-demos` for Entity
+ - Implement game object Requirements
+
+ - Write docs and add demo branch in `topdown-demos` for Requirements & Entity
 
 ### v0.0.7
 
- - Implement graphic object Image
-
- - Implement game object Requirements
-
- - Write docs and add demo branch in `topdown-demos` for Requirements & Image
-
-### v0.0.6
-
  - Tidy current api and write documentation for it
 
- - Implement graphic objects Polygon & Circle
+ - Implement graphic objects Image, Polygon & Circle
 
- - Write docs and add demo branch in `topdown-demos` for Polygon & Circle
-
+ - Write docs and add demo branch in `topdown-demos` for new graphics objects
