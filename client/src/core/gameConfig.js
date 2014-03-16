@@ -27,7 +27,7 @@ var canvases = [];
 
 
 
-// TODO: write this method.
+// TODO: implement this method.
 
 gameConfig.removeCanvas = function(){
 
@@ -37,7 +37,7 @@ gameConfig.removeCanvas = function(){
 
 
 
-//
+// Primary canvas, is the active canvas in `gfx` object when game starts
 
 var primaryCanvas;
 
@@ -80,6 +80,8 @@ gameConfig.setUp = function() {
     var selector = 'canvas#'+id;
     gfx.pushCanvas(id, DOM.make(selector));
   });
+
+  // TODO: set primary canvas as `gfx` main canvas
 
   hasRun = true;
 };

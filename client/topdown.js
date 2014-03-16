@@ -25,9 +25,9 @@ var game = {};
 
 var time;
 
-// exposing time elapsed as readonly property
+// Expose time elapsed as readonly property
 
-game.__defineGetter__('fps', function(){ return time.secondsElapsed(); });
+game.__defineGetter__('time', function(){ return time.secondsElapsed(); });
 
 
 
@@ -42,7 +42,7 @@ game.__defineGetter__('config', function(){ return gameConfig; });
 
 
 
-// framerate object (could be turned into module?)
+// Framerate/FPS object (could be turned into module?)
 
 var frame = 0;
 var fps = {
@@ -61,7 +61,7 @@ var fps = {
   }
 };
 
-// exposing framerate as readonly property
+// Expose framerate as readonly property
 
 game.__defineGetter__('fps', function(){ return fps.value(); });
 
@@ -69,18 +69,19 @@ game.__defineGetter__('fps', function(){ return fps.value(); });
 
 
 
-//
+// Game initializer
 
 var init = function(){
+
   game.beforeInit();
-
   gameConfig.setUp();
-
   game.afterInit();
 
   time = Timer();
   render();
-  setInterval(update, 50); // fixed update *20 a second
+
+  // Fixed interval update 20 times a second
+  setInterval(update, 50);
 };
 
 // expose as readonly
@@ -90,8 +91,8 @@ game.__defineGetter__('init', function(){ return init; });
 
 
 
-// Public methods for hooking into the main game.init method.
-// To allow for setup specific to project
+// Public methods for hooking into the main `game.init` method,
+// to allow for setup routine specific to project
 
 game.beforeInit = function() {};
 game.afterInit = function() {};
@@ -100,13 +101,22 @@ game.afterInit = function() {};
 
 
 
-//
+// Function called every frame. `game.render` should be defined in project as
+// a way to hook into the main loop
 
 game.render = function(delta) {};
 
 var render = function() {
-  fps.set(1000/time.delta());
-  game.render(time.delta());
+
+  // get time since render was last called
+  var delta = time.delta();
+
+  // set current framerate based on that time
+  fps.set(1000/delta);
+
+  // call project render function
+  game.render(delta);
+
   frame++;
   requestAnimationFrame(render);
 };
@@ -115,7 +125,8 @@ var render = function() {
 
 
 
-//
+// Function called every 50ms interval. `game.update` should be defined in project as
+// a way to hook into the main loop, like `game.render`
 
 game.update = function() {};
 
@@ -127,12 +138,14 @@ var update = function() {
 
 
 
-// Expose to other internal modules
+// Export module
 
 module.exports = game;
 
 
-},{"core/gameConfig":"/JRJU7","is":"P9m7US","objects/Timer":"y3F4VZ"}],"/JRJU7":[function(require,module,exports){
+},{"core/gameConfig":"/JRJU7","is":"P9m7US","objects/Timer":"y3F4VZ"}],"core/gameConfig":[function(require,module,exports){
+module.exports=require('/JRJU7');
+},{}],"/JRJU7":[function(require,module,exports){
 
 
 // Load dependencies
@@ -162,7 +175,7 @@ var canvases = [];
 
 
 
-// TODO: write this method.
+// TODO: implement this method.
 
 gameConfig.removeCanvas = function(){
 
@@ -172,7 +185,7 @@ gameConfig.removeCanvas = function(){
 
 
 
-//
+// Primary canvas, is the active canvas in `gfx` object when game starts
 
 var primaryCanvas;
 
@@ -216,6 +229,8 @@ gameConfig.setUp = function() {
     gfx.pushCanvas(id, DOM.make(selector));
   });
 
+  // TODO: set primary canvas as `gfx` main canvas
+
   hasRun = true;
 };
 
@@ -228,8 +243,8 @@ gameConfig.setUp = function() {
 
 module.exports = gameConfig;
 
-},{"dom":"qkALfs","graphics/gfx":"fc2DQ5","is":"P9m7US"}],"core/gameConfig":[function(require,module,exports){
-module.exports=require('/JRJU7');
+},{"dom":"qkALfs","graphics/gfx":"fc2DQ5","is":"P9m7US"}],"dom":[function(require,module,exports){
+module.exports=require('qkALfs');
 },{}],"qkALfs":[function(require,module,exports){
 
 
@@ -331,14 +346,15 @@ var buildAttributes = function(attrs, selectors, multipleElements) {
 
 
 
-//
+// Add splice to object to allow for object to return it's selected array (like jQuery)
 
 DOM.splice = Array.prototype.splice;
 
 
 
 
-// Currently only looks for very basic string
+// Will generate new element based on arguments, pass a callback function to fire
+// once all elements have been added.
 
 DOM.make = function(selector, attrs, callback) {
   var tag = extractTag(selector);
@@ -538,9 +554,7 @@ DOM.css = DOM.style;
 module.exports = DOM;
 
 
-},{"is":"P9m7US"}],"dom":[function(require,module,exports){
-module.exports=require('qkALfs');
-},{}],"AEEx6z":[function(require,module,exports){
+},{"is":"P9m7US"}],"AEEx6z":[function(require,module,exports){
 
 
 // Object declaration
@@ -601,8 +615,6 @@ module.exports = fn;
 
 },{}],"fn":[function(require,module,exports){
 module.exports=require('AEEx6z');
-},{}],"graphics/Point":[function(require,module,exports){
-module.exports=require('07NHAF');
 },{}],"07NHAF":[function(require,module,exports){
 
 
@@ -740,7 +752,11 @@ var Point = obj.define(Object, function(x, y){
 
 module.exports = Point;
 
-},{"obj":"DOFYxp"}],"S3SzPy":[function(require,module,exports){
+},{"obj":"DOFYxp"}],"graphics/Point":[function(require,module,exports){
+module.exports=require('07NHAF');
+},{}],"graphics/Polygon":[function(require,module,exports){
+module.exports=require('S3SzPy');
+},{}],"S3SzPy":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1188,9 +1204,7 @@ var Polygon = obj.define(Shape, function (options) {
 module.exports = Polygon;
 
 
-},{"graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Polygon":[function(require,module,exports){
-module.exports=require('S3SzPy');
-},{}],"graphics/Shape":[function(require,module,exports){
+},{"graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Shape":[function(require,module,exports){
 module.exports=require('rB+uTR');
 },{}],"rB+uTR":[function(require,module,exports){
 
@@ -1261,7 +1275,9 @@ var Shape = obj.define(Object, function (options) {
 
 module.exports = Shape;
 
-},{"obj":"DOFYxp"}],"k68hkO":[function(require,module,exports){
+},{"obj":"DOFYxp"}],"graphics/camera":[function(require,module,exports){
+module.exports=require('k68hkO');
+},{}],"k68hkO":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1289,7 +1305,7 @@ var position = Point([0,0]);
 
 
 
-//
+// Return object literal with position co-ordinates
 
 camera.get = function() {
   return { x: position.x, y: position.y };
@@ -1299,7 +1315,7 @@ camera.get = function() {
 
 
 
-//
+// Offsets a value by the X position of camera
 
 camera.modX = function(x) {
   return x - position.x;
@@ -1309,7 +1325,7 @@ camera.modX = function(x) {
 
 
 
-//
+// Offsets a value by the Y position of camera
 
 camera.modY = function(y) {
   return y - position.y;
@@ -1319,7 +1335,7 @@ camera.modY = function(y) {
 
 
 
-//
+// Move camera by a point
 
 camera.move = function(point) {
   position.add(point);
@@ -1329,7 +1345,7 @@ camera.move = function(point) {
 
 
 
-//
+// Set camera to position of a point
 
 camera.set = function(point) {
   position.add(point.sub(position));
@@ -1339,7 +1355,7 @@ camera.set = function(point) {
 
 
 
-//
+// Offsets a point by camera position, returns new point instance
 
 camera.offset = function(point) {
   return point.add(position, true);
@@ -1349,7 +1365,7 @@ camera.offset = function(point) {
 
 
 
-//
+// Negatively offsets a point by camera position, returns new point instance
 
 camera.noffset = function(point) {
   return point.sub(position, true);
@@ -1382,7 +1398,7 @@ camera.pointInShot = function (point) {
 
 
 
-//
+// Used for tracking an object with camera, disabled for now.
 
 camera.track = function(object) {
   /*
@@ -1402,14 +1418,12 @@ camera.track = function(object) {
 
 
 
-// Expose to other internal modules
+// Export module
 
 module.exports = camera;
 
 
-},{"graphics/Point":"07NHAF","graphics/gfx":"fc2DQ5"}],"graphics/camera":[function(require,module,exports){
-module.exports=require('k68hkO');
-},{}],"fc2DQ5":[function(require,module,exports){
+},{"graphics/Point":"07NHAF","graphics/gfx":"fc2DQ5"}],"fc2DQ5":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1587,8 +1601,6 @@ module.exports=require('fc2DQ5');
 module.exports=require('HKUJiZ');
 },{}],"HKUJiZ":[function(require,module,exports){
 
-},{}],"is":[function(require,module,exports){
-module.exports=require('P9m7US');
 },{}],"P9m7US":[function(require,module,exports){
 
 
@@ -1746,6 +1758,8 @@ is.PlainObject = is.ObjectLiteral;
 
 module.exports = is;
 
+},{}],"is":[function(require,module,exports){
+module.exports=require('P9m7US');
 },{}],"obj":[function(require,module,exports){
 module.exports=require('DOFYxp');
 },{}],"DOFYxp":[function(require,module,exports){
@@ -1916,17 +1930,24 @@ obj.identifier = function(seed){
     seed = Math.floor(Math.random()*m);
   }
 
-  seed = (seed >= m) ? m-1 : (seed < 0) ? Math.abs(seed) : seed;
+  if (seed >= m) {
+    seed = m-1;
+  } else {
+    seed = ( (seed < 0) ? Math.abs(seed) : seed );
+  }
 
-  // invert all even seeds.
-  if (seed % 2) seed = m-seed;
+  // Invert all even seeds.
+  if (seed % 2) {
+    seed = m-seed;
+  }
 
   chunk = (seed % 16);
-  chunk = Math.abs( (chunk%2?7:0) + Math.floor(chunk/2) );
+  chunk = Math.abs( (chunk % 2 ? 7 : 0) + Math.floor(chunk / 2) );
   seed += m / 16 * chunk;
   seed %= m;
 
   mod = m/16/16;
+
   for (var i = 0; i < 3; i++) {
     seed += ((seed % 16)+i)*mod;
     p = 4 - i;
@@ -1939,6 +1960,7 @@ obj.identifier = function(seed){
   seed %= m;
 
   _id = seed.toString(16);
+
   while(_id.length < 6){
     _id = '0'+_id;
   }
