@@ -2,8 +2,8 @@
 
 // Load dependencies
 
-var gfx = require('./gfx');
-var Point = require('./Point');
+var gfx = require('graphics/gfx');
+var Point = require('graphics/Point');
 
 
 
@@ -133,14 +133,6 @@ camera.track = function(object) {
   }
   */
 };
-
-
-
-
-
-// Expose to browser
-
-window.camera = camera;
 
 
 

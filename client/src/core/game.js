@@ -2,8 +2,9 @@
 
 // Load dependencies
 
-var is = require('../is');
-var GameConfig = require('./GameConfig');
+var is = require('is');
+var gameConfig = require('core/gameConfig');
+var Timer = require('objects/Timer');
 
 
 
@@ -17,92 +18,28 @@ var game = {};
 
 
 
-// Declare function arrays for initialization extension
-
-var init = [];
-var beforeInit = [];
-var afterInit = [];
-
-
-
-
-
 // Private variable for game timer
 
 var time;
 
+// exposing time elapsed as readonly property
 
-
-
-
-// Game configuration object
-
-game.config = GameConfig();
-
-
-
-
-
-//
-
-game.init = function(){
-  var execute = function(func){ func(); };
-  beforeInit.forEach(execute);
-  init.forEach(execute);
-  afterInit.forEach(execute);
-
-  time = Timer();
-  render();
-  setInterval(update, 50); // fixed update *20 a second
-};
+game.__defineGetter__('fps', function(){ return time.secondsElapsed(); });
 
 
 
 
 
-//
+// Expose game configuration object with read only exposure
 
-game.onInit = function(func){
-  if (!is.Function(func)) {
-    console.log("onInit only accepts functions");
-    return;
-  }
-  init.push(func);
-};
+game.__defineGetter__('config', function(){ return gameConfig; });
 
 
 
 
 
-//
 
-game.onBeforeInit = function(func) {
-  if (!is.Function(func)) {
-    console.log("onInit only accepts functions");
-    return;
-  }
-  beforeInit.push(func);
-};
-
-
-
-
-
-//
-
-game.onAfterInit = function(func) {
-  if (!is.Function(func)) {
-    console.log("onInit only accepts functions");
-    return;
-  }
-  afterInit.push(func);
-};
-
-
-
-
-
-//
+// framerate object (could be turned into module?)
 
 var frame = 0;
 var fps = {
@@ -121,15 +58,9 @@ var fps = {
   }
 };
 
+// exposing framerate as readonly property
 
-
-
-
-//
-
-game.fps = function(){
-  return fps.value();
-};
+game.__defineGetter__('fps', function(){ return fps.value(); });
 
 
 
@@ -137,9 +68,30 @@ game.fps = function(){
 
 //
 
-game.timeElapsed = function(){
-  return time.secondsElapsed();
+var init = function(){
+  game.beforeInit();
+
+  gameConfig.setUp();
+
+  game.afterInit();
+
+  time = Timer();
+  render();
+  setInterval(update, 50); // fixed update *20 a second
 };
+
+// expose as readonly
+
+game.__defineGetter__('init', function(){ return init; });
+
+
+
+
+// Public methods for hooking into the main game.init method.
+// To allow for setup specific to project
+
+game.beforeInit = function() {};
+game.afterInit = function() {};
 
 
 
@@ -148,12 +100,6 @@ game.timeElapsed = function(){
 //
 
 game.render = function(delta) {};
-
-
-
-
-
-//
 
 var render = function() {
   fps.set(1000/time.delta());
@@ -170,23 +116,9 @@ var render = function() {
 
 game.update = function() {};
 
-
-
-
-
-//
-
 var update = function() {
   game.update();
 };
-
-
-
-
-
-// Expose to browser
-
-window.game = game;
 
 
 

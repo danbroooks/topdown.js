@@ -2,7 +2,7 @@
 
 // Load dependencies
 
-var obj = require('../obj');
+var obj = require('obj');
 
 
 
@@ -104,13 +104,6 @@ Timer.str2ms = function(time){
   }
 };
 
-
-
-
-
-// Expose to browser
-
-window.Timer = Timer;
 
 
 

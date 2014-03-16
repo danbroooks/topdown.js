@@ -49,14 +49,6 @@ fn.fromArray = function (array) {
 
 
 
-// Expose to browser
-
-window.fn = fn;
-
-
-
-
-
-// Expose to other internal modules
+// Expose to other modules
 
 module.exports = fn;

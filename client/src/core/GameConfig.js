@@ -2,55 +2,88 @@
 
 // Load dependencies
 
-var obj = require('../obj');
-var is = require('../is');
+var is = require('is');
+var DOM = require('dom');
+var gfx = require('graphics/gfx');
 
 
 
 
 
-// Object definition
+// Object declaration
 
-var GameConfig = obj.define(Object, function(options){
-
-
-
-
-
-// Object properties & methods
-
-}, {
+var gameConfig = {};
 
 
 
 
 
-  // Canvas array & primary canvas
+// Canvas array & primary canvas
 
-  canvases: [],
-  primaryCanvas: undefined,
-
+var canvases = [];
 
 
 
 
-  // Set primary canvas, adds to canvases array if not already in there
 
-  setPrimaryCanvas: function(canvas) {
-    if (!is.inArray(canvas, this.canvases)) {
-      this.canvases.push(canvas);
-    }
-    this.primaryCanvas = canvas;
+
+// TODO: write this method.
+
+gameConfig.removeCanvas = function(){
+
+};
+
+
+
+
+
+//
+
+var primaryCanvas;
+
+gameConfig.__defineGetter__('primaryCanvas', function(){ return primaryCanvas; });
+
+// Setter for primary canvas, adds to canvases array if not already in there
+
+gameConfig.__defineSetter__('primaryCanvas', function(canvas) {
+  if (!is.inArray(canvas, canvases)) {
+    canvases.push(canvas);
   }
+  primaryCanvas = canvas;
 });
 
 
 
 
 
-// Expose to browser
+// Alias method for setting primary canvas
 
-window.GameConfig = GameConfig;
+gameConfig.setPrimaryCanvas = function(canvas){
+  gameConfig.primaryCanvas = canvas;
+};
+
+
+
+
+
+
+// Set up method, should create canvases in canvases array.
+
+var hasRun = false;
+gameConfig.setUp = function() {
+  if (hasRun) {
+    console.log('gameConfig.setUp has already run.');
+    return false;
+  }
+
+  canvases.forEach(function(id){
+    var selector = 'canvas#'+id;
+    gfx.pushCanvas(id, DOM.make(selector));
+  });
+
+  hasRun = true;
+};
+
 
 
 
@@ -58,4 +91,4 @@ window.GameConfig = GameConfig;
 
 // Expose to other internal modules
 
-module.exports = GameConfig;
+module.exports = gameConfig;

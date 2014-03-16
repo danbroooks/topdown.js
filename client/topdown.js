@@ -1,73 +1,11 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"dE1Bu5":[function(require,module,exports){
 
 
 // Load dependencies
 
-var obj = require('../obj');
-var is = require('../is');
-
-
-
-
-
-// Object definition
-
-var GameConfig = obj.define(Object, function(options){
-
-
-
-
-
-// Object properties & methods
-
-}, {
-
-
-
-
-
-  // Canvas array & primary canvas
-
-  canvases: [],
-  primaryCanvas: undefined,
-
-
-
-
-
-  // Set primary canvas, adds to canvases array if not already in there
-
-  setPrimaryCanvas: function(canvas) {
-    if (!is.inArray(canvas, this.canvases)) {
-      this.canvases.push(canvas);
-    }
-    this.primaryCanvas = canvas;
-  }
-});
-
-
-
-
-
-// Expose to browser
-
-window.GameConfig = GameConfig;
-
-
-
-
-
-// Expose to other internal modules
-
-module.exports = GameConfig;
-
-},{"../is":11,"../obj":12}],2:[function(require,module,exports){
-
-
-// Load dependencies
-
-var is = require('../is');
-var GameConfig = require('./GameConfig');
+var is = require('is');
+var gameConfig = require('core/gameConfig');
+var Timer = require('objects/Timer');
 
 
 
@@ -81,92 +19,28 @@ var game = {};
 
 
 
-// Declare function arrays for initialization extension
-
-var init = [];
-var beforeInit = [];
-var afterInit = [];
-
-
-
-
-
 // Private variable for game timer
 
 var time;
 
+// exposing time elapsed as readonly property
 
-
-
-
-// Game configuration object
-
-game.config = GameConfig();
-
-
-
-
-
-//
-
-game.init = function(){
-  var execute = function(func){ func(); };
-  beforeInit.forEach(execute);
-  init.forEach(execute);
-  afterInit.forEach(execute);
-
-  time = Timer();
-  render();
-  setInterval(update, 50); // fixed update *20 a second
-};
+game.__defineGetter__('fps', function(){ return time.secondsElapsed(); });
 
 
 
 
 
-//
+// Expose game configuration object with read only exposure
 
-game.onInit = function(func){
-  if (!is.Function(func)) {
-    console.log("onInit only accepts functions");
-    return;
-  }
-  init.push(func);
-};
+game.__defineGetter__('config', function(){ return gameConfig; });
 
 
 
 
 
-//
 
-game.onBeforeInit = function(func) {
-  if (!is.Function(func)) {
-    console.log("onInit only accepts functions");
-    return;
-  }
-  beforeInit.push(func);
-};
-
-
-
-
-
-//
-
-game.onAfterInit = function(func) {
-  if (!is.Function(func)) {
-    console.log("onInit only accepts functions");
-    return;
-  }
-  afterInit.push(func);
-};
-
-
-
-
-
-//
+// framerate object (could be turned into module?)
 
 var frame = 0;
 var fps = {
@@ -185,15 +59,9 @@ var fps = {
   }
 };
 
+// exposing framerate as readonly property
 
-
-
-
-//
-
-game.fps = function(){
-  return fps.value();
-};
+game.__defineGetter__('fps', function(){ return fps.value(); });
 
 
 
@@ -201,9 +69,30 @@ game.fps = function(){
 
 //
 
-game.timeElapsed = function(){
-  return time.secondsElapsed();
+var init = function(){
+  game.beforeInit();
+
+  gameConfig.setUp();
+
+  game.afterInit();
+
+  time = Timer();
+  render();
+  setInterval(update, 50); // fixed update *20 a second
 };
+
+// expose as readonly
+
+game.__defineGetter__('init', function(){ return init; });
+
+
+
+
+// Public methods for hooking into the main game.init method.
+// To allow for setup specific to project
+
+game.beforeInit = function() {};
+game.afterInit = function() {};
 
 
 
@@ -212,12 +101,6 @@ game.timeElapsed = function(){
 //
 
 game.render = function(delta) {};
-
-
-
-
-
-//
 
 var render = function() {
   fps.set(1000/time.delta());
@@ -234,23 +117,9 @@ var render = function() {
 
 game.update = function() {};
 
-
-
-
-
-//
-
 var update = function() {
   game.update();
 };
-
-
-
-
-
-// Expose to browser
-
-window.game = game;
 
 
 
@@ -261,12 +130,112 @@ window.game = game;
 module.exports = game;
 
 
-},{"../is":11,"./GameConfig":1}],3:[function(require,module,exports){
+},{"core/gameConfig":"/JRJU7","is":"P9m7US","objects/Timer":"y3F4VZ"}],"core/game":[function(require,module,exports){
+module.exports=require('dE1Bu5');
+},{}],"/JRJU7":[function(require,module,exports){
 
 
 // Load dependencies
 
-var is = require('./is');
+var is = require('is');
+var DOM = require('dom');
+var gfx = require('graphics/gfx');
+
+
+
+
+
+// Object declaration
+
+var gameConfig = {};
+
+
+
+
+
+// Canvas array & primary canvas
+
+var canvases = [];
+
+
+
+
+
+
+// TODO: write this method.
+
+gameConfig.removeCanvas = function(){
+
+};
+
+
+
+
+
+//
+
+var primaryCanvas;
+
+gameConfig.__defineGetter__('primaryCanvas', function(){ return primaryCanvas; });
+
+// Setter for primary canvas, adds to canvases array if not already in there
+
+gameConfig.__defineSetter__('primaryCanvas', function(canvas) {
+  if (!is.inArray(canvas, canvases)) {
+    canvases.push(canvas);
+  }
+  primaryCanvas = canvas;
+});
+
+
+
+
+
+// Alias method for setting primary canvas
+
+gameConfig.setPrimaryCanvas = function(canvas){
+  gameConfig.primaryCanvas = canvas;
+};
+
+
+
+
+
+
+// Set up method, should create canvases in canvases array.
+
+var hasRun = false;
+gameConfig.setUp = function() {
+  if (hasRun) {
+    console.log('gameConfig.setUp has already run.');
+    return false;
+  }
+
+  canvases.forEach(function(id){
+    var selector = 'canvas#'+id;
+    gfx.pushCanvas(id, DOM.make(selector));
+  });
+
+  hasRun = true;
+};
+
+
+
+
+
+
+// Expose to other internal modules
+
+module.exports = gameConfig;
+
+},{"dom":"qkALfs","graphics/gfx":"fc2DQ5","is":"P9m7US"}],"core/gameConfig":[function(require,module,exports){
+module.exports=require('/JRJU7');
+},{}],"qkALfs":[function(require,module,exports){
+
+
+// Load dependencies
+
+var is = require('is');
 
 
 
@@ -560,19 +529,15 @@ DOM.css = function(property, value){
 
 
 
-// Expose to browser
-
-window.DOM = DOM;
-
-
-
 
 // Expose to other internal modules
 
 module.exports = DOM;
 
 
-},{"./is":11}],4:[function(require,module,exports){
+},{"is":"P9m7US"}],"dom":[function(require,module,exports){
+module.exports=require('qkALfs');
+},{}],"AEEx6z":[function(require,module,exports){
 
 
 // Object declaration
@@ -624,24 +589,20 @@ fn.fromArray = function (array) {
 
 
 
-// Expose to browser
-
-window.fn = fn;
-
-
-
-
-
-// Expose to other internal modules
+// Expose to other modules
 
 module.exports = fn;
 
-},{}],5:[function(require,module,exports){
+},{}],"fn":[function(require,module,exports){
+module.exports=require('AEEx6z');
+},{}],"graphics/Point":[function(require,module,exports){
+module.exports=require('07NHAF');
+},{}],"07NHAF":[function(require,module,exports){
 
 
 // Load dependencies
 
-var obj = require('../obj');
+var obj = require('obj');
 
 
 
@@ -769,25 +730,17 @@ var Point = obj.define(Object, function(x, y){
 
 
 
-// Expose to browser
-
-window.Point = Point;
-
-
-
-
-
 // Expose to other internal modules
 
 module.exports = Point;
 
-},{"../obj":12}],6:[function(require,module,exports){
+},{"obj":"DOFYxp"}],"S3SzPy":[function(require,module,exports){
 
 
 // Load dependencies
 
-var obj = require('../obj');
-var Shape = require('./Shape');
+var obj = require('obj');
+var Shape = require('graphics/Shape');
 
 
 
@@ -1223,25 +1176,20 @@ var Polygon = obj.define(Shape, function (options) {
 
 
 
-// Expose to browser
-
-window.Polygon = Polygon;
-
-
-
-
 
 // Expose to other internal modules
 
 module.exports = Polygon;
 
 
-},{"../obj":12,"./Shape":7}],7:[function(require,module,exports){
+},{"graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Polygon":[function(require,module,exports){
+module.exports=require('S3SzPy');
+},{}],"rB+uTR":[function(require,module,exports){
 
 
 // Load dependencies
 
-var obj = require('../obj');
+var obj = require('obj');
 
 
 
@@ -1305,13 +1253,15 @@ var Shape = obj.define(Object, function (options) {
 
 module.exports = Shape;
 
-},{"../obj":12}],8:[function(require,module,exports){
+},{"obj":"DOFYxp"}],"graphics/Shape":[function(require,module,exports){
+module.exports=require('rB+uTR');
+},{}],"k68hkO":[function(require,module,exports){
 
 
 // Load dependencies
 
-var gfx = require('./gfx');
-var Point = require('./Point');
+var gfx = require('graphics/gfx');
+var Point = require('graphics/Point');
 
 
 
@@ -1446,26 +1396,20 @@ camera.track = function(object) {
 
 
 
-// Expose to browser
-
-window.camera = camera;
-
-
-
-
-
 // Expose to other internal modules
 
 module.exports = camera;
 
 
-},{"./Point":5,"./gfx":9}],9:[function(require,module,exports){
+},{"graphics/Point":"07NHAF","graphics/gfx":"fc2DQ5"}],"graphics/camera":[function(require,module,exports){
+module.exports=require('k68hkO');
+},{}],"fc2DQ5":[function(require,module,exports){
 
 
 // Load dependencies
 
-var is = require('../is');
-var Point = require('./Point');
+var is = require('is');
+var Point = require('graphics/Point');
 
 
 
@@ -1512,10 +1456,13 @@ gfx.setCanvas = function(name){
 //
 
 gfx.cling = function(canvRef) {
-  canvRef = canvRef || canvas;
   if (canvRef) {
-    canvRef.width = window.innerWidth;
-    canvRef.height = window.innerHeight;
+    gfx.setCanvas(canvRef);
+  }
+
+  if (canvas) {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
   }
 };
 
@@ -1623,21 +1570,20 @@ gfx.refresh = true;
 
 
 
-// Expose to browser
-
-window.gfx = gfx;
-
-
-
-
 
 // Expose to other internal modules
 
 module.exports = gfx;
 
-},{"../is":11,"./Point":5}],10:[function(require,module,exports){
+},{"graphics/Point":"07NHAF","is":"P9m7US"}],"graphics/gfx":[function(require,module,exports){
+module.exports=require('fc2DQ5');
+},{}],"graphics/trig":[function(require,module,exports){
+module.exports=require('HKUJiZ');
+},{}],"HKUJiZ":[function(require,module,exports){
 
-},{}],11:[function(require,module,exports){
+},{}],"is":[function(require,module,exports){
+module.exports=require('P9m7US');
+},{}],"P9m7US":[function(require,module,exports){
 
 
 // Object declaration
@@ -1786,24 +1732,18 @@ is.PlainObject = function(obj) {
 
 
 
-// Expose to browser
-
-window.is = is;
-
-
-
-
-
 // Expose to other internal modules
 
 module.exports = is;
 
-},{}],12:[function(require,module,exports){
+},{}],"obj":[function(require,module,exports){
+module.exports=require('DOFYxp');
+},{}],"DOFYxp":[function(require,module,exports){
 
 
 // Load dependencies
 
-var is = require('./is');
+var is = require('is');
 
 
 
@@ -2003,23 +1943,17 @@ obj.identifier = function(seed){
 
 
 
-// Expose to browser
-
-window.obj = obj;
-
-
-
 
 // Expose to other internal modules
 
 module.exports = obj;
 
-},{"./is":11}],13:[function(require,module,exports){
+},{"is":"P9m7US"}],"y3F4VZ":[function(require,module,exports){
 
 
 // Load dependencies
 
-var obj = require('../obj');
+var obj = require('obj');
 
 
 
@@ -2125,39 +2059,38 @@ Timer.str2ms = function(time){
 
 
 
-// Expose to browser
-
-window.Timer = Timer;
-
-
-
-
 
 // Expose to other internal modules
 
 module.exports = Timer;
 
-},{"../obj":12}],14:[function(require,module,exports){
+},{"obj":"DOFYxp"}],"objects/Timer":[function(require,module,exports){
+module.exports=require('y3F4VZ');
+},{}],"onload":[function(require,module,exports){
+module.exports=require('+KSpms');
+},{}],"+KSpms":[function(require,module,exports){
 
 
 // Load dependencies
 
-var dom = require('./dom');
-var game = require('./core/game');
+var DOM = require('dom');
+var game = require('core/game');
 
 
 // onload event
 
 window.onload = function(){
   DOM.make('script', {
-    src: 'script.js',
+    src: 'script.min.js',
     type: "text/javascript"
   }, function(){
     game.init();
   });
 };
 
-},{"./core/game":2,"./dom":3}],15:[function(require,module,exports){
+},{"core/game":"dE1Bu5","dom":"qkALfs"}],"poly":[function(require,module,exports){
+module.exports=require('vARtDh');
+},{}],"vARtDh":[function(require,module,exports){
 
 
 // Array forEach function polyfill
@@ -2225,4 +2158,4 @@ if(!window.cancelAnimationFrame){
   };
 }
 
-},{}]},{},[15,4,11,12,3,13,2,14,10,5,7,6,9,8])
+},{}]},{},["vARtDh","+KSpms","AEEx6z","P9m7US","DOFYxp","qkALfs","y3F4VZ","dE1Bu5","/JRJU7","HKUJiZ","07NHAF","rB+uTR","S3SzPy","fc2DQ5","k68hkO"])

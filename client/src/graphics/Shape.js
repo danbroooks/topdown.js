@@ -2,7 +2,7 @@
 
 // Load dependencies
 
-var obj = require('../obj');
+var obj = require('obj');
 
 
 

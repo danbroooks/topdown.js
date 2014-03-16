@@ -2,8 +2,8 @@
 
 // Load dependencies
 
-var is = require('../is');
-var Point = require('./Point');
+var is = require('is');
+var Point = require('graphics/Point');
 
 
 
@@ -50,10 +50,13 @@ gfx.setCanvas = function(name){
 //
 
 gfx.cling = function(canvRef) {
-  canvRef = canvRef || canvas;
   if (canvRef) {
-    canvRef.width = window.innerWidth;
-    canvRef.height = window.innerHeight;
+    gfx.setCanvas(canvRef);
+  }
+
+  if (canvas) {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
   }
 };
 
@@ -157,13 +160,6 @@ gfx.text = function(text, position){
 
 gfx.refresh = true;
 
-
-
-
-
-// Expose to browser
-
-window.gfx = gfx;
 
 
 

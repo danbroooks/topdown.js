@@ -23,7 +23,7 @@ var server = {};
 // public directories
 
 var coreDir = path.join(__dirname, '..', 'public');
-var projectDir = path.join(process.cwd(), '..', 'public');
+var projectDir = path.join(process.cwd(), 'public');
 
 
 

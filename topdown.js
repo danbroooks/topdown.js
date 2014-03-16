@@ -1,6 +1,5 @@
 
-var server = require('./server/server.js');
-
 module.exports = {
-	server: server
+  server: require('./server/server.js'),
+  modules: require('./modules.js')
 }

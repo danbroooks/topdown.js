@@ -2,7 +2,7 @@
 
 // Load dependencies
 
-var obj = require('../obj');
+var obj = require('obj');
 
 
 
@@ -125,14 +125,6 @@ var Point = obj.define(Object, function(x, y){
   },
 
 });
-
-
-
-
-
-// Expose to browser
-
-window.Point = Point;
 
 
 

@@ -2,7 +2,7 @@
 
 // Load dependencies
 
-var is = require('./is');
+var is = require('is');
 
 
 
@@ -199,12 +199,6 @@ obj.identifier = function(seed){
   return _id;
 };
 
-
-
-
-// Expose to browser
-
-window.obj = obj;
 
 
 

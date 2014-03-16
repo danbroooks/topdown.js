@@ -1,4 +1,6 @@
 
+var mod = require('./modules');
+
 module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -19,23 +21,13 @@ module.exports = function(grunt) {
     },
     browserify: {
       client: {
-        files: {
-          'client/topdown.js': [
-            'client/src/poly.js',
-            'client/src/fn.js',
-            'client/src/is.js',
-            'client/src/obj.js',
-            'client/src/dom.js',
-            'client/src/objects/*.js',
-            'client/src/core/game.js',
-            'client/src/onload.js',
-            'client/src/graphics/trig.js',
-            'client/src/graphics/Point.js',
-            'client/src/graphics/Shape.js',
-            'client/src/graphics/Polygon.js',
-            'client/src/graphics/gfx.js',
-            'client/src/graphics/camera.js'
-          ]
+        src: mod.fileList(),
+        dest: 'client/topdown.js',
+        options: {
+          aliasMappings: {
+            cwd: 'client/src',
+            src: ['**/*.js']
+          }
         }
       }
     },
@@ -69,7 +61,7 @@ module.exports = function(grunt) {
         }
       }
     },
-    clean: ["docs/"],
+    clean: ["docs/client/"],
     watch: {
       build: {
         files: ['client/**/*.js'],

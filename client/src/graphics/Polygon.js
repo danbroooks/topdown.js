@@ -2,8 +2,8 @@
 
 // Load dependencies
 
-var obj = require('../obj');
-var Shape = require('./Shape');
+var obj = require('obj');
+var Shape = require('graphics/Shape');
 
 
 
@@ -435,13 +435,6 @@ var Polygon = obj.define(Shape, function (options) {
 
 });
 
-
-
-
-
-// Expose to browser
-
-window.Polygon = Polygon;
 
 
 

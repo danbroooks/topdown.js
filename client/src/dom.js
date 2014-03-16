@@ -2,7 +2,7 @@
 
 // Load dependencies
 
-var is = require('./is');
+var is = require('is');
 
 
 
@@ -293,12 +293,6 @@ DOM.css = function(property, value){
   });
 };
 
-
-
-
-// Expose to browser
-
-window.DOM = DOM;
 
 
 

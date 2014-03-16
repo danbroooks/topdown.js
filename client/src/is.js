@@ -146,14 +146,6 @@ is.PlainObject = function(obj) {
 
 
 
-// Expose to browser
-
-window.is = is;
-
-
-
-
-
 // Expose to other internal modules
 
 module.exports = is;

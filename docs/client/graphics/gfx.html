@@ -85,8 +85,8 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> is = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../is'</span>);
-<span class="hljs-keyword">var</span> Point = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Point'</span>);</pre></div></div>
+<span class="hljs-keyword">var</span> is = <span class="hljs-built_in">require</span>(<span class="hljs-string">'is'</span>);
+<span class="hljs-keyword">var</span> Point = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Point'</span>);</pre></div></div>
             
         </li>
         
@@ -169,10 +169,13 @@ gfx.setCanvas = <span class="hljs-function"><span class="hljs-keyword">function<
             
             <div class="content"><div class='highlight'><pre>
 gfx.cling = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(canvRef)</span> {</span>
-  canvRef = canvRef || canvas;
   <span class="hljs-keyword">if</span> (canvRef) {
-    canvRef.width = window.innerWidth;
-    canvRef.height = window.innerHeight;
+    gfx.setCanvas(canvRef);
+  }
+
+  <span class="hljs-keyword">if</span> (canvas) {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
   }
 };</pre></div></div>
             
@@ -340,22 +343,6 @@ gfx.refresh = <span class="hljs-literal">true</span>;</pre></div></div>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
-              </div>
-              <p>Expose to browser</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>
-window.gfx = gfx;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-17">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>Expose to other internal modules</p>
 
