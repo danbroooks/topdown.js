@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>camera.js</title>
+  <title>Camera.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -17,6 +17,21 @@
           <a class="small" href="javascript:void(0);">+</a>
           <div id="jump_wrapper">
           <div id="jump_page">
+            
+              
+              <a class="source" href="Camera.html">
+                Camera.js
+              </a>
+            
+              
+              <a class="source" href="Canvas.html">
+                Canvas.js
+              </a>
+            
+              
+              <a class="source" href="Graphics.html">
+                Graphics.js
+              </a>
             
               
               <a class="source" href="Point.html">
@@ -34,16 +49,6 @@
               </a>
             
               
-              <a class="source" href="camera.html">
-                camera.js
-              </a>
-            
-              
-              <a class="source" href="gfx.html">
-                gfx.js
-              </a>
-            
-              
               <a class="source" href="trig.html">
                 trig.js
               </a>
@@ -56,7 +61,7 @@
         
           <li id="title">
               <div class="annotation">
-                  <h1>camera.js</h1>
+                  <h1>Camera.js</h1>
               </div>
           </li>
         
@@ -85,7 +90,7 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> gfx = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/gfx'</span>);
+<span class="hljs-keyword">var</span> obj = <span class="hljs-built_in">require</span>(<span class="hljs-string">'obj'</span>);
 <span class="hljs-keyword">var</span> Point = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Point'</span>);</pre></div></div>
             
         </li>
@@ -97,12 +102,12 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Object declaration</p>
+              <p>Constructor</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> camera = {};</pre></div></div>
+<span class="hljs-keyword">var</span> Constructor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y)</span>{</span></pre></div></div>
             
         </li>
         
@@ -117,8 +122,9 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> position = Point([<span class="hljs-number">0</span>,<span class="hljs-number">0</span>]);</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">this</span>.position = Point(x, y);
+
+};</pre></div></div>
             
         </li>
         
@@ -129,14 +135,12 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Return object literal with position co-ordinates</p>
+              <p>Declare object literal</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-camera.get = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
-  <span class="hljs-keyword">return</span> { x: position.x, y: position.y };
-};</pre></div></div>
+<span class="hljs-keyword">var</span> camera = {};</pre></div></div>
             
         </li>
         
@@ -147,13 +151,13 @@ camera.get = <span class="hljs-function"><span class="hljs-keyword">function</sp
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Offsets a value by the X position of camera</p>
+              <p>Return object literal containing position co-ordinates</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-camera.modX = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x)</span> {</span>
-  <span class="hljs-keyword">return</span> x - position.x;
+camera.get = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  <span class="hljs-keyword">return</span> { x: <span class="hljs-keyword">this</span>.position.x, y: <span class="hljs-keyword">this</span>.position.y };
 };</pre></div></div>
             
         </li>
@@ -165,13 +169,13 @@ camera.modX = <span class="hljs-function"><span class="hljs-keyword">function</s
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>Offsets a value by the Y position of camera</p>
+              <p>Offsets a value by the X position of camera</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-camera.modY = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(y)</span> {</span>
-  <span class="hljs-keyword">return</span> y - position.y;
+camera.modX = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x)</span> {</span>
+  <span class="hljs-keyword">return</span> x - <span class="hljs-keyword">this</span>.position.x;
 };</pre></div></div>
             
         </li>
@@ -183,13 +187,13 @@ camera.modY = <span class="hljs-function"><span class="hljs-keyword">function</s
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>Move camera by a point</p>
+              <p>Offsets a value by the Y position of camera</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-camera.move = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span> {</span>
-  position.add(point);
+camera.modY = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(y)</span> {</span>
+  <span class="hljs-keyword">return</span> y - <span class="hljs-keyword">this</span>.position.y;
 };</pre></div></div>
             
         </li>
@@ -201,13 +205,13 @@ camera.move = <span class="hljs-function"><span class="hljs-keyword">function</s
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>Set camera to position of a point</p>
+              <p>Move camera by a point</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-camera.set = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span> {</span>
-  position.add(point.sub(position));
+camera.move = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span> {</span>
+  <span class="hljs-keyword">this</span>.position.add(point);
 };</pre></div></div>
             
         </li>
@@ -219,13 +223,13 @@ camera.set = <span class="hljs-function"><span class="hljs-keyword">function</sp
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>Offsets a point by camera position, returns new point instance</p>
+              <p>Set camera to position of a point</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-camera.offset = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span> {</span>
-  <span class="hljs-keyword">return</span> point.add(position, <span class="hljs-literal">true</span>);
+camera.set = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span> {</span>
+  <span class="hljs-keyword">this</span>.position.add(point.sub(<span class="hljs-keyword">this</span>.position));
 };</pre></div></div>
             
         </li>
@@ -237,13 +241,13 @@ camera.offset = <span class="hljs-function"><span class="hljs-keyword">function<
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p>Negatively offsets a point by camera position, returns new point instance</p>
+              <p>Offsets a point by camera position, returns new point instance</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-camera.noffset = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span> {</span>
-  <span class="hljs-keyword">return</span> point.sub(position, <span class="hljs-literal">true</span>);
+camera.offset = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span> {</span>
+  <span class="hljs-keyword">return</span> point.add(<span class="hljs-keyword">this</span>.position, <span class="hljs-literal">true</span>);
 };</pre></div></div>
             
         </li>
@@ -255,18 +259,37 @@ camera.noffset = <span class="hljs-function"><span class="hljs-keyword">function
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
+              <p>Negatively offsets a point by camera position, returns new point instance</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+camera.noffset = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span> {</span>
+  <span class="hljs-keyword">return</span> point.sub(<span class="hljs-keyword">this</span>.position, <span class="hljs-literal">true</span>);
+};
+
+
+
+<span class="hljs-comment">/*
+
+
+</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
               <p>Returns true if point is inside camera</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
 camera.pointInShot = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(point)</span> {</span>
-  <span class="hljs-comment">/*
-  var cam = {
-    x: camera.modX(point.x),
-    y: camera.modY(point.y)
-  };
-  */</span>
   <span class="hljs-keyword">var</span> cam = camera.noffset(point);
 
   <span class="hljs-keyword">var</span> canvas = gfx.getCanvasSize();
@@ -280,19 +303,19 @@ camera.pointInShot = <span class="hljs-function"><span class="hljs-keyword">func
         </li>
         
         
-        <li id="section-13">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>Used for tracking an object with camera, disabled for now.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-camera.track = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(object)</span> {</span>
-  <span class="hljs-comment">/*
+camera.track = function(object) {
+
    if (is.string(object) &amp;&amp; object == 'off') {
      game.onBeforeLoop.remove('camera_track');
    }
@@ -302,24 +325,43 @@ camera.track = <span class="hljs-function"><span class="hljs-keyword">function</
       camera.set(object.shape.centroid().sub(graphics.getCanvasCenter()));
     });
   }
-  */</span>
-};</pre></div></div>
+
+};
+
+
+*/</pre></div></div>
             
         </li>
         
         
-        <li id="section-14">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Create definition</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> Camera = obj.define(<span class="hljs-built_in">Object</span>, Constructor, camera);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>Export module</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-module.exports = camera;</pre></div></div>
+module.exports = Camera;</pre></div></div>
             
         </li>
         

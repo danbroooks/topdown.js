@@ -2,14 +2,27 @@
 
 // Load dependencies
 
-var gfx = require('graphics/gfx');
+var obj = require('obj');
 var Point = require('graphics/Point');
 
 
 
 
 
-// Object declaration
+// Constructor
+
+var Constructor = function(x, y){
+
+  // Camera position stored as Point
+  this.position = Point(x, y);
+
+};
+
+
+
+
+
+// Declare object literal
 
 var camera = {};
 
@@ -17,18 +30,10 @@ var camera = {};
 
 
 
-// Camera position stored as Point
-
-var position = Point([0,0]);
-
-
-
-
-
-// Return object literal with position co-ordinates
+// Return object literal containing position co-ordinates
 
 camera.get = function() {
-  return { x: position.x, y: position.y };
+  return { x: this.position.x, y: this.position.y };
 };
 
 
@@ -38,7 +43,7 @@ camera.get = function() {
 // Offsets a value by the X position of camera
 
 camera.modX = function(x) {
-  return x - position.x;
+  return x - this.position.x;
 };
 
 
@@ -48,7 +53,7 @@ camera.modX = function(x) {
 // Offsets a value by the Y position of camera
 
 camera.modY = function(y) {
-  return y - position.y;
+  return y - this.position.y;
 };
 
 
@@ -58,7 +63,7 @@ camera.modY = function(y) {
 // Move camera by a point
 
 camera.move = function(point) {
-  position.add(point);
+  this.position.add(point);
 };
 
 
@@ -68,7 +73,7 @@ camera.move = function(point) {
 // Set camera to position of a point
 
 camera.set = function(point) {
-  position.add(point.sub(position));
+  this.position.add(point.sub(this.position));
 };
 
 
@@ -78,7 +83,7 @@ camera.set = function(point) {
 // Offsets a point by camera position, returns new point instance
 
 camera.offset = function(point) {
-  return point.add(position, true);
+  return point.add(this.position, true);
 };
 
 
@@ -88,22 +93,17 @@ camera.offset = function(point) {
 // Negatively offsets a point by camera position, returns new point instance
 
 camera.noffset = function(point) {
-  return point.sub(position, true);
+  return point.sub(this.position, true);
 };
 
 
 
+/*
 
 
 // Returns true if point is inside camera
 
 camera.pointInShot = function (point) {
-  /*
-  var cam = {
-    x: camera.modX(point.x),
-    y: camera.modY(point.y)
-  };
-  */
   var cam = camera.noffset(point);
 
   var canvas = gfx.getCanvasSize();
@@ -117,11 +117,10 @@ camera.pointInShot = function (point) {
 
 
 
-
 // Used for tracking an object with camera, disabled for now.
 
 camera.track = function(object) {
-  /*
+
    if (is.string(object) && object == 'off') {
      game.onBeforeLoop.remove('camera_track');
    }
@@ -131,8 +130,16 @@ camera.track = function(object) {
       camera.set(object.shape.centroid().sub(graphics.getCanvasCenter()));
     });
   }
-  */
+
 };
+
+
+*/
+
+
+// Create definition
+
+var Camera = obj.define(Object, Constructor, camera);
 
 
 
@@ -140,5 +147,6 @@ camera.track = function(object) {
 
 // Export module
 
-module.exports = camera;
+module.exports = Camera;
+
 

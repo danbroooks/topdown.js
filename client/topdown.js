@@ -1,12 +1,143 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"core/game":[function(require,module,exports){
-module.exports=require('dE1Bu5');
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"h5AJ9p":[function(require,module,exports){
+
+
+// Load dependencies
+
+var is = require('is');
+var obj = require('obj');
+var Graphics = require('graphics/Graphics');
+
+
+
+
+
+// Constructor
+
+var Constructor = function(){
+
+  this.gfx = Graphics();
+
+};
+
+
+
+
+
+// Declare object literal
+
+var gameConfig = {};
+
+
+
+
+
+// Make and add canvas to canvas list
+
+gameConfig.createCanvas = function(name) {
+  this.gfx.createCanvas(name);
+};
+
+// alias
+
+gameConfig.addCanvas = gameConfig.createCanvas;
+
+
+
+
+
+// Primary canvas, is the active canvas in `gfx` object when game starts
+
+gameConfig.setPrimaryCanvas = function(canvasName){
+  this.gfx.setPrimaryCanvas(canvasName);
+};
+
+
+
+
+
+// Method to combine the creation and selection of a canvas
+
+gameConfig.addPrimaryCanvas = function(name) {
+  this.createCanvas(name);
+  this.setPrimaryCanvas(name);
+};
+
+
+
+
+
+// Add camera
+
+gameConfig.addCamera = function(name) {
+  this.gfx.addCamera(name);
+};
+
+
+
+
+
+// Set camera
+
+gameConfig.setCamera = function(name) {
+  this.gfx.setCamera(name);
+};
+
+
+
+
+
+// Method to create and set primary camera
+
+gameConfig.addPrimaryCamera = function(name) {
+  this.addCamera(name);
+  this.setCamera(name);
+};
+
+
+
+
+
+// Set up method, should create canvases in canvases array.
+
+gameConfig.setUp = function(game) {
+  if (this.setUp.hasRun) {
+    console.log('gameConfig.setUp has already run.');
+    return false;
+  }
+
+  game.setGraphicsObject(this.gfx);
+
+  this.setUp.hasRun = true;
+};
+
+gameConfig.setUp.hasRun = false;
+
+
+
+
+
+// Create definition
+
+var GameConfig = obj.define(Object, Constructor, gameConfig);
+
+
+
+
+
+// Export module
+
+module.exports = GameConfig;
+
+
+},{"graphics/Graphics":"mC3JHL","is":"P9m7US","obj":"DOFYxp"}],"core/GameConfig":[function(require,module,exports){
+module.exports=require('h5AJ9p');
 },{}],"dE1Bu5":[function(require,module,exports){
 
 
 // Load dependencies
 
 var is = require('is');
-var gameConfig = require('core/gameConfig');
+var GameConfig = require('core/GameConfig');
 var Timer = require('objects/Timer');
 
 
@@ -21,13 +152,10 @@ var game = {};
 
 
 
-// Private variable for game timer
+// Private variable for game config object
 
-var time;
+var gameConfig;
 
-// Expose time elapsed as readonly property
-
-game.__defineGetter__('time', function(){ return time.secondsElapsed(); });
 
 
 
@@ -38,6 +166,40 @@ game.__defineGetter__('time', function(){ return time.secondsElapsed(); });
 game.__defineGetter__('config', function(){ return gameConfig; });
 
 
+
+
+
+// Private variable for game timer
+
+var time;
+
+
+
+
+
+// Expose time elapsed as readonly property
+
+game.__defineGetter__('time', function(){ return time.secondsElapsed(); });
+
+
+
+
+
+// Private variable for graphics object
+
+var gfx;
+
+
+
+
+
+// Setter method for setting private gfx variable, can only be set once.
+
+game.setGraphicsObject = function(gfxObj) {
+  if (!gfx) {
+    gfx = gfxObj;
+  }
+};
 
 
 
@@ -61,6 +223,10 @@ var fps = {
   }
 };
 
+
+
+
+
 // Expose framerate as readonly property
 
 game.__defineGetter__('fps', function(){ return fps.value(); });
@@ -69,13 +235,24 @@ game.__defineGetter__('fps', function(){ return fps.value(); });
 
 
 
+// Expose frame as readonly property
+
+game.__defineGetter__('tick', function(){ return frame; });
+
+
+
+
+
 // Game initializer
 
 var init = function(){
+  gameConfig = GameConfig();
 
-  game.beforeInit();
-  gameConfig.setUp();
-  game.afterInit();
+  game.beforeInit(gameConfig);
+
+  gameConfig.setUp(this);
+
+  game.afterInit(gfx);
 
   time = Timer();
   render();
@@ -84,9 +261,14 @@ var init = function(){
   setInterval(update, 50);
 };
 
+
+
+
+
 // expose as readonly
 
 game.__defineGetter__('init', function(){ return init; });
+
 
 
 
@@ -104,7 +286,7 @@ game.afterInit = function() {};
 // Function called every frame. `game.render` should be defined in project as
 // a way to hook into the main loop
 
-game.render = function(delta) {};
+game.render = function(delta, gfx) {};
 
 var render = function() {
 
@@ -115,7 +297,7 @@ var render = function() {
   fps.set(1000/delta);
 
   // call project render function
-  game.render(delta);
+  game.render(delta, gfx);
 
   frame++;
   requestAnimationFrame(render);
@@ -128,10 +310,10 @@ var render = function() {
 // Function called every 50ms interval. `game.update` should be defined in project as
 // a way to hook into the main loop, like `game.render`
 
-game.update = function() {};
+game.update = function(gfx) {};
 
 var update = function() {
-  game.update();
+  game.update(gfx);
 };
 
 
@@ -143,107 +325,9 @@ var update = function() {
 module.exports = game;
 
 
-},{"core/gameConfig":"/JRJU7","is":"P9m7US","objects/Timer":"y3F4VZ"}],"core/gameConfig":[function(require,module,exports){
-module.exports=require('/JRJU7');
-},{}],"/JRJU7":[function(require,module,exports){
-
-
-// Load dependencies
-
-var is = require('is');
-var DOM = require('dom');
-var gfx = require('graphics/gfx');
-
-
-
-
-
-// Object declaration
-
-var gameConfig = {};
-
-
-
-
-
-// Canvas array & primary canvas
-
-var canvases = [];
-
-
-
-
-
-
-// TODO: implement this method.
-
-gameConfig.removeCanvas = function(){
-
-};
-
-
-
-
-
-// Primary canvas, is the active canvas in `gfx` object when game starts
-
-var primaryCanvas;
-
-gameConfig.__defineGetter__('primaryCanvas', function(){ return primaryCanvas; });
-
-// Setter for primary canvas, adds to canvases array if not already in there
-
-gameConfig.__defineSetter__('primaryCanvas', function(canvas) {
-  if (!is.inArray(canvas, canvases)) {
-    canvases.push(canvas);
-  }
-  primaryCanvas = canvas;
-});
-
-
-
-
-
-// Alias method for setting primary canvas
-
-gameConfig.setPrimaryCanvas = function(canvas){
-  gameConfig.primaryCanvas = canvas;
-};
-
-
-
-
-
-
-// Set up method, should create canvases in canvases array.
-
-var hasRun = false;
-gameConfig.setUp = function() {
-  if (hasRun) {
-    console.log('gameConfig.setUp has already run.');
-    return false;
-  }
-
-  canvases.forEach(function(id){
-    var selector = 'canvas#'+id;
-    gfx.pushCanvas(id, DOM.make(selector));
-  });
-
-  // TODO: set primary canvas as `gfx` main canvas
-
-  hasRun = true;
-};
-
-
-
-
-
-
-// Expose to other internal modules
-
-module.exports = gameConfig;
-
-},{"dom":"qkALfs","graphics/gfx":"fc2DQ5","is":"P9m7US"}],"dom":[function(require,module,exports){
+},{"core/GameConfig":"h5AJ9p","is":"P9m7US","objects/Timer":"y3F4VZ"}],"core/game":[function(require,module,exports){
+module.exports=require('dE1Bu5');
+},{}],"dom":[function(require,module,exports){
 module.exports=require('qkALfs');
 },{}],"qkALfs":[function(require,module,exports){
 
@@ -554,7 +638,9 @@ DOM.css = DOM.style;
 module.exports = DOM;
 
 
-},{"is":"P9m7US"}],"AEEx6z":[function(require,module,exports){
+},{"is":"P9m7US"}],"fn":[function(require,module,exports){
+module.exports=require('AEEx6z');
+},{}],"AEEx6z":[function(require,module,exports){
 
 
 // Object declaration
@@ -613,683 +699,32 @@ fn.fromArray = function (array) {
 
 module.exports = fn;
 
-},{}],"fn":[function(require,module,exports){
-module.exports=require('AEEx6z');
-},{}],"07NHAF":[function(require,module,exports){
+},{}],"NsksZx":[function(require,module,exports){
 
 
 // Load dependencies
 
 var obj = require('obj');
-
-
-
-
-
-// Object definition
-
-var Point = obj.define(Object, function(x, y){
-
-
-
-
-
-  // Constructor
-
-  var point = {};
-  x = x || {};
-
-  if (!y) {
-    if (x.length == 2) {
-      point.x = x[0];
-      point.y = x[1];
-    } else {
-      point.x = x.x || 0;
-      point.y = x.y || 0;
-    }
-  } else {
-    point.x = x;
-    point.y = y;
-  }
-
-  this.x = point.x;
-  this.y = point.y;
-
-
-
-
-
-// Object properties & methods
-
-}, {
-
-
-
-
-
-  // Rotate point around another point
-
-  rotate: function (axis, theta) {
-    if (false === axis instanceof Point)
-      throw new Error('You can only rotate a point around another Point.');
-
-    var cos = Math.cos(theta),
-        sin = Math.sin(theta);
-
-    var transform = {
-      x: this.x - axis.x,
-      y: this.y - axis.y
-    };
-
-    var rotate = {
-      x: transform.x * cos - transform.y * sin,
-      y: transform.x * sin + transform.y * cos
-    };
-
-    this.x = rotate.x + axis.x;
-    this.y = rotate.y + axis.y;
-  },
-
-
-
-
-
-  // Add vector to point
-
-  add: function (point, returnNewInstance) {
-    if (false === point instanceof Point)
-      throw new Error('You can only add a another Point to Point object.');
-
-    if (returnNewInstance) {
-      var x = this.x + point.x;
-      var y = this.y + point.y;
-      return Point(x, y);
-    } else {
-      this.x += point.x;
-      this.y += point.y;
-      return this;
-    }
-  },
-
-
-
-
-
-  // Subtract vector from point
-
-  sub: function (point, returnNewInstance) {
-    if (false === point instanceof Point)
-      throw new Error('You can only subtract a another Point to Point object.');
-
-    if (returnNewInstance) {
-      var x = this.x - point.x;
-      var y = this.y - point.y;
-      return Point(x, y);
-    } else {
-      this.x -= point.x;
-      this.y -= point.y;
-      return this;
-    }
-  },
-
-
-
-
-
-  // Returns inverted point
-
-  invert: function () {
-    return Point( -this.x, -this.y );
-  },
-
-});
-
-
-
-
-
-// Expose to other internal modules
-
-module.exports = Point;
-
-},{"obj":"DOFYxp"}],"graphics/Point":[function(require,module,exports){
-module.exports=require('07NHAF');
-},{}],"graphics/Polygon":[function(require,module,exports){
-module.exports=require('S3SzPy');
-},{}],"S3SzPy":[function(require,module,exports){
-
-
-// Load dependencies
-
-var obj = require('obj');
-var Shape = require('graphics/Shape');
-
-
-
-
-
-// Object definition
-
-var Polygon = obj.define(Shape, function (options) {
-
-
-
-
-
-  // Constructor
-
-  options = options || {};
-/*
-  function checkPoints(points, size) {
-    points.forEach(function(point){
-      if (point.length != size) throw new Error('Array contains incorrect amount of points required ('+size+').');
-    });
-
-    return true;
-  }
-
-  var _default = {
-    points: [
-      [ 20, 20 ],
-      [ 20, 40 ],
-      [ 40, 40 ],
-      [ 40, 20 ]
-    ],
-    position: [20, 20]
-  };
-
-  var points = ( options.points !== undefined ) ? options.points : _default.points;
-  var position = ( options.position !== undefined ) ? options.position : _default.position;
-
-  this.points = (function(){
-
-    Points = (checkPoints(points, 2)) ? points : [];
-    PointArray = [];
-
-    Points.forEach(function(point){
-      PointArray.push( Point( point ));
-    });
-
-    return PointArray;
-
-  }());
-
-  this.move(this.centroid().invert());
-  this.move(Point(position));
-  this.position = this.centroid();
-
-  this.stroke = options.stroke || this.stroke;
-  this.angle = options.angle || this.angle;
-  this.fill = options.fill || this.fill;
-
-*/
-
-
-
-
-
-// Object properties & methods
-
-}, {
-
-
-
-
-
-  // Iterates over points. If at least one of a shape's points are in shot, then draw.
-  // If they're all less than 0 or greater than canvas edge on x or y axis, do not draw.
-
-  inShot: function() {
-    /*
-    canvas_size = topdown.gfx.getCanvasSize();
-
-    var modx = topdown.gfx.camera.mod.x;
-        mody = topdown.gfx.camera.mod.y;
-
-    var viewport = {
-      x:{
-        lt: true, gt: true,
-        min: modx(0),
-        max: modx(canvas_size.x)
-      },
-      y: {
-        lt: true, gt: true,
-        min: mody(0),
-        max: mody(canvas_size.y)
-      }
-    };
-
-    for (var i = 0; i < this.points.length; i++) {
-      if(this.points[i].inShot()) return true;
-
-      var points = this.points[i];
-
-      viewport.x.lt = ( viewport.x.lt && (points.x < viewport.x.min) ) ? true : false;
-      viewport.x.gt = ( viewport.x.gt && (points.x > viewport.x.max) ) ? true : false;
-      viewport.y.lt = ( viewport.y.lt && (points.y < viewport.y.min) ) ? true : false;
-      viewport.y.gt = ( viewport.y.gt && (points.y > viewport.y.max) ) ? true : false;
-    }
-
-    if (viewport.x.lt || viewport.y.lt || viewport.x.gt || viewport.y.gt) return false;
-    */
-
-    // consider case when points are off shot but shape is not
-
-    // More complex tests arise when a shape's points are out of the bounds
-    // of camera, but part of the shape will still fall in shot, ie a rotated
-    // square or a triangle.
-
-    //   denom = ((LineB2.Y – LineB1.Y) * (LineA2.X – LineA1.X)) –
-    //     ((LineB2.X – lineB1.X) * (LineA2.Y - LineA1.Y))
-    //   return denom != 0
-
-    // alternatively generate bounding sphere and use that to calculate wether
-    // or not to draw shape, less exact but possibly more efficient.
-
-    // http://devmag.org.za/2009/04/13/basic-collision-detection-in-2d-part-1/
-
-
-    // see also:
-    //   https://github.com/robhawkes/rawkets/blob/master/public/js/Game.js#L440
-
-    // Without a final algorithm it's worth rendering this
-    // content anyway incase it overlaps into the viewport.
-    return true;
-  },
-
-
-
-  // Calls graphics method to render shape
-
-  render: function () {
-    /*
-    if (!this.inShot()) return false;
-
-    var
-    ctx = topdown.gfx.getContext(),
-    mod = topdown.gfx.camera.mod;
-
-    ctx.fillStyle = this.fill;
-    ctx.strokeStyle = this.stroke;
-    ctx.beginPath();
-
-    for(i = 0; i < this.points.length; i++) {
-      var point = this.points[i];
-      var func = i ? 'lineTo' : 'moveTo';
-      ctx[func](mod.x(point.x), mod.y(point.y));
-    }
-
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-    */
-  },
-
-
-
-
-
-  // Iterates over points to move them by vector supplied in argument
-
-  move: function () {
-    /*
-    var args = arguments;
-    var vector;
-
-    if(!args.length || args.length > 2) return false;
-    if(args.length == 1) vector = args[0];
-
-    if(args.length == 2) {
-      if( isNaN( args[0] ) || isNaN( args[1] ) ) return false;
-      vector = Point(args);
-    }
-
-    if (false === vector instanceof Point)
-      throw new Error('You can only move a point by the vector of another Point.');
-
-    this.points.forEach(function(point){
-      point.add(vector);
-    });
-
-    this.position = this.centroid();
-
-    topdown.gfx.refreshBackground = true;
-    */
-  },
-
-
-
-
-
-  //
-
-  teleport: function (point) {
-    /*
-    var current = this.centroid();
-    this.move(point.sub(current));
-    */
-  },
-
-
-
-
-
-  // Iterates over points to rotate them by angle supplied in argument
-
-  rotate: function (theta) {
-    /*
-    var axis = this.position;
-
-    this.points.forEach(function(point){
-      point.rotate(axis, theta);
-    });
-
-    angle = (this.angle + theta) % (Math.PI*2);
-
-    while(angle < 0) angle += (Math.PI*2);
-
-    this.angle = angle;
-
-    topdown.gfx.refreshBackground = true;
-    */
-  },
-
-
-
-
-
-  //
-
-  setAngle: function (angle) {
-    /*
-    var axis = this.position;
-    var theta = angle - this.angle;
-
-    this.points.forEach(function(point){
-      point.rotate(axis, theta);
-    });
-
-    this.angle = angle;
-
-    topdown.gfx.refreshBackground = true;
-    */
-  },
-
-
-
-
-
-  //
-
-  pointInPolygon: function(point){
-    /*
-    var
-    counter = 0,
-    x_inter,
-    points = this.points;
-
-    var p1 = points[0];
-    for (var i = 1, l = points.length; i <= l; i++) {
-      var p2 = points[i%l];
-
-      if (
-        point.y > Math.min(p1.y, p2.y) &&
-        point.y <= Math.max(p1.y, p2.y) &&
-        point.x <= Math.max(p1.x, p2.x) &&
-        p1.y != p2.y
-      ) {
-        x_inter = (point.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
-        if ( p1.x == p2.x || point.x <= x_inter) {
-          counter++;
-        }
-      }
-      p1 = p2;
-    }
-
-    return ( counter % 2 == 1 );
-    */
-  },
-
-
-
-
-
-  // Collision algorithm
-
-  detectCollision: function () {
-    /*
-    var args = arguments;
-
-    if(args.length != 2) {
-      throw new Error('Invalid number of arguments provided.');
-    } else if ( !args[0] instanceof Point || !args[1] instanceof Point ) {
-      throw new Error('Function requires two points to detect collision.');
-    }
-
-    var
-    B1 = args[0],
-    B2 = args[1],
-    collision = false,
-    points = this.points;
-
-    if (this.pointInPolygon(B1) || this.pointInPolygon(B2)) {
-      return true;
-    }
-
-    for(var i = 0, nPts = points.length; i < nPts; i++) {
-      var this_point = points[i];
-      var next_point = points[(i+1)%nPts];
-
-      var A1 = {
-        x: this_point.x,
-        y: this_point.y
-      },
-      A2 = {
-        x: next_point.x,
-        y: next_point.y
-      };
-
-      collision = ( collision || this.doesLineIntersect(A1, A2, B1, B2) );
-    }
-
-    return collision;
-    */
-  },
-
-
-
-
-
-  //
-
-  getLineIntersectionPoint: function(A1, A2, B1, B2) {
-    /*
-    var s1_x, s1_y, s2_x, s2_y;
-    s1_x = A2.x - A1.x;
-    s1_y = A2.y - A1.y;
-    s2_x = B2.x - B1.x;
-    s2_y = B2.y - B1.y;
-    var s, t;
-    s = (-s1_y * (A1.x - B1.x) + s1_x * (A1.y - B1.y)) / (-s2_x * s1_y + s1_x * s2_y);
-    t = ( s2_x * (A1.y - B1.y) - s2_y * (A1.x - B1.x)) / (-s2_x * s1_y + s1_x * s2_y);
-
-    if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
-      // Collision detected
-      return Point({
-        x: A1.x + (t * s1_x),
-        y: A1.y + (t * s1_y)
-      });
-    }
-
-    // No collision
-    return false;
-    */
-  },
-
-
-
-
-
-  //
-
-  doesLineIntersect: function(A1, A2, B1, B2) {
-    return this.getLineIntersectionPoint(A1, A2, B1, B2) !== false;
-  },
-
-
-
-
-
-  // Returns the center point of shape.
-  // TODO: doesnt calculate with only two points (ie straight line)
-
-  centroid: function() {
-    /*
-    var pts  = this.points;
-    var nPts = pts.length;
-    var x = 0; var y = 0;
-    var f;
-    var j = nPts - 1;
-    var p1; var p2;
-
-    for (var i = 0; i < nPts; j = i++) {
-      p1 = pts[i];
-      p2 = pts[j];
-      f  = p1.x * p2.y - p2.x * p1.y;
-      x += (p1.x + p2.x) * f;
-      y += (p1.y + p2.y) * f;
-    }
-
-    f = this.area() * 6;
-
-    return Point([ x/f, y/f ]);
-    */
-  },
-
-
-
-
-
-  // Returns area of shape
-
-  area: function() {
-    /*
-    var
-    area = 0,
-    pts = this.points,
-    p1, p2;
-
-    for (var i=0, nPts = pts.length, j = nPts - 1; i < nPts; j = i++) {
-      p1 = pts[i];
-      p2 = pts[j];
-      area += p1.x * p2.y;
-      area -= p1.y * p2.x;
-    }
-
-    area /= 2;
-
-    return area;
-    */
-  },
-
-});
-
-
-
-
-
-
-// Expose to other internal modules
-
-module.exports = Polygon;
-
-
-},{"graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Shape":[function(require,module,exports){
-module.exports=require('rB+uTR');
-},{}],"rB+uTR":[function(require,module,exports){
-
-
-// Load dependencies
-
-var obj = require('obj');
-
-
-
-
-
-// Object definition
-
-var Shape = obj.define(Object, function (options) {
-
-
-
-
-
-  // Constructor
-
-  throw new Error("This class isn't meant for direct instantiation");
-
-
-
-
-
-// Object properties & methods
-
-}, {
-
-
-
-
-
-  //
-
-  stroke: '698796',
-  fill: '132132',
-  angle: Math.PI*2,
-
-
-
-
-
-  //
-
-  inShot: function(){
-    return false;
-  },
-
-
-
-
-
-  //
-
-  render: function(){}
-
-});
-
-
-
-
-
-// Expose to other internal modules
-
-module.exports = Shape;
-
-},{"obj":"DOFYxp"}],"graphics/camera":[function(require,module,exports){
-module.exports=require('k68hkO');
-},{}],"k68hkO":[function(require,module,exports){
-
-
-// Load dependencies
-
-var gfx = require('graphics/gfx');
 var Point = require('graphics/Point');
 
 
 
 
 
-// Object declaration
+// Constructor
+
+var Constructor = function(x, y){
+
+  // Camera position stored as Point
+  this.position = Point(x, y);
+
+};
+
+
+
+
+
+// Declare object literal
 
 var camera = {};
 
@@ -1297,18 +732,10 @@ var camera = {};
 
 
 
-// Camera position stored as Point
-
-var position = Point([0,0]);
-
-
-
-
-
-// Return object literal with position co-ordinates
+// Return object literal containing position co-ordinates
 
 camera.get = function() {
-  return { x: position.x, y: position.y };
+  return { x: this.position.x, y: this.position.y };
 };
 
 
@@ -1318,7 +745,7 @@ camera.get = function() {
 // Offsets a value by the X position of camera
 
 camera.modX = function(x) {
-  return x - position.x;
+  return x - this.position.x;
 };
 
 
@@ -1328,7 +755,7 @@ camera.modX = function(x) {
 // Offsets a value by the Y position of camera
 
 camera.modY = function(y) {
-  return y - position.y;
+  return y - this.position.y;
 };
 
 
@@ -1338,7 +765,7 @@ camera.modY = function(y) {
 // Move camera by a point
 
 camera.move = function(point) {
-  position.add(point);
+  this.position.add(point);
 };
 
 
@@ -1348,7 +775,7 @@ camera.move = function(point) {
 // Set camera to position of a point
 
 camera.set = function(point) {
-  position.add(point.sub(position));
+  this.position.add(point.sub(this.position));
 };
 
 
@@ -1358,7 +785,7 @@ camera.set = function(point) {
 // Offsets a point by camera position, returns new point instance
 
 camera.offset = function(point) {
-  return point.add(position, true);
+  return point.add(this.position, true);
 };
 
 
@@ -1368,22 +795,17 @@ camera.offset = function(point) {
 // Negatively offsets a point by camera position, returns new point instance
 
 camera.noffset = function(point) {
-  return point.sub(position, true);
+  return point.sub(this.position, true);
 };
 
 
 
+/*
 
 
 // Returns true if point is inside camera
 
 camera.pointInShot = function (point) {
-  /*
-  var cam = {
-    x: camera.modX(point.x),
-    y: camera.modY(point.y)
-  };
-  */
   var cam = camera.noffset(point);
 
   var canvas = gfx.getCanvasSize();
@@ -1397,11 +819,10 @@ camera.pointInShot = function (point) {
 
 
 
-
 // Used for tracking an object with camera, disabled for now.
 
 camera.track = function(object) {
-  /*
+
    if (is.string(object) && object == 'off') {
      game.onBeforeLoop.remove('camera_track');
    }
@@ -1411,8 +832,16 @@ camera.track = function(object) {
       camera.set(object.shape.centroid().sub(graphics.getCanvasCenter()));
     });
   }
-  */
+
 };
+
+
+*/
+
+
+// Create definition
+
+var Camera = obj.define(Object, Constructor, camera);
 
 
 
@@ -1420,22 +849,209 @@ camera.track = function(object) {
 
 // Export module
 
-module.exports = camera;
+module.exports = Camera;
 
 
-},{"graphics/Point":"07NHAF","graphics/gfx":"fc2DQ5"}],"fc2DQ5":[function(require,module,exports){
+
+},{"graphics/Point":"07NHAF","obj":"DOFYxp"}],"graphics/Camera":[function(require,module,exports){
+module.exports=require('NsksZx');
+},{}],"gCPbFZ":[function(require,module,exports){
+
+// Load dependencies
+
+var obj = require('obj');
+var DOM = require('dom');
+var Point = require('graphics/Point');
+var Shape = require('graphics/Shape');
+var Camera = require('graphics/Camera');
+
+
+
+
+
+// Constructor
+
+var Constructor = function(id){
+  var selector = 'canvas#'+id;
+  this.canvas = DOM.make(selector);
+};
+
+
+
+
+
+// Declare object literal
+
+var canvas = {};
+
+
+
+
+
+//
+
+canvas.camera = undefined;
+
+
+
+
+
+//
+
+canvas.useCamera = function(camera){
+  if (camera instanceof Camera) {
+    this.camera = camera;
+  }
+};
+
+canvas.setCamera = canvas.useCamera;
+
+
+
+
+
+
+//
+
+canvas.cling = function() {
+  this.canvas.width = window.innerWidth;
+  this.canvas.height = window.innerHeight;
+};
+
+
+
+
+
+//
+
+canvas.clearContext = function() {
+  var canvas = this.canvas;
+  var ctx = canvas.getContext();
+  if (ctx) {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+};
+
+
+
+
+
+//
+
+canvas.getContext = function(){
+  return this.canvas.getContext('2d');
+};
+
+
+
+
+
+//
+
+canvas.getCanvasSize = function() {
+  var canvas = this.canvas;
+  return { x: canvas.width, y: canvas.height };
+};
+
+
+
+
+
+//
+
+canvas.getCanvasCenter = function(){
+  var size = this.getCanvasSize();
+  return Point([size.x/2, size.y/2]);
+};
+
+
+
+
+
+//
+
+canvas.text = function(text, position){
+  var ctx = this.getContext();
+  if (ctx) {
+    ctx.fillStyle = 'FFFFFF';
+    ctx.fillText(text, position.x-25, position.y+5);
+  }
+};
+
+
+
+
+
+//
+
+// gfx.render = function(shape) {
+//   if (!shape instanceof Shape) {
+//     throw new Error('Only pass shape objects to render.');
+//   }
+
+//   console.log(shape);
+//   if (shape.inShot(this)) {
+//     shape.render(this);
+//   }
+
+// };
+
+
+
+
+
+
+
+// Create definition
+
+var Canvas = obj.define(Object, Constructor, canvas);
+
+
+
+
+
+// Export module
+
+module.exports = Canvas;
+
+
+
+},{"dom":"qkALfs","graphics/Camera":"NsksZx","graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Canvas":[function(require,module,exports){
+module.exports=require('gCPbFZ');
+},{}],"mC3JHL":[function(require,module,exports){
 
 
 // Load dependencies
 
-var is = require('is');
+var obj = require('obj');
+var Stack = require('objects/Stack');
+var Camera = require('graphics/Camera');
 var Point = require('graphics/Point');
+var Canvas = require('graphics/Canvas');
 
 
 
 
 
-// Object declaration
+// Constructor
+
+var Constructor = function(){
+
+  this.canvasStack = Stack(function(o){
+    return o instanceof Canvas;
+  });
+
+  this.cameraStack = Stack(function(o){
+    return o instanceof Camera;
+  });
+
+};
+
+
+
+
+
+// Declare object literal
 
 var gfx = {};
 
@@ -1445,44 +1061,10 @@ var gfx = {};
 
 //
 
-var canvas, context, ctx;
-var canvasStack = {};
-
-
-
-
-
-//
-
-gfx.pushCanvas = function(name, element) {
-  canvasStack[name] = element;
-};
-
-
-
-
-
-//
-
-gfx.setCanvas = function(name){
-  canvas = name ? canvasStack[name] : canvas;
-  ctx = context = canvas ? canvas.getContext('2d') : undefined;
-};
-
-
-
-
-
-//
-
-gfx.cling = function(canvRef) {
-  if (canvRef) {
-    gfx.setCanvas(canvRef);
-  }
-
-  if (canvas) {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+gfx.createCanvas = function(name) {
+  if (name) {
+    var c = Canvas(name);
+    this.canvasStack.push(name, c);
   }
 };
 
@@ -1490,12 +1072,58 @@ gfx.cling = function(canvRef) {
 
 
 
-//
+// Sets primary canvas
 
-gfx.clearContext = function(ctxRef) {
-  ctxRef = ctxRef || context;
-  if (ctxRef) {
-    ctxRef.clearRect(0,0,canvas.width,canvas.height);
+gfx.setPrimaryCanvas = function(canvasName){
+  this.canvasStack.select(canvasName);
+};
+
+gfx.setCanvas = gfx.setPrimaryCanvas;
+
+
+
+
+
+// Sets camera
+
+gfx.setCamera = function(name){
+  this.cameraStack.select(name);
+};
+
+
+
+
+
+// Add camera
+
+gfx.addCamera = function(name){
+  if (name) {
+    var c = Camera();
+    this.cameraStack.push(name, c);
+  }
+};
+
+
+
+
+// //
+
+// // gfx.loadImage = function(src, callback) {
+// //   var image = new Image();
+// //   image.src = src;
+// //   if (callback) {
+// //     image.onload = callback;
+// //   }
+// //   return image;
+// // };
+
+
+
+gfx.bindCameraToCanvas = function(camera, canvas) {
+  var canv = this.canvasStack.get(canvas);
+  var cam = this.cameraStack.get(camera);
+  if (canv && cam) {
+    canv.useCamera(cam);
   }
 };
 
@@ -1503,35 +1131,353 @@ gfx.clearContext = function(ctxRef) {
 
 
 
-//
+// Create definition
 
-gfx.getContext = function(){
-  return context;
-};
+var Graphics = obj.define(Object, Constructor, gfx);
 
 
 
 
 
-//
+// Export module
 
-gfx.getCanvasSize = function() {
-  if (canvas) {
-    return { x: canvas.width, y: canvas.height };
+module.exports = Graphics;
+
+
+},{"graphics/Camera":"NsksZx","graphics/Canvas":"gCPbFZ","graphics/Point":"07NHAF","obj":"DOFYxp","objects/Stack":"w0x1FX"}],"graphics/Graphics":[function(require,module,exports){
+module.exports=require('mC3JHL');
+},{}],"graphics/Point":[function(require,module,exports){
+module.exports=require('07NHAF');
+},{}],"07NHAF":[function(require,module,exports){
+
+
+// Load dependencies
+
+var obj = require('obj');
+var is = require('is');
+
+
+
+
+
+// Constructor
+
+var Constructor = function(x, y){
+
+  if (!y && is.Array(x) && x.length == 2) {
+    this.x = x[0];
+    this.y = x[1];
+  } else if (is.PlainObject(x) && x.x && x.y) {
+      this.x = x.x;
+      this.y = x.y;
+  } else {
+    this.x = is.Numeric(x) ? x : 0;
+    this.y = is.Numeric(y) ? y : 0;
   }
+
 };
 
 
 
 
 
-//
+// Declare object literal
 
-gfx.getCanvasCenter = function(){
-  if (canvas) {
-    var size = gfx.getCanvasSize();
-    return Point([size.x/2, size.y/2]);
+var point = {};
+
+
+
+
+
+
+// Rotate point around another point
+
+point.rotate = function (axis, theta) {
+
+  if (false === axis instanceof Point)
+    throw new Error('You can only rotate a point around another Point.');
+
+  var cos = Math.cos(theta),
+      sin = Math.sin(theta);
+
+  var transform = {
+    x: this.x - axis.x,
+    y: this.y - axis.y
+  };
+
+  var rotate = {
+    x: transform.x * cos - transform.y * sin,
+    y: transform.x * sin + transform.y * cos
+  };
+
+  this.x = rotate.x + axis.x;
+  this.y = rotate.y + axis.y;
+
+};
+
+
+
+
+
+// Add vector to point
+
+point.add = function (point, returnNewInstance) {
+
+  if (false === point instanceof Point)
+    throw new Error('You can only add a another Point to Point object.');
+
+  if (returnNewInstance) {
+    var x = this.x + point.x;
+    var y = this.y + point.y;
+    return Point(x, y);
+  } else {
+    this.x += point.x;
+    this.y += point.y;
+    return this;
   }
+
+};
+
+
+
+
+
+// Subtract vector from point
+
+point.sub = function (point, returnNewInstance) {
+
+  if (false === point instanceof Point)
+    throw new Error('You can only subtract a another Point to Point object.');
+
+  if (returnNewInstance) {
+    var x = this.x - point.x;
+    var y = this.y - point.y;
+    return Point(x, y);
+  } else {
+    this.x -= point.x;
+    this.y -= point.y;
+    return this;
+  }
+
+};
+
+
+
+
+
+// Returns inverted point
+
+point.invert = function () {
+  return Point( -this.x, -this.y );
+};
+
+
+
+
+
+
+// Object definition
+
+var Point = obj.define(Object, Constructor, point);
+
+
+
+
+
+
+// Export module
+
+module.exports = Point;
+
+},{"is":"P9m7US","obj":"DOFYxp"}],"S3SzPy":[function(require,module,exports){
+
+
+// Load dependencies
+
+var obj = require('obj');
+var Shape = require('graphics/Shape');
+var Point = require('graphics/Point');
+
+
+
+
+
+// Constructor
+
+var Constructor = function(options){
+  /*
+  options = obj.extend({
+    points: defaultPoints,
+    position: [20, 20]
+  }, options);
+
+  var proto = this;
+  while ( (proto = Object.getPrototypeOf(proto)) !== null ) {
+    options = obj.extend(proto, options);
+  }
+
+  function checkPoints(points, size) {
+    points.forEach(function(point){
+      if (point.length != size) throw new Error('Array contains incorrect amount of points required ('+size+').');
+    });
+
+    return true;
+  }
+
+  var defaultPoints = [
+    [ 20, 20 ],
+    [ 20, 40 ],
+    [ 40, 40 ],
+    [ 40, 20 ]
+  ];
+
+  var points = options.points;
+  var position = options.position;
+
+  points = (checkPoints(points, 2)) ? points : defaultPoints;
+  this.points = [];
+
+  points.forEach(function(point){
+    this.points.push( Point( point ));
+  });
+
+  this.move(this.centroid().invert());
+  this.move(Point(position));
+  this.position = this.centroid();
+  */
+
+};
+
+
+
+
+
+// Declare object literal
+
+var polygon = {};
+
+
+
+
+
+// Iterates over points. If at least one of a shape's points are in shot, then draw.
+// If they're all less than 0 or greater than canvas edge on x or y axis, do not draw.
+
+polygon.inShot = function() {
+  /*
+  canvas_size = topdown.gfx.getCanvasSize();
+
+  var modx = topdown.gfx.camera.mod.x;
+      mody = topdown.gfx.camera.mod.y;
+
+  var viewport = {
+    x:{
+      lt: true, gt: true,
+      min: modx(0),
+      max: modx(canvas_size.x)
+    },
+    y: {
+      lt: true, gt: true,
+      min: mody(0),
+      max: mody(canvas_size.y)
+    }
+  };
+
+  for (var i = 0; i < this.points.length; i++) {
+    if(this.points[i].inShot()) return true;
+
+    var points = this.points[i];
+
+    viewport.x.lt = ( viewport.x.lt && (points.x < viewport.x.min) ) ? true : false;
+    viewport.x.gt = ( viewport.x.gt && (points.x > viewport.x.max) ) ? true : false;
+    viewport.y.lt = ( viewport.y.lt && (points.y < viewport.y.min) ) ? true : false;
+    viewport.y.gt = ( viewport.y.gt && (points.y > viewport.y.max) ) ? true : false;
+  }
+
+  if (viewport.x.lt || viewport.y.lt || viewport.x.gt || viewport.y.gt) return false;
+  */
+
+  // consider case when points are off shot but shape is not
+
+  // More complex tests arise when a shape's points are out of the bounds
+  // of camera, but part of the shape will still fall in shot, ie a rotated
+  // square or a triangle.
+
+  //   denom = ((LineB2.Y – LineB1.Y) * (LineA2.X – LineA1.X)) –
+  //     ((LineB2.X – lineB1.X) * (LineA2.Y - LineA1.Y))
+  //   return denom != 0
+
+  // alternatively generate bounding sphere and use that to calculate wether
+  // or not to draw shape, less exact but possibly more efficient.
+
+  // http://devmag.org.za/2009/04/13/basic-collision-detection-in-2d-part-1/
+
+
+  // see also:
+  //   https://github.com/robhawkes/rawkets/blob/master/public/js/Game.js#L440
+
+  // Without a final algorithm it's worth rendering this
+  // content anyway incase it overlaps into the viewport.
+  return true;
+};
+
+
+
+
+
+// Calls graphics method to render shape
+
+polygon.render = function (gfx) {
+  /*
+  if (!this.inShot()) return false;
+
+  var ctx = gfx.getContext();
+  var mod = gfx.camera.mod;
+
+  ctx.fillStyle = this.fill;
+  ctx.strokeStyle = this.stroke;
+  ctx.beginPath();
+
+  for(i = 0; i < this.points.length; i++) {
+    var point = this.points[i];
+    var func = i ? 'lineTo' : 'moveTo';
+    ctx[func](mod.x(point.x), mod.y(point.y));
+  }
+
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  */
+};
+
+
+
+
+
+// Iterates over points to move them by vector supplied in argument
+
+polygon.move = function () {
+  /*
+  var args = arguments;
+  var vector;
+
+  if(!args.length || args.length > 2) return false;
+  if(args.length == 1) vector = args[0];
+
+  if(args.length == 2) {
+    if( isNaN( args[0] ) || isNaN( args[1] ) ) return false;
+    vector = Point(args);
+  }
+
+  if (false === vector instanceof Point)
+    throw new Error('You can only move a point by the vector of another Point.');
+
+  this.points.forEach(function(point){
+    point.add(vector);
+  });
+
+  this.position = this.centroid();
+  */
 };
 
 
@@ -1540,15 +1486,135 @@ gfx.getCanvasCenter = function(){
 
 //
 
-gfx.render = function(shape) {
+polygon.teleport = function (point) {
+  /*
+  var current = this.centroid();
+  this.move(point.sub(current));
+  */
+};
+
+
+
+
+
+// Iterates over points to rotate them by angle supplied in argument
+
+polygon.rotate = function (theta) {
+  /*
+  var axis = this.position;
+
+  this.points.forEach(function(point){
+    point.rotate(axis, theta);
+  });
+
+  angle = (this.angle + theta) % (Math.PI*2);
+
+  while(angle < 0) angle += (Math.PI*2);
+
+  this.angle = angle;
+  */
+};
+
+
+
+
+
+//
+
+polygon.setAngle = function (angle) {
+  /*
+  var axis = this.position;
+  var theta = angle - this.angle;
+
+  this.points.forEach(function(point){
+    point.rotate(axis, theta);
+  });
+
+  this.angle = angle;
+  */
+};
+
+
+
+
+
+// Move into collision module?
+
+polygon.containsPoint = function(point){
+  /*
+  var
+  counter = 0,
+  x_inter,
+  points = this.points;
+
+  var p1 = points[0];
+  for (var i = 1, l = points.length; i <= l; i++) {
+    var p2 = points[i%l];
+
+    if (
+      point.y > Math.min(p1.y, p2.y) &&
+      point.y <= Math.max(p1.y, p2.y) &&
+      point.x <= Math.max(p1.x, p2.x) &&
+      p1.y != p2.y
+    ) {
+      x_inter = (point.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
+      if ( p1.x == p2.x || point.x <= x_inter) {
+        counter++;
+      }
+    }
+    p1 = p2;
+  }
+
+  return ( counter % 2 == 1 );
+  */
+};
+
+polygon.pointInPolygon = pointInPolygon.containsPoint;
+
+
+
+
+
+// Collision algorithm.
+// Move into collision module?
+
+polygon.detectCollision = function () {
 /*
-  if (!shape instanceof Shape) {
-    throw new Error('Only pass shape objects to render.');
+  var args = arguments;
+
+  if(args.length != 2) {
+    throw new Error('Invalid number of arguments provided.');
+  } else if ( !args[0] instanceof Point || !args[1] instanceof Point ) {
+    throw new Error('Function requires two points to detect collision.');
   }
 
-  if (shape.inShot()) {
-    shape.render();
+  var
+  B1 = args[0],
+  B2 = args[1],
+  collision = false,
+  points = this.points;
+
+  if (this.pointInPolygon(B1) || this.pointInPolygon(B2)) {
+    return true;
   }
+
+  for(var i = 0, nPts = points.length; i < nPts; i++) {
+    var this_point = points[i];
+    var next_point = points[(i+1)%nPts];
+
+    var A1 = {
+      x: this_point.x,
+      y: this_point.y
+    },
+    A2 = {
+      x: next_point.x,
+      y: next_point.y
+    };
+
+    collision = ( collision || this.doesLineIntersect(A1, A2, B1, B2) );
+  }
+
+  return collision;
 */
 };
 
@@ -1556,15 +1622,30 @@ gfx.render = function(shape) {
 
 
 
-//
+// Move into collision module?
 
-gfx.loadImage = function(src, callback) {
-  var image = new Image();
-  image.src = src;
-  if (callback) {
-    image.onload = callback;
+polygon.getLineIntersectionPoint = function(A1, A2, B1, B2) {
+  /*
+  var s1_x, s1_y, s2_x, s2_y;
+  s1_x = A2.x - A1.x;
+  s1_y = A2.y - A1.y;
+  s2_x = B2.x - B1.x;
+  s2_y = B2.y - B1.y;
+  var s, t;
+  s = (-s1_y * (A1.x - B1.x) + s1_x * (A1.y - B1.y)) / (-s2_x * s1_y + s1_x * s2_y);
+  t = ( s2_x * (A1.y - B1.y) - s2_y * (A1.x - B1.x)) / (-s2_x * s1_y + s1_x * s2_y);
+
+  if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
+    // Collision detected
+    return Point({
+      x: A1.x + (t * s1_x),
+      y: A1.y + (t * s1_y)
+    });
   }
-  return image;
+
+  // No collision
+  return false;
+  */
 };
 
 
@@ -1573,19 +1654,73 @@ gfx.loadImage = function(src, callback) {
 
 //
 
-gfx.text = function(text, position){
-  context.fillStyle = 'FFFFFF';
-  context.fillText(text, position.x-25, position.y+5);
+polygon.doesLineIntersect = function(A1, A2, B1, B2) {
+  // return this.getLineIntersectionPoint(A1, A2, B1, B2) !== false;
 };
 
 
 
 
 
-//
+// Returns the center point of shape.
+// TODO: doesnt calculate with only two points (ie straight line)
 
-gfx.refresh = true;
+polygon.centroid = function() {
+  /*
+  var pts  = this.points;
+  var nPts = pts.length;
+  var x = 0; var y = 0;
+  var f;
+  var j = nPts - 1;
+  var p1; var p2;
 
+  for (var i = 0; i < nPts; j = i++) {
+    p1 = pts[i];
+    p2 = pts[j];
+    f  = p1.x * p2.y - p2.x * p1.y;
+    x += (p1.x + p2.x) * f;
+    y += (p1.y + p2.y) * f;
+  }
+
+  f = this.area() * 6;
+
+  return Point([ x/f, y/f ]);
+  */
+};
+
+
+
+
+
+// Returns area of shape
+
+polygon.area = function() {
+  /*
+  var
+  area = 0,
+  pts = this.points,
+  p1, p2;
+
+  for (var i=0, nPts = pts.length, j = nPts - 1; i < nPts; j = i++) {
+    p1 = pts[i];
+    p2 = pts[j];
+    area += p1.x * p2.y;
+    area -= p1.y * p2.x;
+  }
+
+  area /= 2;
+
+  return area;
+  */
+};
+
+
+
+
+
+// Object definition
+
+var Polygon = obj.define(Shape, Constructor, polygon);
 
 
 
@@ -1593,14 +1728,74 @@ gfx.refresh = true;
 
 // Expose to other internal modules
 
-module.exports = gfx;
+module.exports = Polygon;
 
-},{"graphics/Point":"07NHAF","is":"P9m7US"}],"graphics/gfx":[function(require,module,exports){
-module.exports=require('fc2DQ5');
-},{}],"graphics/trig":[function(require,module,exports){
-module.exports=require('HKUJiZ');
+
+},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Polygon":[function(require,module,exports){
+module.exports=require('S3SzPy');
+},{}],"rB+uTR":[function(require,module,exports){
+
+
+// Load dependencies
+
+var obj = require('obj');
+
+
+
+
+
+// Constructor
+
+var Constructor = function(){
+
+  throw new Error("This class isn't meant for direct instantiation");
+
+};
+
+
+
+
+
+// Declare object literal
+
+var shape = {};
+
+shape.stroke = '698796';
+
+shape.fill = '132132';
+
+shape.angle = Math.PI*2;
+
+shape.inShot = function(){
+  return false;
+};
+
+shape.render = function(){};
+
+
+
+
+
+// Object definition
+
+var Shape = obj.define(Object, Constructor, shape);
+
+
+
+
+
+// Expose to other internal modules
+
+module.exports = Shape;
+
+},{"obj":"DOFYxp"}],"graphics/Shape":[function(require,module,exports){
+module.exports=require('rB+uTR');
 },{}],"HKUJiZ":[function(require,module,exports){
 
+},{}],"graphics/trig":[function(require,module,exports){
+module.exports=require('HKUJiZ');
+},{}],"is":[function(require,module,exports){
+module.exports=require('P9m7US');
 },{}],"P9m7US":[function(require,module,exports){
 
 
@@ -1758,10 +1953,6 @@ is.PlainObject = is.ObjectLiteral;
 
 module.exports = is;
 
-},{}],"is":[function(require,module,exports){
-module.exports=require('P9m7US');
-},{}],"obj":[function(require,module,exports){
-module.exports=require('DOFYxp');
 },{}],"DOFYxp":[function(require,module,exports){
 
 
@@ -1842,14 +2033,17 @@ obj.extend = function(){
   length = arguments.length,
   deep = false;
   if (typeof target === "boolean") {
+    console.log('one');
     deep = target;
     target = arguments[1] || {};
     i = 2;
   }
   if (typeof target !== "object" && !is.Function(target)) {
+    console.log('two');
     target = {};
   }
   if (length === i) {
+    console.log('three');
     target = this;
     --i;
   }
@@ -1976,7 +2170,89 @@ obj.identifier = function(seed){
 
 module.exports = obj;
 
-},{"is":"P9m7US"}],"y3F4VZ":[function(require,module,exports){
+},{"is":"P9m7US"}],"obj":[function(require,module,exports){
+module.exports=require('DOFYxp');
+},{}],"w0x1FX":[function(require,module,exports){
+
+
+// Load dependencies
+
+var obj = require('obj');
+
+
+
+
+var Stack = function(filter){
+
+
+  //
+  var stack = {};
+  var selected;
+
+
+
+  this.push = function(key, value){
+    if (filter(value)) {
+      stack[key] = value;
+    }
+  };
+
+
+
+  this.get = function(key){
+    if (this.hasKey(key)) {
+      return stack[key];
+    }
+  };
+
+
+
+  this.select = function(select) {
+    if (this.hasKey(select)) {
+      selected = select;
+    } else {
+      console.log('Stack does not contain key ' + select + '!');
+    }
+  };
+
+
+
+  this.__defineGetter__('selected', function(){
+    if (stack[selected]) {
+      return stack[selected];
+    }
+  });
+
+
+
+  this.each = function(func) {
+    obj.keys(stack).forEach(function(key, i) {
+      func(stack[key]);
+    });
+  };
+
+
+
+  this.hasKey = function(key) {
+    return stack[key] ? true : false;
+  };
+
+};
+
+
+
+
+
+// Export module
+
+module.exports = function(filter){
+  filter = filter || function(o){ return o; };
+  return new Stack(filter);
+};
+
+},{"obj":"DOFYxp"}],"objects/Stack":[function(require,module,exports){
+module.exports=require('w0x1FX');
+},{}],"y3F4VZ":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1987,80 +2263,71 @@ var obj = require('obj');
 
 
 
-// Object definition
+// Constructor
 
-var Timer = obj.define(Object, function(options){
-
-
-
-
-
-// Object properties & methods
-
-}, {
+var Constructor = function(){
+  this.start = new Date().getTime();
+};
 
 
 
 
 
-  //
+// Declare object literal
 
-  start: new Date().getTime(),
-
-
-
-
-
-  //
-
-  restart: function(){
-    this.start = new Date().getTime();
-  },
+var timer = {};
 
 
 
 
 
-  //
+// Reset the timer
 
-  elapsed: function () {
-    return new Date().getTime() - this.start;
-  },
-
-
-
-
-
-  //
-
-  secondsElapsed: function() {
-    return Math.floor(this.elapsed()/100)/10;
-  },
+timer.restart = function(){
+  this.start = new Date().getTime();
+};
 
 
 
 
 
-  //
+// Returns time elapsed since timer was started
 
-  lastDelta: undefined,
-  delta: function(){
-    if (!this.lastDelta) this.lastDelta = this.start;
-    var now = new Date().getTime();
-    var delta = now - this.lastDelta;
-    this.lastDelta = now;
-    return delta;
-  },
-
-});
+timer.elapsed = function () {
+  return new Date().getTime() - this.start;
+};
 
 
 
 
 
-// Static methods
+// As above but rounded down to seconds
 
-Timer.str2ms = function(time){
+timer.secondsElapsed = function() {
+  return Math.floor(this.elapsed()/100)/10;
+};
+
+
+
+
+
+// Length of time since delta was last called
+
+timer.delta = function(){
+  if (!this.delta.last) this.delta.last = this.start;
+  var now = new Date().getTime();
+  var delta = now - this.delta.last;
+  this.delta.last = now;
+  return delta;
+};
+
+
+
+
+
+// Static method converts string to ms
+
+module.exports.str2ms = function(time){
   if (typeof(time) == 'string') {
     var ms, lastChar, stripped;
 
@@ -2087,10 +2354,20 @@ Timer.str2ms = function(time){
 
 
 
+// Create definition
+
+var Timer = obj.define(Object, Constructor, timer);
+
+
+
+
+
 
 // Export module
 
 module.exports = Timer;
+
+
 
 },{"obj":"DOFYxp"}],"objects/Timer":[function(require,module,exports){
 module.exports=require('y3F4VZ');
@@ -2186,4 +2463,4 @@ if(!window.cancelAnimationFrame){
   };
 }
 
-},{}]},{},["vARtDh","+KSpms","AEEx6z","P9m7US","DOFYxp","qkALfs","y3F4VZ","dE1Bu5","/JRJU7","HKUJiZ","07NHAF","rB+uTR","S3SzPy","fc2DQ5","k68hkO"])
+},{}]},{},["vARtDh","+KSpms","AEEx6z","P9m7US","DOFYxp","qkALfs","y3F4VZ","w0x1FX","dE1Bu5","h5AJ9p","HKUJiZ","07NHAF","rB+uTR","S3SzPy","NsksZx","gCPbFZ"])

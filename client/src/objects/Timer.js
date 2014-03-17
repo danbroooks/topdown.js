@@ -8,80 +8,71 @@ var obj = require('obj');
 
 
 
-// Object definition
+// Constructor
 
-var Timer = obj.define(Object, function(options){
-
-
-
-
-
-// Object properties & methods
-
-}, {
+var Constructor = function(){
+  this.start = new Date().getTime();
+};
 
 
 
 
 
-  //
+// Declare object literal
 
-  start: new Date().getTime(),
-
-
-
-
-
-  //
-
-  restart: function(){
-    this.start = new Date().getTime();
-  },
+var timer = {};
 
 
 
 
 
-  //
+// Reset the timer
 
-  elapsed: function () {
-    return new Date().getTime() - this.start;
-  },
-
-
-
-
-
-  //
-
-  secondsElapsed: function() {
-    return Math.floor(this.elapsed()/100)/10;
-  },
+timer.restart = function(){
+  this.start = new Date().getTime();
+};
 
 
 
 
 
-  //
+// Returns time elapsed since timer was started
 
-  lastDelta: undefined,
-  delta: function(){
-    if (!this.lastDelta) this.lastDelta = this.start;
-    var now = new Date().getTime();
-    var delta = now - this.lastDelta;
-    this.lastDelta = now;
-    return delta;
-  },
-
-});
+timer.elapsed = function () {
+  return new Date().getTime() - this.start;
+};
 
 
 
 
 
-// Static methods
+// As above but rounded down to seconds
 
-Timer.str2ms = function(time){
+timer.secondsElapsed = function() {
+  return Math.floor(this.elapsed()/100)/10;
+};
+
+
+
+
+
+// Length of time since delta was last called
+
+timer.delta = function(){
+  if (!this.delta.last) this.delta.last = this.start;
+  var now = new Date().getTime();
+  var delta = now - this.delta.last;
+  this.delta.last = now;
+  return delta;
+};
+
+
+
+
+
+// Static method converts string to ms
+
+module.exports.str2ms = function(time){
   if (typeof(time) == 'string') {
     var ms, lastChar, stripped;
 
@@ -108,7 +99,17 @@ Timer.str2ms = function(time){
 
 
 
+// Create definition
+
+var Timer = obj.define(Object, Constructor, timer);
+
+
+
+
+
 
 // Export module
 
 module.exports = Timer;
+
+
