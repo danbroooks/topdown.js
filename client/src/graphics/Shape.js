@@ -8,55 +8,41 @@ var obj = require('obj');
 
 
 
-// Object definition
+// Constructor
 
-var Shape = obj.define(Object, function (options) {
-
-
-
-
-
-  // Constructor
+var Constructor = function(){
 
   throw new Error("This class isn't meant for direct instantiation");
 
-
-
-
-
-// Object properties & methods
-
-}, {
+};
 
 
 
 
 
-  //
+// Declare object literal
 
-  stroke: '698796',
-  fill: '132132',
-  angle: Math.PI*2,
+var shape = {};
 
+shape.stroke = '698796';
 
+shape.fill = '132132';
 
+shape.angle = Math.PI*2;
 
+shape.inShot = function(){
+  return false;
+};
 
-  //
-
-  inShot: function(){
-    return false;
-  },
-
-
+shape.render = function(){};
 
 
 
-  //
 
-  render: function(){}
 
-});
+// Object definition
+
+var Shape = obj.define(Object, Constructor, shape);
 
 
 

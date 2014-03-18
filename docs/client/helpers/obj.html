@@ -39,6 +39,11 @@
               </a>
             
               
+              <a class="source" href="Stack.html">
+                Stack.js
+              </a>
+            
+              
               <a class="source" href="Timer.html">
                 Timer.js
               </a>
@@ -208,14 +213,17 @@ obj.extend = <span class="hljs-function"><span class="hljs-keyword">function</sp
   length = <span class="hljs-built_in">arguments</span>.length,
   deep = <span class="hljs-literal">false</span>;
   <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> target === <span class="hljs-string">"boolean"</span>) {
+    console.log(<span class="hljs-string">'one'</span>);
     deep = target;
     target = <span class="hljs-built_in">arguments</span>[<span class="hljs-number">1</span>] || {};
     i = <span class="hljs-number">2</span>;
   }
   <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> target !== <span class="hljs-string">"object"</span> &amp;&amp; !is.Function(target)) {
+    console.log(<span class="hljs-string">'two'</span>);
     target = {};
   }
   <span class="hljs-keyword">if</span> (length === i) {
+    console.log(<span class="hljs-string">'three'</span>);
     target = <span class="hljs-keyword">this</span>;
     --i;
   }

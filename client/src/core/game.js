@@ -3,7 +3,7 @@
 // Load dependencies
 
 var is = require('is');
-var gameConfig = require('core/gameConfig');
+var GameConfig = require('core/GameConfig');
 var Timer = require('objects/Timer');
 
 
@@ -18,13 +18,10 @@ var game = {};
 
 
 
-// Private variable for game timer
+// Private variable for game config object
 
-var time;
+var gameConfig;
 
-// Expose time elapsed as readonly property
-
-game.__defineGetter__('time', function(){ return time.secondsElapsed(); });
 
 
 
@@ -35,6 +32,40 @@ game.__defineGetter__('time', function(){ return time.secondsElapsed(); });
 game.__defineGetter__('config', function(){ return gameConfig; });
 
 
+
+
+
+// Private variable for game timer
+
+var time;
+
+
+
+
+
+// Expose time elapsed as readonly property
+
+game.__defineGetter__('time', function(){ return time.secondsElapsed(); });
+
+
+
+
+
+// Private variable for graphics object
+
+var gfx;
+
+
+
+
+
+// Setter method for setting private gfx variable, can only be set once.
+
+game.setGraphicsObject = function(gfxObj) {
+  if (!gfx) {
+    gfx = gfxObj;
+  }
+};
 
 
 
@@ -58,6 +89,10 @@ var fps = {
   }
 };
 
+
+
+
+
 // Expose framerate as readonly property
 
 game.__defineGetter__('fps', function(){ return fps.value(); });
@@ -66,13 +101,24 @@ game.__defineGetter__('fps', function(){ return fps.value(); });
 
 
 
+// Expose frame as readonly property
+
+game.__defineGetter__('tick', function(){ return frame; });
+
+
+
+
+
 // Game initializer
 
 var init = function(){
+  gameConfig = GameConfig();
 
-  game.beforeInit();
-  gameConfig.setUp();
-  game.afterInit();
+  game.beforeInit(gameConfig);
+
+  gameConfig.setUp(this);
+
+  game.afterInit(gfx);
 
   time = Timer();
   render();
@@ -81,9 +127,14 @@ var init = function(){
   setInterval(update, 50);
 };
 
+
+
+
+
 // expose as readonly
 
 game.__defineGetter__('init', function(){ return init; });
+
 
 
 
@@ -101,7 +152,7 @@ game.afterInit = function() {};
 // Function called every frame. `game.render` should be defined in project as
 // a way to hook into the main loop
 
-game.render = function(delta) {};
+game.render = function(delta, gfx) {};
 
 var render = function() {
 
@@ -112,7 +163,7 @@ var render = function() {
   fps.set(1000/delta);
 
   // call project render function
-  game.render(delta);
+  game.render(delta, gfx);
 
   frame++;
   requestAnimationFrame(render);
@@ -125,10 +176,10 @@ var render = function() {
 // Function called every 50ms interval. `game.update` should be defined in project as
 // a way to hook into the main loop, like `game.render`
 
-game.update = function() {};
+game.update = function(gfx) {};
 
 var update = function() {
-  game.update();
+  game.update(gfx);
 };
 
 

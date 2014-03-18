@@ -3,14 +3,26 @@
 // Load dependencies
 
 var is = require('is');
-var DOM = require('dom');
-var gfx = require('graphics/gfx');
+var obj = require('obj');
+var Graphics = require('graphics/Graphics');
 
 
 
 
 
-// Object declaration
+// Constructor
+
+var Constructor = function(){
+
+  this.gfx = Graphics();
+
+};
+
+
+
+
+
+// Declare object literal
 
 var gameConfig = {};
 
@@ -18,20 +30,15 @@ var gameConfig = {};
 
 
 
-// Canvas array & primary canvas
+// Make and add canvas to canvas list
 
-var canvases = [];
-
-
-
-
-
-
-// TODO: implement this method.
-
-gameConfig.removeCanvas = function(){
-
+gameConfig.createCanvas = function(name) {
+  this.gfx.createCanvas(name);
 };
+
+// alias
+
+gameConfig.addCanvas = gameConfig.createCanvas;
 
 
 
@@ -39,29 +46,51 @@ gameConfig.removeCanvas = function(){
 
 // Primary canvas, is the active canvas in `gfx` object when game starts
 
-var primaryCanvas;
-
-gameConfig.__defineGetter__('primaryCanvas', function(){ return primaryCanvas; });
-
-// Setter for primary canvas, adds to canvases array if not already in there
-
-gameConfig.__defineSetter__('primaryCanvas', function(canvas) {
-  if (!is.inArray(canvas, canvases)) {
-    canvases.push(canvas);
-  }
-  primaryCanvas = canvas;
-});
-
-
-
-
-
-// Alias method for setting primary canvas
-
-gameConfig.setPrimaryCanvas = function(canvas){
-  gameConfig.primaryCanvas = canvas;
+gameConfig.setPrimaryCanvas = function(canvasName){
+  this.gfx.setPrimaryCanvas(canvasName);
 };
 
+
+
+
+
+// Method to combine the creation and selection of a canvas
+
+gameConfig.addPrimaryCanvas = function(name) {
+  this.createCanvas(name);
+  this.setPrimaryCanvas(name);
+};
+
+
+
+
+
+// Add camera
+
+gameConfig.addCamera = function(name) {
+  this.gfx.addCamera(name);
+};
+
+
+
+
+
+// Set camera
+
+gameConfig.setCamera = function(name) {
+  this.gfx.setCamera(name);
+};
+
+
+
+
+
+// Method to create and set primary camera
+
+gameConfig.addPrimaryCamera = function(name) {
+  this.addCamera(name);
+  this.setCamera(name);
+};
 
 
 
@@ -69,28 +98,32 @@ gameConfig.setPrimaryCanvas = function(canvas){
 
 // Set up method, should create canvases in canvases array.
 
-var hasRun = false;
-gameConfig.setUp = function() {
-  if (hasRun) {
+gameConfig.setUp = function(game) {
+  if (this.setUp.hasRun) {
     console.log('gameConfig.setUp has already run.');
     return false;
   }
 
-  canvases.forEach(function(id){
-    var selector = 'canvas#'+id;
-    gfx.pushCanvas(id, DOM.make(selector));
-  });
+  game.setGraphicsObject(this.gfx);
 
-  // TODO: set primary canvas as `gfx` main canvas
-
-  hasRun = true;
+  this.setUp.hasRun = true;
 };
 
+gameConfig.setUp.hasRun = false;
 
 
 
 
 
-// Expose to other internal modules
+// Create definition
 
-module.exports = gameConfig;
+var GameConfig = obj.define(Object, Constructor, gameConfig);
+
+
+
+
+
+// Export module
+
+module.exports = GameConfig;
+

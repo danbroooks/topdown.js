@@ -19,6 +19,21 @@
           <div id="jump_page">
             
               
+              <a class="source" href="Camera.html">
+                Camera.js
+              </a>
+            
+              
+              <a class="source" href="Canvas.html">
+                Canvas.js
+              </a>
+            
+              
+              <a class="source" href="Graphics.html">
+                Graphics.js
+              </a>
+            
+              
               <a class="source" href="Point.html">
                 Point.js
               </a>
@@ -31,16 +46,6 @@
               
               <a class="source" href="Shape.html">
                 Shape.js
-              </a>
-            
-              
-              <a class="source" href="camera.html">
-                camera.js
-              </a>
-            
-              
-              <a class="source" href="gfx.html">
-                gfx.js
               </a>
             
               
@@ -86,7 +91,8 @@
             
             <div class="content"><div class='highlight'><pre>
 <span class="hljs-keyword">var</span> obj = <span class="hljs-built_in">require</span>(<span class="hljs-string">'obj'</span>);
-<span class="hljs-keyword">var</span> Shape = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Shape'</span>);</pre></div></div>
+<span class="hljs-keyword">var</span> Shape = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Shape'</span>);
+<span class="hljs-keyword">var</span> Point = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Point'</span>);</pre></div></div>
             
         </li>
         
@@ -97,12 +103,54 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Object definition</p>
+              <p>Constructor</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> Polygon = obj.define(Shape, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(options)</span> {</span></pre></div></div>
+<span class="hljs-keyword">var</span> Constructor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span>{</span>
+  <span class="hljs-comment">/*
+  options = obj.extend({
+    points: defaultPoints,
+    position: [20, 20]
+  }, options);
+
+  var proto = this;
+  while ( (proto = Object.getPrototypeOf(proto)) !== null ) {
+    options = obj.extend(proto, options);
+  }
+
+  function checkPoints(points, size) {
+    points.forEach(function(point){
+      if (point.length != size) throw new Error('Array contains incorrect amount of points required ('+size+').');
+    });
+
+    return true;
+  }
+
+  var defaultPoints = [
+    [ 20, 20 ],
+    [ 20, 40 ],
+    [ 40, 40 ],
+    [ 40, 20 ]
+  ];
+
+  var points = options.points;
+  var position = options.position;
+
+  points = (checkPoints(points, 2)) ? points : defaultPoints;
+  this.points = [];
+
+  points.forEach(function(point){
+    this.points.push( Point( point ));
+  });
+
+  this.move(this.centroid().invert());
+  this.move(Point(position));
+  this.position = this.centroid();
+  */</span>
+
+};</pre></div></div>
             
         </li>
         
@@ -113,56 +161,12 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Constructor</p>
+              <p>Declare object literal</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-  options = options || {};
-<span class="hljs-comment">/*
-  function checkPoints(points, size) {
-    points.forEach(function(point){
-      if (point.length != size) throw new Error('Array contains incorrect amount of points required ('+size+').');
-    });
-
-    return true;
-  }
-
-  var _default = {
-    points: [
-      [ 20, 20 ],
-      [ 20, 40 ],
-      [ 40, 40 ],
-      [ 40, 20 ]
-    ],
-    position: [20, 20]
-  };
-
-  var points = ( options.points !== undefined ) ? options.points : _default.points;
-  var position = ( options.position !== undefined ) ? options.position : _default.position;
-
-  this.points = (function(){
-
-    Points = (checkPoints(points, 2)) ? points : [];
-    PointArray = [];
-
-    Points.forEach(function(point){
-      PointArray.push( Point( point ));
-    });
-
-    return PointArray;
-
-  }());
-
-  this.move(this.centroid().invert());
-  this.move(Point(position));
-  this.position = this.centroid();
-
-  this.stroke = options.stroke || this.stroke;
-  this.angle = options.angle || this.angle;
-  this.fill = options.fill || this.fill;
-
-*/</span></pre></div></div>
+<span class="hljs-keyword">var</span> polygon = {};</pre></div></div>
             
         </li>
         
@@ -173,12 +177,45 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Object properties &amp; methods</p>
+              <p>Iterates over points. If at least one of a shape’s points are in shot, then draw.
+If they’re all less than 0 or greater than canvas edge on x or y axis, do not draw.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-}, {</pre></div></div>
+polygon.inShot = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  <span class="hljs-comment">/*
+  canvas_size = topdown.gfx.getCanvasSize();
+
+  var modx = topdown.gfx.camera.mod.x;
+      mody = topdown.gfx.camera.mod.y;
+
+  var viewport = {
+    x:{
+      lt: true, gt: true,
+      min: modx(0),
+      max: modx(canvas_size.x)
+    },
+    y: {
+      lt: true, gt: true,
+      min: mody(0),
+      max: mody(canvas_size.y)
+    }
+  };
+
+  for (var i = 0; i &lt; this.points.length; i++) {
+    if(this.points[i].inShot()) return true;
+
+    var points = this.points[i];
+
+    viewport.x.lt = ( viewport.x.lt &amp;&amp; (points.x &lt; viewport.x.min) ) ? true : false;
+    viewport.x.gt = ( viewport.x.gt &amp;&amp; (points.x &gt; viewport.x.max) ) ? true : false;
+    viewport.y.lt = ( viewport.y.lt &amp;&amp; (points.y &lt; viewport.y.min) ) ? true : false;
+    viewport.y.gt = ( viewport.y.gt &amp;&amp; (points.y &gt; viewport.y.max) ) ? true : false;
+  }
+
+  if (viewport.x.lt || viewport.y.lt || viewport.x.gt || viewport.y.gt) return false;
+  */</span></pre></div></div>
             
         </li>
         
@@ -189,45 +226,9 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Iterates over points. If at least one of a shape’s points are in shot, then draw.
-If they’re all less than 0 or greater than canvas edge on x or y axis, do not draw.</p>
+              <p>consider case when points are off shot but shape is not</p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>
-  inShot: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
-    <span class="hljs-comment">/*
-    canvas_size = topdown.gfx.getCanvasSize();
-
-    var modx = topdown.gfx.camera.mod.x;
-        mody = topdown.gfx.camera.mod.y;
-
-    var viewport = {
-      x:{
-        lt: true, gt: true,
-        min: modx(0),
-        max: modx(canvas_size.x)
-      },
-      y: {
-        lt: true, gt: true,
-        min: mody(0),
-        max: mody(canvas_size.y)
-      }
-    };
-
-    for (var i = 0; i &lt; this.points.length; i++) {
-      if(this.points[i].inShot()) return true;
-
-      var points = this.points[i];
-
-      viewport.x.lt = ( viewport.x.lt &amp;&amp; (points.x &lt; viewport.x.min) ) ? true : false;
-      viewport.x.gt = ( viewport.x.gt &amp;&amp; (points.x &gt; viewport.x.max) ) ? true : false;
-      viewport.y.lt = ( viewport.y.lt &amp;&amp; (points.y &lt; viewport.y.min) ) ? true : false;
-      viewport.y.gt = ( viewport.y.gt &amp;&amp; (points.y &gt; viewport.y.max) ) ? true : false;
-    }
-
-    if (viewport.x.lt || viewport.y.lt || viewport.x.gt || viewport.y.gt) return false;
-    */</span></pre></div></div>
             
         </li>
         
@@ -238,7 +239,9 @@ If they’re all less than 0 or greater than canvas edge on x or y axis, do not 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>consider case when points are off shot but shape is not</p>
+              <p>More complex tests arise when a shape’s points are out of the bounds
+of camera, but part of the shape will still fall in shot, ie a rotated
+square or a triangle.</p>
 
             </div>
             
@@ -251,9 +254,9 @@ If they’re all less than 0 or greater than canvas edge on x or y axis, do not 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>More complex tests arise when a shape’s points are out of the bounds
-of camera, but part of the shape will still fall in shot, ie a rotated
-square or a triangle.</p>
+              <p>  denom = ((LineB2.Y – LineB1.Y) <em> (LineA2.X – LineA1.X)) –
+    ((LineB2.X – lineB1.X) </em> (LineA2.Y - LineA1.Y))
+  return denom != 0</p>
 
             </div>
             
@@ -266,9 +269,8 @@ square or a triangle.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>  denom = ((LineB2.Y – LineB1.Y) <em> (LineA2.X – LineA1.X)) –
-    ((LineB2.X – lineB1.X) </em> (LineA2.Y - LineA1.Y))
-  return denom != 0</p>
+              <p>alternatively generate bounding sphere and use that to calculate wether
+or not to draw shape, less exact but possibly more efficient.</p>
 
             </div>
             
@@ -281,8 +283,7 @@ square or a triangle.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>alternatively generate bounding sphere and use that to calculate wether
-or not to draw shape, less exact but possibly more efficient.</p>
+              <p><a href="http://devmag.org.za/2009/04/13/basic-collision-detection-in-2d-part-1/">http://devmag.org.za/2009/04/13/basic-collision-detection-in-2d-part-1/</a></p>
 
             </div>
             
@@ -295,7 +296,8 @@ or not to draw shape, less exact but possibly more efficient.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p><a href="http://devmag.org.za/2009/04/13/basic-collision-detection-in-2d-part-1/">http://devmag.org.za/2009/04/13/basic-collision-detection-in-2d-part-1/</a></p>
+              <p>see also:
+  <a href="https://github.com/robhawkes/rawkets/blob/master/public/js/Game.js#L440">https://github.com/robhawkes/rawkets/blob/master/public/js/Game.js#L440</a></p>
 
             </div>
             
@@ -308,10 +310,13 @@ or not to draw shape, less exact but possibly more efficient.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <p>see also:
-  <a href="https://github.com/robhawkes/rawkets/blob/master/public/js/Game.js#L440">https://github.com/robhawkes/rawkets/blob/master/public/js/Game.js#L440</a></p>
+              <p>Without a final algorithm it’s worth rendering this
+content anyway incase it overlaps into the viewport.</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+};</pre></div></div>
             
         </li>
         
@@ -322,13 +327,33 @@ or not to draw shape, less exact but possibly more efficient.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>Without a final algorithm it’s worth rendering this
-content anyway incase it overlaps into the viewport.</p>
+              <p>Calls graphics method to render shape</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-  },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>
+polygon.render = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(gfx)</span> {</span>
+  <span class="hljs-comment">/*
+  if (!this.inShot()) return false;
+
+  var ctx = gfx.getContext();
+  var mod = gfx.camera.mod;
+
+  ctx.fillStyle = this.fill;
+  ctx.strokeStyle = this.stroke;
+  ctx.beginPath();
+
+  for(i = 0; i &lt; this.points.length; i++) {
+    var point = this.points[i];
+    var func = i ? 'lineTo' : 'moveTo';
+    ctx[func](mod.x(point.x), mod.y(point.y));
+  }
+
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  */</span>
+};</pre></div></div>
             
         </li>
         
@@ -339,34 +364,34 @@ content anyway incase it overlaps into the viewport.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <p>Calls graphics method to render shape</p>
+              <p>Iterates over points to move them by vector supplied in argument</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-  render: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
-    <span class="hljs-comment">/*
-    if (!this.inShot()) return false;
+polygon.move = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+  <span class="hljs-comment">/*
+  var args = arguments;
+  var vector;
 
-    var
-    ctx = topdown.gfx.getContext(),
-    mod = topdown.gfx.camera.mod;
+  if(!args.length || args.length &gt; 2) return false;
+  if(args.length == 1) vector = args[0];
 
-    ctx.fillStyle = this.fill;
-    ctx.strokeStyle = this.stroke;
-    ctx.beginPath();
+  if(args.length == 2) {
+    if( isNaN( args[0] ) || isNaN( args[1] ) ) return false;
+    vector = Point(args);
+  }
 
-    for(i = 0; i &lt; this.points.length; i++) {
-      var point = this.points[i];
-      var func = i ? 'lineTo' : 'moveTo';
-      ctx[func](mod.x(point.x), mod.y(point.y));
-    }
+  if (false === vector instanceof Point)
+    throw new Error('You can only move a point by the vector of another Point.');
 
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-    */</span>
-  },</pre></div></div>
+  this.points.forEach(function(point){
+    point.add(vector);
+  });
+
+  this.position = this.centroid();
+  */</span>
+};</pre></div></div>
             
         </li>
         
@@ -377,36 +402,16 @@ content anyway incase it overlaps into the viewport.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <p>Iterates over points to move them by vector supplied in argument</p>
-
+              
             </div>
             
             <div class="content"><div class='highlight'><pre>
-  move: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
-    <span class="hljs-comment">/*
-    var args = arguments;
-    var vector;
-
-    if(!args.length || args.length &gt; 2) return false;
-    if(args.length == 1) vector = args[0];
-
-    if(args.length == 2) {
-      if( isNaN( args[0] ) || isNaN( args[1] ) ) return false;
-      vector = Point(args);
-    }
-
-    if (false === vector instanceof Point)
-      throw new Error('You can only move a point by the vector of another Point.');
-
-    this.points.forEach(function(point){
-      point.add(vector);
-    });
-
-    this.position = this.centroid();
-
-    topdown.gfx.refreshBackground = true;
-    */</span>
-  },</pre></div></div>
+polygon.teleport = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(point)</span> {</span>
+  <span class="hljs-comment">/*
+  var current = this.centroid();
+  this.move(point.sub(current));
+  */</span>
+};</pre></div></div>
             
         </li>
         
@@ -417,16 +422,26 @@ content anyway incase it overlaps into the viewport.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              
+              <p>Iterates over points to rotate them by angle supplied in argument</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
-  teleport: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(point)</span> {</span>
-    <span class="hljs-comment">/*
-    var current = this.centroid();
-    this.move(point.sub(current));
-    */</span>
-  },</pre></div></div>
+polygon.rotate = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(theta)</span> {</span>
+  <span class="hljs-comment">/*
+  var axis = this.position;
+
+  this.points.forEach(function(point){
+    point.rotate(axis, theta);
+  });
+
+  angle = (this.angle + theta) % (Math.PI*2);
+
+  while(angle &lt; 0) angle += (Math.PI*2);
+
+  this.angle = angle;
+  */</span>
+};</pre></div></div>
             
         </li>
         
@@ -437,28 +452,22 @@ content anyway incase it overlaps into the viewport.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <p>Iterates over points to rotate them by angle supplied in argument</p>
-
+              
             </div>
             
             <div class="content"><div class='highlight'><pre>
-  rotate: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(theta)</span> {</span>
-    <span class="hljs-comment">/*
-    var axis = this.position;
+polygon.setAngle = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(angle)</span> {</span>
+  <span class="hljs-comment">/*
+  var axis = this.position;
+  var theta = angle - this.angle;
 
-    this.points.forEach(function(point){
-      point.rotate(axis, theta);
-    });
+  this.points.forEach(function(point){
+    point.rotate(axis, theta);
+  });
 
-    angle = (this.angle + theta) % (Math.PI*2);
-
-    while(angle &lt; 0) angle += (Math.PI*2);
-
-    this.angle = angle;
-
-    topdown.gfx.refreshBackground = true;
-    */</span>
-  },</pre></div></div>
+  this.angle = angle;
+  */</span>
+};</pre></div></div>
             
         </li>
         
@@ -469,24 +478,41 @@ content anyway incase it overlaps into the viewport.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              
+              <p>Move into collision module?</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
-  setAngle: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(angle)</span> {</span>
-    <span class="hljs-comment">/*
-    var axis = this.position;
-    var theta = angle - this.angle;
+polygon.containsPoint = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span>{</span>
+  <span class="hljs-comment">/*
+  var
+  counter = 0,
+  x_inter,
+  points = this.points;
 
-    this.points.forEach(function(point){
-      point.rotate(axis, theta);
-    });
+  var p1 = points[0];
+  for (var i = 1, l = points.length; i &lt;= l; i++) {
+    var p2 = points[i%l];
 
-    this.angle = angle;
+    if (
+      point.y &gt; Math.min(p1.y, p2.y) &amp;&amp;
+      point.y &lt;= Math.max(p1.y, p2.y) &amp;&amp;
+      point.x &lt;= Math.max(p1.x, p2.x) &amp;&amp;
+      p1.y != p2.y
+    ) {
+      x_inter = (point.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
+      if ( p1.x == p2.x || point.x &lt;= x_inter) {
+        counter++;
+      }
+    }
+    p1 = p2;
+  }
 
-    topdown.gfx.refreshBackground = true;
-    */</span>
-  },</pre></div></div>
+  return ( counter % 2 == 1 );
+  */</span>
+};
+
+polygon.pointInPolygon = pointInPolygon.containsPoint;</pre></div></div>
             
         </li>
         
@@ -497,38 +523,51 @@ content anyway incase it overlaps into the viewport.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              
+              <p>Collision algorithm.
+Move into collision module?</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
-  pointInPolygon: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span>{</span>
-    <span class="hljs-comment">/*
-    var
-    counter = 0,
-    x_inter,
-    points = this.points;
+polygon.detectCollision = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+<span class="hljs-comment">/*
+  var args = arguments;
 
-    var p1 = points[0];
-    for (var i = 1, l = points.length; i &lt;= l; i++) {
-      var p2 = points[i%l];
+  if(args.length != 2) {
+    throw new Error('Invalid number of arguments provided.');
+  } else if ( !args[0] instanceof Point || !args[1] instanceof Point ) {
+    throw new Error('Function requires two points to detect collision.');
+  }
 
-      if (
-        point.y &gt; Math.min(p1.y, p2.y) &amp;&amp;
-        point.y &lt;= Math.max(p1.y, p2.y) &amp;&amp;
-        point.x &lt;= Math.max(p1.x, p2.x) &amp;&amp;
-        p1.y != p2.y
-      ) {
-        x_inter = (point.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
-        if ( p1.x == p2.x || point.x &lt;= x_inter) {
-          counter++;
-        }
-      }
-      p1 = p2;
-    }
+  var
+  B1 = args[0],
+  B2 = args[1],
+  collision = false,
+  points = this.points;
 
-    return ( counter % 2 == 1 );
-    */</span>
-  },</pre></div></div>
+  if (this.pointInPolygon(B1) || this.pointInPolygon(B2)) {
+    return true;
+  }
+
+  for(var i = 0, nPts = points.length; i &lt; nPts; i++) {
+    var this_point = points[i];
+    var next_point = points[(i+1)%nPts];
+
+    var A1 = {
+      x: this_point.x,
+      y: this_point.y
+    },
+    A2 = {
+      x: next_point.x,
+      y: next_point.y
+    };
+
+    collision = ( collision || this.doesLineIntersect(A1, A2, B1, B2) );
+  }
+
+  return collision;
+*/</span>
+};</pre></div></div>
             
         </li>
         
@@ -539,50 +578,24 @@ content anyway incase it overlaps into the viewport.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
-              <p>Collision algorithm</p>
+              <p>Move into collision module?</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-  detectCollision: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
-    <span class="hljs-comment">/*
-    var args = arguments;
+polygon.getLineIntersectionPoint = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(A1, A2, B1, B2)</span> {</span>
+  <span class="hljs-comment">/*
+  var s1_x, s1_y, s2_x, s2_y;
+  s1_x = A2.x - A1.x;
+  s1_y = A2.y - A1.y;
+  s2_x = B2.x - B1.x;
+  s2_y = B2.y - B1.y;
+  var s, t;
+  s = (-s1_y * (A1.x - B1.x) + s1_x * (A1.y - B1.y)) / (-s2_x * s1_y + s1_x * s2_y);
+  t = ( s2_x * (A1.y - B1.y) - s2_y * (A1.x - B1.x)) / (-s2_x * s1_y + s1_x * s2_y);
 
-    if(args.length != 2) {
-      throw new Error('Invalid number of arguments provided.');
-    } else if ( !args[0] instanceof Point || !args[1] instanceof Point ) {
-      throw new Error('Function requires two points to detect collision.');
-    }
-
-    var
-    B1 = args[0],
-    B2 = args[1],
-    collision = false,
-    points = this.points;
-
-    if (this.pointInPolygon(B1) || this.pointInPolygon(B2)) {
-      return true;
-    }
-
-    for(var i = 0, nPts = points.length; i &lt; nPts; i++) {
-      var this_point = points[i];
-      var next_point = points[(i+1)%nPts];
-
-      var A1 = {
-        x: this_point.x,
-        y: this_point.y
-      },
-      A2 = {
-        x: next_point.x,
-        y: next_point.y
-      };
-
-      collision = ( collision || this.doesLineIntersect(A1, A2, B1, B2) );
-    }
-
-    return collision;
-    */</span>
-  },</pre></div></div>
+  if (s &gt;= 0 &amp;&amp; s &lt;= 1 &amp;&amp; t &gt;= 0 &amp;&amp; t &lt;= 1) {
+</span></pre></div></div>
             
         </li>
         
@@ -593,23 +606,15 @@ content anyway incase it overlaps into the viewport.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
-              
+              <p>Collision detected</p>
+
             </div>
             
-            <div class="content"><div class='highlight'><pre>
-  getLineIntersectionPoint: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(A1, A2, B1, B2)</span> {</span>
-    <span class="hljs-comment">/*
-    var s1_x, s1_y, s2_x, s2_y;
-    s1_x = A2.x - A1.x;
-    s1_y = A2.y - A1.y;
-    s2_x = B2.x - B1.x;
-    s2_y = B2.y - B1.y;
-    var s, t;
-    s = (-s1_y * (A1.x - B1.x) + s1_x * (A1.y - B1.y)) / (-s2_x * s1_y + s1_x * s2_y);
-    t = ( s2_x * (A1.y - B1.y) - s2_y * (A1.x - B1.x)) / (-s2_x * s1_y + s1_x * s2_y);
-
-    if (s &gt;= 0 &amp;&amp; s &lt;= 1 &amp;&amp; t &gt;= 0 &amp;&amp; t &lt;= 1) {
-</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">return</span> Point({
+      x: A1.x + (t * s1_x),
+      y: A1.y + (t * s1_y)
+    });
+  }</pre></div></div>
             
         </li>
         
@@ -620,15 +625,13 @@ content anyway incase it overlaps into the viewport.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              <p>Collision detected</p>
+              <p>No collision</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">return</span> Point({
-        x: A1.x + (t * s1_x),
-        y: A1.y + (t * s1_y)
-      });
-    }</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  return false;
+  */
+};</pre></div></div>
             
         </li>
         
@@ -639,13 +642,11 @@ content anyway incase it overlaps into the viewport.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
-              <p>No collision</p>
-
+              
             </div>
             
-            <div class="content"><div class='highlight'><pre>    return false;
-    */
-  },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>
+polygon.doesLineIntersect = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(A1, A2, B1, B2)</span> {</span></pre></div></div>
             
         </li>
         
@@ -656,13 +657,11 @@ content anyway incase it overlaps into the viewport.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
-              
+              <p>return this.getLineIntersectionPoint(A1, A2, B1, B2) !== false;</p>
+
             </div>
             
-            <div class="content"><div class='highlight'><pre>
-  doesLineIntersect: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(A1, A2, B1, B2)</span> {</span>
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getLineIntersectionPoint(A1, A2, B1, B2) !== <span class="hljs-literal">false</span>;
-  },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>};</pre></div></div>
             
         </li>
         
@@ -679,28 +678,28 @@ TODO: doesnt calculate with only two points (ie straight line)</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>
-  centroid: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
-    <span class="hljs-comment">/*
-    var pts  = this.points;
-    var nPts = pts.length;
-    var x = 0; var y = 0;
-    var f;
-    var j = nPts - 1;
-    var p1; var p2;
+polygon.centroid = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  <span class="hljs-comment">/*
+  var pts  = this.points;
+  var nPts = pts.length;
+  var x = 0; var y = 0;
+  var f;
+  var j = nPts - 1;
+  var p1; var p2;
 
-    for (var i = 0; i &lt; nPts; j = i++) {
-      p1 = pts[i];
-      p2 = pts[j];
-      f  = p1.x * p2.y - p2.x * p1.y;
-      x += (p1.x + p2.x) * f;
-      y += (p1.y + p2.y) * f;
-    }
+  for (var i = 0; i &lt; nPts; j = i++) {
+    p1 = pts[i];
+    p2 = pts[j];
+    f  = p1.x * p2.y - p2.x * p1.y;
+    x += (p1.x + p2.x) * f;
+    y += (p1.y + p2.y) * f;
+  }
 
-    f = this.area() * 6;
+  f = this.area() * 6;
 
-    return Point([ x/f, y/f ]);
-    */</span>
-  },</pre></div></div>
+  return Point([ x/f, y/f ]);
+  */</span>
+};</pre></div></div>
             
         </li>
         
@@ -716,27 +715,25 @@ TODO: doesnt calculate with only two points (ie straight line)</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>
-  area: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
-    <span class="hljs-comment">/*
-    var
-    area = 0,
-    pts = this.points,
-    p1, p2;
+polygon.area = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  <span class="hljs-comment">/*
+  var
+  area = 0,
+  pts = this.points,
+  p1, p2;
 
-    for (var i=0, nPts = pts.length, j = nPts - 1; i &lt; nPts; j = i++) {
-      p1 = pts[i];
-      p2 = pts[j];
-      area += p1.x * p2.y;
-      area -= p1.y * p2.x;
-    }
+  for (var i=0, nPts = pts.length, j = nPts - 1; i &lt; nPts; j = i++) {
+    p1 = pts[i];
+    p2 = pts[j];
+    area += p1.x * p2.y;
+    area -= p1.y * p2.x;
+  }
 
-    area /= 2;
+  area /= 2;
 
-    return area;
-    */</span>
-  },
-
-});</pre></div></div>
+  return area;
+  */</span>
+};</pre></div></div>
             
         </li>
         
@@ -746,6 +743,22 @@ TODO: doesnt calculate with only two points (ie straight line)</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>Object definition</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> Polygon = obj.define(Shape, Constructor, polygon);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>Expose to other internal modules</p>
 

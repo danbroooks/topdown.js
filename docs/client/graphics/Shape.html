@@ -19,6 +19,21 @@
           <div id="jump_page">
             
               
+              <a class="source" href="Camera.html">
+                Camera.js
+              </a>
+            
+              
+              <a class="source" href="Canvas.html">
+                Canvas.js
+              </a>
+            
+              
+              <a class="source" href="Graphics.html">
+                Graphics.js
+              </a>
+            
+              
               <a class="source" href="Point.html">
                 Point.js
               </a>
@@ -31,16 +46,6 @@
               
               <a class="source" href="Shape.html">
                 Shape.js
-              </a>
-            
-              
-              <a class="source" href="camera.html">
-                camera.js
-              </a>
-            
-              
-              <a class="source" href="gfx.html">
-                gfx.js
               </a>
             
               
@@ -96,12 +101,16 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Object definition</p>
+              <p>Constructor</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> Shape = obj.define(<span class="hljs-built_in">Object</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(options)</span> {</span></pre></div></div>
+<span class="hljs-keyword">var</span> Constructor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+
+  <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"This class isn't meant for direct instantiation"</span>);
+
+};</pre></div></div>
             
         </li>
         
@@ -112,12 +121,24 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Constructor</p>
+              <p>Declare object literal</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-  <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"This class isn't meant for direct instantiation"</span>);</pre></div></div>
+<span class="hljs-keyword">var</span> shape = {};
+
+shape.stroke = <span class="hljs-string">'698796'</span>;
+
+shape.fill = <span class="hljs-string">'132132'</span>;
+
+shape.angle = <span class="hljs-built_in">Math</span>.PI*<span class="hljs-number">2</span>;
+
+shape.inShot = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+};
+
+shape.render = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>};</pre></div></div>
             
         </li>
         
@@ -128,12 +149,12 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Object properties &amp; methods</p>
+              <p>Object definition</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-}, {</pre></div></div>
+<span class="hljs-keyword">var</span> Shape = obj.define(<span class="hljs-built_in">Object</span>, Constructor, shape);</pre></div></div>
             
         </li>
         
@@ -143,57 +164,6 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>
-  stroke: <span class="hljs-string">'698796'</span>,
-  fill: <span class="hljs-string">'132132'</span>,
-  angle: <span class="hljs-built_in">Math</span>.PI*<span class="hljs-number">2</span>,</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-7">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
-              </div>
-              
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>
-  inShot: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
-    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-  },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-8">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
-              </div>
-              
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>
-  render: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>}
-
-});</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-9">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>Expose to other internal modules</p>
 

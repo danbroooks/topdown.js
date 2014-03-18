@@ -77,14 +77,17 @@ obj.extend = function(){
   length = arguments.length,
   deep = false;
   if (typeof target === "boolean") {
+    console.log('one');
     deep = target;
     target = arguments[1] || {};
     i = 2;
   }
   if (typeof target !== "object" && !is.Function(target)) {
+    console.log('two');
     target = {};
   }
   if (length === i) {
+    console.log('three');
     target = this;
     --i;
   }

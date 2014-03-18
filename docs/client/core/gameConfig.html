@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>gameConfig.js</title>
+  <title>GameConfig.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -19,13 +19,13 @@
           <div id="jump_page">
             
               
-              <a class="source" href="game.html">
-                game.js
+              <a class="source" href="GameConfig.html">
+                GameConfig.js
               </a>
             
               
-              <a class="source" href="gameConfig.html">
-                gameConfig.js
+              <a class="source" href="game.html">
+                game.js
               </a>
             
           </div>
@@ -36,7 +36,7 @@
         
           <li id="title">
               <div class="annotation">
-                  <h1>gameConfig.js</h1>
+                  <h1>GameConfig.js</h1>
               </div>
           </li>
         
@@ -66,8 +66,8 @@
             
             <div class="content"><div class='highlight'><pre>
 <span class="hljs-keyword">var</span> is = <span class="hljs-built_in">require</span>(<span class="hljs-string">'is'</span>);
-<span class="hljs-keyword">var</span> DOM = <span class="hljs-built_in">require</span>(<span class="hljs-string">'dom'</span>);
-<span class="hljs-keyword">var</span> gfx = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/gfx'</span>);</pre></div></div>
+<span class="hljs-keyword">var</span> obj = <span class="hljs-built_in">require</span>(<span class="hljs-string">'obj'</span>);
+<span class="hljs-keyword">var</span> Graphics = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Graphics'</span>);</pre></div></div>
             
         </li>
         
@@ -78,12 +78,16 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Object declaration</p>
+              <p>Constructor</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> gameConfig = {};</pre></div></div>
+<span class="hljs-keyword">var</span> Constructor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+
+  <span class="hljs-keyword">this</span>.gfx = Graphics();
+
+};</pre></div></div>
             
         </li>
         
@@ -94,12 +98,12 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Canvas array &amp; primary canvas</p>
+              <p>Declare object literal</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> canvases = [];</pre></div></div>
+<span class="hljs-keyword">var</span> gameConfig = {};</pre></div></div>
             
         </li>
         
@@ -110,13 +114,13 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>TODO: implement this method.</p>
+              <p>Make and add canvas to canvas list</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-gameConfig.removeCanvas = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
-
+gameConfig.createCanvas = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span> {</span>
+  <span class="hljs-keyword">this</span>.gfx.createCanvas(name);
 };</pre></div></div>
             
         </li>
@@ -128,14 +132,12 @@ gameConfig.removeCanvas = <span class="hljs-function"><span class="hljs-keyword"
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Primary canvas, is the active canvas in <code>gfx</code> object when game starts</p>
+              <p>alias</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> primaryCanvas;
-
-gameConfig.__defineGetter__(<span class="hljs-string">'primaryCanvas'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span> <span class="hljs-keyword">return</span> primaryCanvas; });</pre></div></div>
+gameConfig.addCanvas = gameConfig.createCanvas;</pre></div></div>
             
         </li>
         
@@ -146,17 +148,14 @@ gameConfig.__defineGetter__(<span class="hljs-string">'primaryCanvas'</span>, <s
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>Setter for primary canvas, adds to canvases array if not already in there</p>
+              <p>Primary canvas, is the active canvas in <code>gfx</code> object when game starts</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-gameConfig.__defineSetter__(<span class="hljs-string">'primaryCanvas'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(canvas)</span> {</span>
-  <span class="hljs-keyword">if</span> (!is.inArray(canvas, canvases)) {
-    canvases.push(canvas);
-  }
-  primaryCanvas = canvas;
-});</pre></div></div>
+gameConfig.setPrimaryCanvas = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(canvasName)</span>{</span>
+  <span class="hljs-keyword">this</span>.gfx.setPrimaryCanvas(canvasName);
+};</pre></div></div>
             
         </li>
         
@@ -167,13 +166,14 @@ gameConfig.__defineSetter__(<span class="hljs-string">'primaryCanvas'</span>, <s
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>Alias method for setting primary canvas</p>
+              <p>Method to combine the creation and selection of a canvas</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-gameConfig.setPrimaryCanvas = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(canvas)</span>{</span>
-  gameConfig.primaryCanvas = canvas;
+gameConfig.addPrimaryCanvas = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span> {</span>
+  <span class="hljs-keyword">this</span>.createCanvas(name);
+  <span class="hljs-keyword">this</span>.setPrimaryCanvas(name);
 };</pre></div></div>
             
         </li>
@@ -185,22 +185,14 @@ gameConfig.setPrimaryCanvas = <span class="hljs-function"><span class="hljs-keyw
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>Set up method, should create canvases in canvases array.</p>
+              <p>Add camera</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> hasRun = <span class="hljs-literal">false</span>;
-gameConfig.setUp = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
-  <span class="hljs-keyword">if</span> (hasRun) {
-    console.log(<span class="hljs-string">'gameConfig.setUp has already run.'</span>);
-    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-  }
-
-  canvases.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(id)</span>{</span>
-    <span class="hljs-keyword">var</span> selector = <span class="hljs-string">'canvas#'</span>+id;
-    gfx.pushCanvas(id, DOM.make(selector));
-  });</pre></div></div>
+gameConfig.addCamera = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span> {</span>
+  <span class="hljs-keyword">this</span>.gfx.addCamera(name);
+};</pre></div></div>
             
         </li>
         
@@ -211,12 +203,13 @@ gameConfig.setUp = <span class="hljs-function"><span class="hljs-keyword">functi
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>TODO: set primary canvas as <code>gfx</code> main canvas</p>
+              <p>Set camera</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-  hasRun = <span class="hljs-literal">true</span>;
+gameConfig.setCamera = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span> {</span>
+  <span class="hljs-keyword">this</span>.gfx.setCamera(name);
 };</pre></div></div>
             
         </li>
@@ -228,12 +221,74 @@ gameConfig.setUp = <span class="hljs-function"><span class="hljs-keyword">functi
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p>Expose to other internal modules</p>
+              <p>Method to create and set primary camera</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-module.exports = gameConfig;</pre></div></div>
+gameConfig.addPrimaryCamera = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span> {</span>
+  <span class="hljs-keyword">this</span>.addCamera(name);
+  <span class="hljs-keyword">this</span>.setCamera(name);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>Set up method, should create canvases in canvases array.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+gameConfig.setUp = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(game)</span> {</span>
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.setUp.hasRun) {
+    console.log(<span class="hljs-string">'gameConfig.setUp has already run.'</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  }
+
+  game.setGraphicsObject(<span class="hljs-keyword">this</span>.gfx);
+
+  <span class="hljs-keyword">this</span>.setUp.hasRun = <span class="hljs-literal">true</span>;
+};
+
+gameConfig.setUp.hasRun = <span class="hljs-literal">false</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Create definition</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> GameConfig = obj.define(<span class="hljs-built_in">Object</span>, Constructor, gameConfig);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Export module</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+module.exports = GameConfig;</pre></div></div>
             
         </li>
         

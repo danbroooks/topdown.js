@@ -39,6 +39,11 @@
               </a>
             
               
+              <a class="source" href="Stack.html">
+                Stack.js
+              </a>
+            
+              
               <a class="source" href="Timer.html">
                 Timer.js
               </a>
@@ -101,12 +106,14 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Object definition</p>
+              <p>Constructor</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> Timer = obj.define(<span class="hljs-built_in">Object</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span>{</span></pre></div></div>
+<span class="hljs-keyword">var</span> Constructor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+  <span class="hljs-keyword">this</span>.start = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().getTime();
+};</pre></div></div>
             
         </li>
         
@@ -117,12 +124,12 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Object properties &amp; methods</p>
+              <p>Declare object literal</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-}, {</pre></div></div>
+<span class="hljs-keyword">var</span> timer = {};</pre></div></div>
             
         </li>
         
@@ -133,11 +140,14 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              
+              <p>Reset the timer</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
-  start: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().getTime(),</pre></div></div>
+timer.restart = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+  <span class="hljs-keyword">this</span>.start = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().getTime();
+};</pre></div></div>
             
         </li>
         
@@ -148,13 +158,14 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              
+              <p>Returns time elapsed since timer was started</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
-  restart: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
-    <span class="hljs-keyword">this</span>.start = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().getTime();
-  },</pre></div></div>
+timer.elapsed = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().getTime() - <span class="hljs-keyword">this</span>.start;
+};</pre></div></div>
             
         </li>
         
@@ -165,13 +176,14 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              
+              <p>As above but rounded down to seconds</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
-  elapsed: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().getTime() - <span class="hljs-keyword">this</span>.start;
-  },</pre></div></div>
+timer.secondsElapsed = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.floor(<span class="hljs-keyword">this</span>.elapsed()/<span class="hljs-number">100</span>)/<span class="hljs-number">10</span>;
+};</pre></div></div>
             
         </li>
         
@@ -182,13 +194,18 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              
+              <p>Length of time since delta was last called</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
-  secondsElapsed: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
-    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.floor(<span class="hljs-keyword">this</span>.elapsed()/<span class="hljs-number">100</span>)/<span class="hljs-number">10</span>;
-  },</pre></div></div>
+timer.delta = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.delta.last) <span class="hljs-keyword">this</span>.delta.last = <span class="hljs-keyword">this</span>.start;
+  <span class="hljs-keyword">var</span> now = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().getTime();
+  <span class="hljs-keyword">var</span> delta = now - <span class="hljs-keyword">this</span>.delta.last;
+  <span class="hljs-keyword">this</span>.delta.last = now;
+  <span class="hljs-keyword">return</span> delta;
+};</pre></div></div>
             
         </li>
         
@@ -199,36 +216,12 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>
-  lastDelta: <span class="hljs-literal">undefined</span>,
-  delta: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.lastDelta) <span class="hljs-keyword">this</span>.lastDelta = <span class="hljs-keyword">this</span>.start;
-    <span class="hljs-keyword">var</span> now = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().getTime();
-    <span class="hljs-keyword">var</span> delta = now - <span class="hljs-keyword">this</span>.lastDelta;
-    <span class="hljs-keyword">this</span>.lastDelta = now;
-    <span class="hljs-keyword">return</span> delta;
-  },
-
-});</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-10">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
-              </div>
-              <p>Static methods</p>
+              <p>Static method converts string to ms</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-Timer.str2ms = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(time)</span>{</span>
+module.exports.str2ms = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(time)</span>{</span>
   <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span>(time) == <span class="hljs-string">'string'</span>) {
     <span class="hljs-keyword">var</span> ms, lastChar, stripped;
 
@@ -241,11 +234,11 @@ Timer.str2ms = <span class="hljs-function"><span class="hljs-keyword">function</
         </li>
         
         
-        <li id="section-11">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>ms is ignored because final number is in ms anyway</p>
 
@@ -262,6 +255,22 @@ Timer.str2ms = <span class="hljs-function"><span class="hljs-keyword">function</
     <span class="hljs-keyword">return</span> time;
   }
 };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Create definition</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> Timer = obj.define(<span class="hljs-built_in">Object</span>, Constructor, timer);</pre></div></div>
             
         </li>
         

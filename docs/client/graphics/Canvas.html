@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>gfx.js</title>
+  <title>Canvas.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -17,6 +17,21 @@
           <a class="small" href="javascript:void(0);">+</a>
           <div id="jump_wrapper">
           <div id="jump_page">
+            
+              
+              <a class="source" href="Camera.html">
+                Camera.js
+              </a>
+            
+              
+              <a class="source" href="Canvas.html">
+                Canvas.js
+              </a>
+            
+              
+              <a class="source" href="Graphics.html">
+                Graphics.js
+              </a>
             
               
               <a class="source" href="Point.html">
@@ -34,16 +49,6 @@
               </a>
             
               
-              <a class="source" href="camera.html">
-                camera.js
-              </a>
-            
-              
-              <a class="source" href="gfx.html">
-                gfx.js
-              </a>
-            
-              
               <a class="source" href="trig.html">
                 trig.js
               </a>
@@ -56,7 +61,7 @@
         
           <li id="title">
               <div class="annotation">
-                  <h1>gfx.js</h1>
+                  <h1>Canvas.js</h1>
               </div>
           </li>
         
@@ -85,8 +90,11 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> is = <span class="hljs-built_in">require</span>(<span class="hljs-string">'is'</span>);
-<span class="hljs-keyword">var</span> Point = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Point'</span>);</pre></div></div>
+<span class="hljs-keyword">var</span> obj = <span class="hljs-built_in">require</span>(<span class="hljs-string">'obj'</span>);
+<span class="hljs-keyword">var</span> DOM = <span class="hljs-built_in">require</span>(<span class="hljs-string">'dom'</span>);
+<span class="hljs-keyword">var</span> Point = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Point'</span>);
+<span class="hljs-keyword">var</span> Shape = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Shape'</span>);
+<span class="hljs-keyword">var</span> Camera = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Camera'</span>);</pre></div></div>
             
         </li>
         
@@ -97,12 +105,15 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Object declaration</p>
+              <p>Constructor</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> gfx = {};</pre></div></div>
+<span class="hljs-keyword">var</span> Constructor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(id)</span>{</span>
+  <span class="hljs-keyword">var</span> selector = <span class="hljs-string">'canvas#'</span>+id;
+  <span class="hljs-keyword">this</span>.canvas = DOM.make(selector);
+};</pre></div></div>
             
         </li>
         
@@ -113,12 +124,12 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              
+              <p>Declare object literal</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> canvas, context, ctx;
-<span class="hljs-keyword">var</span> canvasStack = {};</pre></div></div>
+<span class="hljs-keyword">var</span> canvas = {};</pre></div></div>
             
         </li>
         
@@ -133,9 +144,7 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>
-gfx.pushCanvas = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, element)</span> {</span>
-  canvasStack[name] = element;
-};</pre></div></div>
+canvas.camera = <span class="hljs-literal">undefined</span>;</pre></div></div>
             
         </li>
         
@@ -150,10 +159,13 @@ gfx.pushCanvas = <span class="hljs-function"><span class="hljs-keyword">function
             </div>
             
             <div class="content"><div class='highlight'><pre>
-gfx.setCanvas = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span>{</span>
-  canvas = name ? canvasStack[name] : canvas;
-  ctx = context = canvas ? canvas.getContext(<span class="hljs-string">'2d'</span>) : <span class="hljs-literal">undefined</span>;
-};</pre></div></div>
+canvas.useCamera = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(camera)</span>{</span>
+  <span class="hljs-keyword">if</span> (camera <span class="hljs-keyword">instanceof</span> Camera) {
+    <span class="hljs-keyword">this</span>.camera = camera;
+  }
+};
+
+canvas.setCamera = canvas.useCamera;</pre></div></div>
             
         </li>
         
@@ -168,15 +180,9 @@ gfx.setCanvas = <span class="hljs-function"><span class="hljs-keyword">function<
             </div>
             
             <div class="content"><div class='highlight'><pre>
-gfx.cling = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(canvRef)</span> {</span>
-  <span class="hljs-keyword">if</span> (canvRef) {
-    gfx.setCanvas(canvRef);
-  }
-
-  <span class="hljs-keyword">if</span> (canvas) {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
+canvas.cling = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  <span class="hljs-keyword">this</span>.canvas.width = window.innerWidth;
+  <span class="hljs-keyword">this</span>.canvas.height = window.innerHeight;
 };</pre></div></div>
             
         </li>
@@ -192,10 +198,11 @@ gfx.cling = <span class="hljs-function"><span class="hljs-keyword">function</spa
             </div>
             
             <div class="content"><div class='highlight'><pre>
-gfx.clearContext = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(ctxRef)</span> {</span>
-  ctxRef = ctxRef || context;
-  <span class="hljs-keyword">if</span> (ctxRef) {
-    ctxRef.clearRect(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,canvas.width,canvas.height);
+canvas.clearContext = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  <span class="hljs-keyword">var</span> canvas = <span class="hljs-keyword">this</span>.canvas;
+  <span class="hljs-keyword">var</span> ctx = canvas.getContext();
+  <span class="hljs-keyword">if</span> (ctx) {
+    ctx.clearRect(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,canvas.width,canvas.height);
   }
 };</pre></div></div>
             
@@ -212,8 +219,8 @@ gfx.clearContext = <span class="hljs-function"><span class="hljs-keyword">functi
             </div>
             
             <div class="content"><div class='highlight'><pre>
-gfx.getContext = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
-  <span class="hljs-keyword">return</span> context;
+canvas.getContext = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.canvas.getContext(<span class="hljs-string">'2d'</span>);
 };</pre></div></div>
             
         </li>
@@ -229,10 +236,9 @@ gfx.getContext = <span class="hljs-function"><span class="hljs-keyword">function
             </div>
             
             <div class="content"><div class='highlight'><pre>
-gfx.getCanvasSize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
-  <span class="hljs-keyword">if</span> (canvas) {
-    <span class="hljs-keyword">return</span> { x: canvas.width, y: canvas.height };
-  }
+canvas.getCanvasSize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  <span class="hljs-keyword">var</span> canvas = <span class="hljs-keyword">this</span>.canvas;
+  <span class="hljs-keyword">return</span> { x: canvas.width, y: canvas.height };
 };</pre></div></div>
             
         </li>
@@ -248,11 +254,9 @@ gfx.getCanvasSize = <span class="hljs-function"><span class="hljs-keyword">funct
             </div>
             
             <div class="content"><div class='highlight'><pre>
-gfx.getCanvasCenter = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
-  <span class="hljs-keyword">if</span> (canvas) {
-    <span class="hljs-keyword">var</span> size = gfx.getCanvasSize();
-    <span class="hljs-keyword">return</span> Point([size.x/<span class="hljs-number">2</span>, size.y/<span class="hljs-number">2</span>]);
-  }
+canvas.getCanvasCenter = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+  <span class="hljs-keyword">var</span> size = <span class="hljs-keyword">this</span>.getCanvasSize();
+  <span class="hljs-keyword">return</span> Point([size.x/<span class="hljs-number">2</span>, size.y/<span class="hljs-number">2</span>]);
 };</pre></div></div>
             
         </li>
@@ -268,16 +272,12 @@ gfx.getCanvasCenter = <span class="hljs-function"><span class="hljs-keyword">fun
             </div>
             
             <div class="content"><div class='highlight'><pre>
-gfx.render = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(shape)</span> {</span>
-<span class="hljs-comment">/*
-  if (!shape instanceof Shape) {
-    throw new Error('Only pass shape objects to render.');
+canvas.text = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(text, position)</span>{</span>
+  <span class="hljs-keyword">var</span> ctx = <span class="hljs-keyword">this</span>.getContext();
+  <span class="hljs-keyword">if</span> (ctx) {
+    ctx.fillStyle = <span class="hljs-string">'FFFFFF'</span>;
+    ctx.fillText(text, position.x-<span class="hljs-number">25</span>, position.y+<span class="hljs-number">5</span>);
   }
-
-  if (shape.inShot()) {
-    shape.render();
-  }
-*/</span>
 };</pre></div></div>
             
         </li>
@@ -292,16 +292,6 @@ gfx.render = <span class="hljs-function"><span class="hljs-keyword">function</sp
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>
-gfx.loadImage = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(src, callback)</span> {</span>
-  <span class="hljs-keyword">var</span> image = <span class="hljs-keyword">new</span> Image();
-  image.src = src;
-  <span class="hljs-keyword">if</span> (callback) {
-    image.onload = callback;
-  }
-  <span class="hljs-keyword">return</span> image;
-};</pre></div></div>
-            
         </li>
         
         
@@ -311,14 +301,12 @@ gfx.loadImage = <span class="hljs-function"><span class="hljs-keyword">function<
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              
+              <p>gfx.render = function(shape) {
+  if (!shape instanceof Shape) {
+    throw new Error(‘Only pass shape objects to render.’);
+  }</p>
+
             </div>
-            
-            <div class="content"><div class='highlight'><pre>
-gfx.text = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(text, position)</span>{</span>
-  context.fillStyle = <span class="hljs-string">'FFFFFF'</span>;
-  context.fillText(text, position.x-<span class="hljs-number">25</span>, position.y+<span class="hljs-number">5</span>);
-};</pre></div></div>
             
         </li>
         
@@ -329,11 +317,12 @@ gfx.text = <span class="hljs-function"><span class="hljs-keyword">function</span
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              
+              <p>  console.log(shape);
+  if (shape.inShot(this)) {
+    shape.render(this);
+  }</p>
+
             </div>
-            
-            <div class="content"><div class='highlight'><pre>
-gfx.refresh = <span class="hljs-literal">true</span>;</pre></div></div>
             
         </li>
         
@@ -344,12 +333,41 @@ gfx.refresh = <span class="hljs-literal">true</span>;</pre></div></div>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <p>Expose to other internal modules</p>
+              <p>};</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Create definition</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-module.exports = gfx;</pre></div></div>
+<span class="hljs-keyword">var</span> Canvas = obj.define(<span class="hljs-built_in">Object</span>, Constructor, canvas);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>Export module</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+module.exports = Canvas;</pre></div></div>
             
         </li>
         

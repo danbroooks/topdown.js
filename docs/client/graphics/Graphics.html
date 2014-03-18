@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>Point.js</title>
+  <title>Graphics.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -61,7 +61,7 @@
         
           <li id="title">
               <div class="annotation">
-                  <h1>Point.js</h1>
+                  <h1>Graphics.js</h1>
               </div>
           </li>
         
@@ -91,7 +91,10 @@
             
             <div class="content"><div class='highlight'><pre>
 <span class="hljs-keyword">var</span> obj = <span class="hljs-built_in">require</span>(<span class="hljs-string">'obj'</span>);
-<span class="hljs-keyword">var</span> is = <span class="hljs-built_in">require</span>(<span class="hljs-string">'is'</span>);</pre></div></div>
+<span class="hljs-keyword">var</span> Stack = <span class="hljs-built_in">require</span>(<span class="hljs-string">'objects/Stack'</span>);
+<span class="hljs-keyword">var</span> Camera = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Camera'</span>);
+<span class="hljs-keyword">var</span> Point = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Point'</span>);
+<span class="hljs-keyword">var</span> Canvas = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Canvas'</span>);</pre></div></div>
             
         </li>
         
@@ -107,18 +110,15 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> Constructor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y)</span>{</span>
+<span class="hljs-keyword">var</span> Constructor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
 
-  <span class="hljs-keyword">if</span> (!y &amp;&amp; is.Array(x) &amp;&amp; x.length == <span class="hljs-number">2</span>) {
-    <span class="hljs-keyword">this</span>.x = x[<span class="hljs-number">0</span>];
-    <span class="hljs-keyword">this</span>.y = x[<span class="hljs-number">1</span>];
-  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (is.PlainObject(x) &amp;&amp; x.x &amp;&amp; x.y) {
-      <span class="hljs-keyword">this</span>.x = x.x;
-      <span class="hljs-keyword">this</span>.y = x.y;
-  } <span class="hljs-keyword">else</span> {
-    <span class="hljs-keyword">this</span>.x = is.Numeric(x) ? x : <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">this</span>.y = is.Numeric(y) ? y : <span class="hljs-number">0</span>;
-  }
+  <span class="hljs-keyword">this</span>.canvasStack = Stack(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(o)</span>{</span>
+    <span class="hljs-keyword">return</span> o <span class="hljs-keyword">instanceof</span> Canvas;
+  });
+
+  <span class="hljs-keyword">this</span>.cameraStack = Stack(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(o)</span>{</span>
+    <span class="hljs-keyword">return</span> o <span class="hljs-keyword">instanceof</span> Camera;
+  });
 
 };</pre></div></div>
             
@@ -136,7 +136,7 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> point = {};</pre></div></div>
+<span class="hljs-keyword">var</span> gfx = {};</pre></div></div>
             
         </li>
         
@@ -147,32 +147,15 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Rotate point around another point</p>
-
+              
             </div>
             
             <div class="content"><div class='highlight'><pre>
-point.rotate = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(axis, theta)</span> {</span>
-
-  <span class="hljs-keyword">if</span> (<span class="hljs-literal">false</span> === axis <span class="hljs-keyword">instanceof</span> Point)
-    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'You can only rotate a point around another Point.'</span>);
-
-  <span class="hljs-keyword">var</span> cos = <span class="hljs-built_in">Math</span>.cos(theta),
-      sin = <span class="hljs-built_in">Math</span>.sin(theta);
-
-  <span class="hljs-keyword">var</span> transform = {
-    x: <span class="hljs-keyword">this</span>.x - axis.x,
-    y: <span class="hljs-keyword">this</span>.y - axis.y
-  };
-
-  <span class="hljs-keyword">var</span> rotate = {
-    x: transform.x * cos - transform.y * sin,
-    y: transform.x * sin + transform.y * cos
-  };
-
-  <span class="hljs-keyword">this</span>.x = rotate.x + axis.x;
-  <span class="hljs-keyword">this</span>.y = rotate.y + axis.y;
-
+gfx.createCanvas = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span> {</span>
+  <span class="hljs-keyword">if</span> (name) {
+    <span class="hljs-keyword">var</span> c = Canvas(name);
+    <span class="hljs-keyword">this</span>.canvasStack.push(name, c);
+  }
 };</pre></div></div>
             
         </li>
@@ -184,27 +167,16 @@ point.rotate = <span class="hljs-function"><span class="hljs-keyword">function</
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Add vector to point</p>
+              <p>Sets primary canvas</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-point.add = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(point, returnNewInstance)</span> {</span>
+gfx.setPrimaryCanvas = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(canvasName)</span>{</span>
+  <span class="hljs-keyword">this</span>.canvasStack.select(canvasName);
+};
 
-  <span class="hljs-keyword">if</span> (<span class="hljs-literal">false</span> === point <span class="hljs-keyword">instanceof</span> Point)
-    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'You can only add a another Point to Point object.'</span>);
-
-  <span class="hljs-keyword">if</span> (returnNewInstance) {
-    <span class="hljs-keyword">var</span> x = <span class="hljs-keyword">this</span>.x + point.x;
-    <span class="hljs-keyword">var</span> y = <span class="hljs-keyword">this</span>.y + point.y;
-    <span class="hljs-keyword">return</span> Point(x, y);
-  } <span class="hljs-keyword">else</span> {
-    <span class="hljs-keyword">this</span>.x += point.x;
-    <span class="hljs-keyword">this</span>.y += point.y;
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-  }
-
-};</pre></div></div>
+gfx.setCanvas = gfx.setPrimaryCanvas;</pre></div></div>
             
         </li>
         
@@ -215,26 +187,13 @@ point.add = <span class="hljs-function"><span class="hljs-keyword">function</spa
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>Subtract vector from point</p>
+              <p>Sets camera</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-point.sub = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(point, returnNewInstance)</span> {</span>
-
-  <span class="hljs-keyword">if</span> (<span class="hljs-literal">false</span> === point <span class="hljs-keyword">instanceof</span> Point)
-    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'You can only subtract a another Point to Point object.'</span>);
-
-  <span class="hljs-keyword">if</span> (returnNewInstance) {
-    <span class="hljs-keyword">var</span> x = <span class="hljs-keyword">this</span>.x - point.x;
-    <span class="hljs-keyword">var</span> y = <span class="hljs-keyword">this</span>.y - point.y;
-    <span class="hljs-keyword">return</span> Point(x, y);
-  } <span class="hljs-keyword">else</span> {
-    <span class="hljs-keyword">this</span>.x -= point.x;
-    <span class="hljs-keyword">this</span>.y -= point.y;
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-  }
-
+gfx.setCamera = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span>{</span>
+  <span class="hljs-keyword">this</span>.cameraStack.select(name);
 };</pre></div></div>
             
         </li>
@@ -246,13 +205,16 @@ point.sub = <span class="hljs-function"><span class="hljs-keyword">function</spa
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>Returns inverted point</p>
+              <p>Add camera</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-point.invert = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
-  <span class="hljs-keyword">return</span> Point( -<span class="hljs-keyword">this</span>.x, -<span class="hljs-keyword">this</span>.y );
+gfx.addCamera = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span>{</span>
+  <span class="hljs-keyword">if</span> (name) {
+    <span class="hljs-keyword">var</span> c = Camera();
+    <span class="hljs-keyword">this</span>.cameraStack.push(name, c);
+  }
 };</pre></div></div>
             
         </li>
@@ -264,12 +226,9 @@ point.invert = <span class="hljs-function"><span class="hljs-keyword">function</
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>Object definition</p>
+              <p>//</p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> Point = obj.define(<span class="hljs-built_in">Object</span>, Constructor, point);</pre></div></div>
             
         </li>
         
@@ -280,12 +239,59 @@ point.invert = <span class="hljs-function"><span class="hljs-keyword">function</
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
+              <p>// gfx.loadImage = function(src, callback) {
+//   var image = new Image();
+//   image.src = src;
+//   if (callback) {
+//     image.onload = callback;
+//   }
+//   return image;
+// };</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+
+
+gfx.bindCameraToCanvas = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(camera, canvas)</span> {</span>
+  <span class="hljs-keyword">var</span> canv = <span class="hljs-keyword">this</span>.canvasStack.get(canvas);
+  <span class="hljs-keyword">var</span> cam = <span class="hljs-keyword">this</span>.cameraStack.get(camera);
+  <span class="hljs-keyword">if</span> (canv &amp;&amp; cam) {
+    canv.useCamera(cam);
+  }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Create definition</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> Graphics = obj.define(<span class="hljs-built_in">Object</span>, Constructor, gfx);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
               <p>Export module</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-module.exports = Point;</pre></div></div>
+module.exports = Graphics;</pre></div></div>
             
         </li>
         
