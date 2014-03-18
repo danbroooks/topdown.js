@@ -638,9 +638,7 @@ DOM.css = DOM.style;
 module.exports = DOM;
 
 
-},{"is":"P9m7US"}],"fn":[function(require,module,exports){
-module.exports=require('AEEx6z');
-},{}],"AEEx6z":[function(require,module,exports){
+},{"is":"P9m7US"}],"AEEx6z":[function(require,module,exports){
 
 
 // Object declaration
@@ -699,6 +697,8 @@ fn.fromArray = function (array) {
 
 module.exports = fn;
 
+},{}],"fn":[function(require,module,exports){
+module.exports=require('AEEx6z');
 },{}],"NsksZx":[function(require,module,exports){
 
 
@@ -1018,6 +1018,8 @@ module.exports = Canvas;
 
 },{"dom":"qkALfs","graphics/Camera":"NsksZx","graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Canvas":[function(require,module,exports){
 module.exports=require('gCPbFZ');
+},{}],"graphics/Graphics":[function(require,module,exports){
+module.exports=require('mC3JHL');
 },{}],"mC3JHL":[function(require,module,exports){
 
 
@@ -1144,9 +1146,7 @@ var Graphics = obj.define(Object, Constructor, gfx);
 module.exports = Graphics;
 
 
-},{"graphics/Camera":"NsksZx","graphics/Canvas":"gCPbFZ","graphics/Point":"07NHAF","obj":"DOFYxp","objects/Stack":"w0x1FX"}],"graphics/Graphics":[function(require,module,exports){
-module.exports=require('mC3JHL');
-},{}],"graphics/Point":[function(require,module,exports){
+},{"graphics/Camera":"NsksZx","graphics/Canvas":"gCPbFZ","graphics/Point":"07NHAF","obj":"DOFYxp","objects/Stack":"w0x1FX"}],"graphics/Point":[function(require,module,exports){
 module.exports=require('07NHAF');
 },{}],"07NHAF":[function(require,module,exports){
 
@@ -1733,6 +1733,8 @@ module.exports = Polygon;
 
 },{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Polygon":[function(require,module,exports){
 module.exports=require('S3SzPy');
+},{}],"graphics/Shape":[function(require,module,exports){
+module.exports=require('rB+uTR');
 },{}],"rB+uTR":[function(require,module,exports){
 
 
@@ -1788,12 +1790,10 @@ var Shape = obj.define(Object, Constructor, shape);
 
 module.exports = Shape;
 
-},{"obj":"DOFYxp"}],"graphics/Shape":[function(require,module,exports){
-module.exports=require('rB+uTR');
+},{"obj":"DOFYxp"}],"graphics/trig":[function(require,module,exports){
+module.exports=require('HKUJiZ');
 },{}],"HKUJiZ":[function(require,module,exports){
 
-},{}],"graphics/trig":[function(require,module,exports){
-module.exports=require('HKUJiZ');
 },{}],"is":[function(require,module,exports){
 module.exports=require('P9m7US');
 },{}],"P9m7US":[function(require,module,exports){
@@ -1953,6 +1953,8 @@ is.PlainObject = is.ObjectLiteral;
 
 module.exports = is;
 
+},{}],"obj":[function(require,module,exports){
+module.exports=require('DOFYxp');
 },{}],"DOFYxp":[function(require,module,exports){
 
 
@@ -2170,9 +2172,7 @@ obj.identifier = function(seed){
 
 module.exports = obj;
 
-},{"is":"P9m7US"}],"obj":[function(require,module,exports){
-module.exports=require('DOFYxp');
-},{}],"w0x1FX":[function(require,module,exports){
+},{"is":"P9m7US"}],"w0x1FX":[function(require,module,exports){
 
 
 // Load dependencies
