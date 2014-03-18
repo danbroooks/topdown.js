@@ -38,19 +38,13 @@ This will be added to this readme when the process becomes more stable.
 
 ## Roadmap
 
-### v0.1.0 - First stable release
+### v0.0.7
 
- - Create functioning game in demo repo
+ - Tidy current api and write documentation for it
 
- - Finish documentation with 'Getting Started' guide
+ - Implement graphic objects Image, Polygon & Circle
 
-### v0.0.9
-
- - Add Audio object/module
-
- - Add in collision module
-
- - Write docs and add demo branch in `topdown-demos` for Audio & Collision
+ - Write docs and add demo branch in `topdown-demos` for new graphics objects
 
 ### v0.0.8
 
@@ -60,10 +54,17 @@ This will be added to this readme when the process becomes more stable.
 
  - Write docs and add demo branch in `topdown-demos` for Requirements & Entity
 
-### v0.0.7
+### v0.0.9
 
- - Tidy current api and write documentation for it
+ - Add Audio object/module
 
- - Implement graphic objects Image, Polygon & Circle
+ - Add in collision module
 
- - Write docs and add demo branch in `topdown-demos` for new graphics objects
+ - Write docs and add demo branch in `topdown-demos` for Audio & Collision
+
+### v0.1.0 - First stable release
+
+ - Create functioning game in demo repo
+
+ - Finish documentation with 'Getting Started' guide
+

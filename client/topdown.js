@@ -1,4 +1,6 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"h5AJ9p":[function(require,module,exports){
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"core/GameConfig":[function(require,module,exports){
+module.exports=require('h5AJ9p');
+},{}],"h5AJ9p":[function(require,module,exports){
 
 
 // Load dependencies
@@ -129,9 +131,7 @@ var GameConfig = obj.define(Object, Constructor, gameConfig);
 module.exports = GameConfig;
 
 
-},{"graphics/Graphics":"mC3JHL","is":"P9m7US","obj":"DOFYxp"}],"core/GameConfig":[function(require,module,exports){
-module.exports=require('h5AJ9p');
-},{}],"core/game":[function(require,module,exports){
+},{"graphics/Graphics":"mC3JHL","is":"P9m7US","obj":"DOFYxp"}],"core/game":[function(require,module,exports){
 module.exports=require('dE1Bu5');
 },{}],"dE1Bu5":[function(require,module,exports){
 
@@ -327,7 +327,9 @@ var update = function() {
 module.exports = game;
 
 
-},{"core/GameConfig":"h5AJ9p","is":"P9m7US","objects/Timer":"y3F4VZ"}],"qkALfs":[function(require,module,exports){
+},{"core/GameConfig":"h5AJ9p","is":"P9m7US","objects/Timer":"y3F4VZ"}],"dom":[function(require,module,exports){
+module.exports=require('qkALfs');
+},{}],"qkALfs":[function(require,module,exports){
 
 
 // Load dependencies
@@ -636,9 +638,7 @@ DOM.css = DOM.style;
 module.exports = DOM;
 
 
-},{"is":"P9m7US"}],"dom":[function(require,module,exports){
-module.exports=require('qkALfs');
-},{}],"fn":[function(require,module,exports){
+},{"is":"P9m7US"}],"fn":[function(require,module,exports){
 module.exports=require('AEEx6z');
 },{}],"AEEx6z":[function(require,module,exports){
 
@@ -855,6 +855,8 @@ module.exports = Camera;
 
 },{"graphics/Point":"07NHAF","obj":"DOFYxp"}],"graphics/Camera":[function(require,module,exports){
 module.exports=require('NsksZx');
+},{}],"graphics/Canvas":[function(require,module,exports){
+module.exports=require('gCPbFZ');
 },{}],"gCPbFZ":[function(require,module,exports){
 
 // Load dependencies
@@ -1016,9 +1018,7 @@ module.exports = Canvas;
 
 
 
-},{"dom":"qkALfs","graphics/Camera":"NsksZx","graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Canvas":[function(require,module,exports){
-module.exports=require('gCPbFZ');
-},{}],"mC3JHL":[function(require,module,exports){
+},{"dom":"qkALfs","graphics/Camera":"NsksZx","graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"mC3JHL":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1790,10 +1790,10 @@ module.exports = Shape;
 
 },{"obj":"DOFYxp"}],"graphics/Shape":[function(require,module,exports){
 module.exports=require('rB+uTR');
-},{}],"graphics/trig":[function(require,module,exports){
-module.exports=require('HKUJiZ');
 },{}],"HKUJiZ":[function(require,module,exports){
 
+},{}],"graphics/trig":[function(require,module,exports){
+module.exports=require('HKUJiZ');
 },{}],"is":[function(require,module,exports){
 module.exports=require('P9m7US');
 },{}],"P9m7US":[function(require,module,exports){
@@ -2371,8 +2371,6 @@ module.exports = Timer;
 
 },{"obj":"DOFYxp"}],"objects/Timer":[function(require,module,exports){
 module.exports=require('y3F4VZ');
-},{}],"onload":[function(require,module,exports){
-module.exports=require('+KSpms');
 },{}],"+KSpms":[function(require,module,exports){
 
 
@@ -2393,7 +2391,9 @@ window.onload = function(){
   });
 };
 
-},{"core/game":"dE1Bu5","dom":"qkALfs"}],"poly":[function(require,module,exports){
+},{"core/game":"dE1Bu5","dom":"qkALfs"}],"onload":[function(require,module,exports){
+module.exports=require('+KSpms');
+},{}],"poly":[function(require,module,exports){
 module.exports=require('vARtDh');
 },{}],"vARtDh":[function(require,module,exports){
 
