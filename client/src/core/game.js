@@ -72,7 +72,6 @@ game.setGraphicsObject = function(gfxObj) {
 
 // Framerate/FPS object (could be turned into module?)
 
-var frame = 0;
 var fps = {
   current: 0,
   previous: 0,
@@ -85,11 +84,9 @@ var fps = {
   set: function(value) {
     this.last = this.previous;
     this.previous = this.current;
-    this.current = value;
+    this.current = 1000/value;
   }
 };
-
-
 
 
 
@@ -99,6 +96,9 @@ game.__defineGetter__('fps', function(){ return fps.value(); });
 
 
 
+
+
+var frame = 0;
 
 
 // Expose frame as readonly property
@@ -160,7 +160,7 @@ var render = function() {
   var delta = time.delta();
 
   // set current framerate based on that time
-  fps.set(1000/delta);
+  fps.set(delta);
 
   // call project render function
   game.render(delta, gfx);

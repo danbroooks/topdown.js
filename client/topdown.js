@@ -1,6 +1,4 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"core/GameConfig":[function(require,module,exports){
-module.exports=require('h5AJ9p');
-},{}],"h5AJ9p":[function(require,module,exports){
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"h5AJ9p":[function(require,module,exports){
 
 
 // Load dependencies
@@ -131,8 +129,8 @@ var GameConfig = obj.define(Object, Constructor, gameConfig);
 module.exports = GameConfig;
 
 
-},{"graphics/Graphics":"mC3JHL","is":"P9m7US","obj":"DOFYxp"}],"core/game":[function(require,module,exports){
-module.exports=require('dE1Bu5');
+},{"graphics/Graphics":"mC3JHL","is":"P9m7US","obj":"DOFYxp"}],"core/GameConfig":[function(require,module,exports){
+module.exports=require('h5AJ9p');
 },{}],"dE1Bu5":[function(require,module,exports){
 
 
@@ -208,7 +206,6 @@ game.setGraphicsObject = function(gfxObj) {
 
 // Framerate/FPS object (could be turned into module?)
 
-var frame = 0;
 var fps = {
   current: 0,
   previous: 0,
@@ -221,11 +218,9 @@ var fps = {
   set: function(value) {
     this.last = this.previous;
     this.previous = this.current;
-    this.current = value;
+    this.current = 1000/value;
   }
 };
-
-
 
 
 
@@ -235,6 +230,9 @@ game.__defineGetter__('fps', function(){ return fps.value(); });
 
 
 
+
+
+var frame = 0;
 
 
 // Expose frame as readonly property
@@ -296,7 +294,7 @@ var render = function() {
   var delta = time.delta();
 
   // set current framerate based on that time
-  fps.set(1000/delta);
+  fps.set(delta);
 
   // call project render function
   game.render(delta, gfx);
@@ -327,8 +325,8 @@ var update = function() {
 module.exports = game;
 
 
-},{"core/GameConfig":"h5AJ9p","is":"P9m7US","objects/Timer":"y3F4VZ"}],"dom":[function(require,module,exports){
-module.exports=require('qkALfs');
+},{"core/GameConfig":"h5AJ9p","is":"P9m7US","objects/Timer":"y3F4VZ"}],"core/game":[function(require,module,exports){
+module.exports=require('dE1Bu5');
 },{}],"qkALfs":[function(require,module,exports){
 
 
@@ -638,8 +636,8 @@ DOM.css = DOM.style;
 module.exports = DOM;
 
 
-},{"is":"P9m7US"}],"fn":[function(require,module,exports){
-module.exports=require('AEEx6z');
+},{"is":"P9m7US"}],"dom":[function(require,module,exports){
+module.exports=require('qkALfs');
 },{}],"AEEx6z":[function(require,module,exports){
 
 
@@ -699,6 +697,10 @@ fn.fromArray = function (array) {
 
 module.exports = fn;
 
+},{}],"fn":[function(require,module,exports){
+module.exports=require('AEEx6z');
+},{}],"graphics/Camera":[function(require,module,exports){
+module.exports=require('NsksZx');
 },{}],"NsksZx":[function(require,module,exports){
 
 
@@ -853,11 +855,7 @@ module.exports = Camera;
 
 
 
-},{"graphics/Point":"07NHAF","obj":"DOFYxp"}],"graphics/Camera":[function(require,module,exports){
-module.exports=require('NsksZx');
-},{}],"graphics/Canvas":[function(require,module,exports){
-module.exports=require('gCPbFZ');
-},{}],"gCPbFZ":[function(require,module,exports){
+},{"graphics/Point":"07NHAF","obj":"DOFYxp"}],"gCPbFZ":[function(require,module,exports){
 
 // Load dependencies
 
@@ -1018,7 +1016,86 @@ module.exports = Canvas;
 
 
 
-},{"dom":"qkALfs","graphics/Camera":"NsksZx","graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"mC3JHL":[function(require,module,exports){
+},{"dom":"qkALfs","graphics/Camera":"NsksZx","graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Canvas":[function(require,module,exports){
+module.exports=require('gCPbFZ');
+},{}],"graphics/Collision":[function(require,module,exports){
+module.exports=require('8SM2KA');
+},{}],"8SM2KA":[function(require,module,exports){
+
+var obj = require('obj');
+var is = require('is');
+
+var Vector = require('graphics/Vector');
+var Point = require('graphics/Point');
+
+
+
+// Constructor
+
+var Constructor = function(vectorA, vectorB){
+
+  if (!is.instanceOf(Vector, vectorA) || !is.instanceOf(Vector, vectorB)) {
+    throw new Error('Collision constructor takes two Vector objects.');
+  }
+
+  this.vectorA = vectorA;
+  this.vectorB = vectorB;
+
+};
+
+var collision = {};
+
+//
+
+collision.polygonContainsPoint = function(){};
+
+//
+
+collision.getIntersectionPoint = function() {
+
+  var vectorA = this.vectorA;
+  var vectorB = this.vectorB;
+
+  var s1_x, s1_y, s2_x, s2_y;
+
+  s1_x = vectorA.b.x - vectorA.a.x;
+  s1_y = vectorA.b.y - vectorA.a.y;
+  s2_x = vectorB.b.x - vectorB.a.x;
+  s2_y = vectorB.b.y - vectorB.a.y;
+
+  var s = (-s1_y * (vectorA.a.x - vectorB.a.x) + s1_x * (vectorA.a.y - vectorB.a.y)) / (-s2_x * s1_y + s1_x * s2_y);
+  var t = ( s2_x * (vectorA.a.y - vectorB.a.y) - s2_y * (vectorA.a.x - vectorB.a.x)) / (-s2_x * s1_y + s1_x * s2_y);
+
+  if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
+    // Collision detected
+    return Point({
+      x: vectorA.a.x + (t * s1_x),
+      y: vectorA.a.y + (t * s1_y)
+    });
+  }
+
+  // No collision
+  return false;
+};
+
+//
+
+collision.doesLineIntersect = function() {
+  return this.getLineIntersectionPoint() !== false;
+};
+
+
+// Object definition
+
+var Collision = obj.define(Object, Constructor, collision);
+
+
+module.exports = Collision;
+
+
+},{"graphics/Point":"07NHAF","graphics/Vector":"Hli4CA","is":"P9m7US","obj":"DOFYxp"}],"graphics/Graphics":[function(require,module,exports){
+module.exports=require('mC3JHL');
+},{}],"mC3JHL":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1144,9 +1221,7 @@ var Graphics = obj.define(Object, Constructor, gfx);
 module.exports = Graphics;
 
 
-},{"graphics/Camera":"NsksZx","graphics/Canvas":"gCPbFZ","graphics/Point":"07NHAF","obj":"DOFYxp","objects/Stack":"w0x1FX"}],"graphics/Graphics":[function(require,module,exports){
-module.exports=require('mC3JHL');
-},{}],"07NHAF":[function(require,module,exports){
+},{"graphics/Camera":"NsksZx","graphics/Canvas":"gCPbFZ","graphics/Point":"07NHAF","obj":"DOFYxp","objects/Stack":"w0x1FX"}],"07NHAF":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1289,8 +1364,6 @@ module.exports = Point;
 
 },{"is":"P9m7US","obj":"DOFYxp"}],"graphics/Point":[function(require,module,exports){
 module.exports=require('07NHAF');
-},{}],"graphics/Polygon":[function(require,module,exports){
-module.exports=require('S3SzPy');
 },{}],"S3SzPy":[function(require,module,exports){
 
 
@@ -1571,7 +1644,7 @@ polygon.containsPoint = function(point){
   */
 };
 
-polygon.pointInPolygon = pointInPolygon.containsPoint;
+polygon.pointInPolygon = polygon.containsPoint;
 
 
 
@@ -1733,7 +1806,9 @@ var Polygon = obj.define(Shape, Constructor, polygon);
 module.exports = Polygon;
 
 
-},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"rB+uTR":[function(require,module,exports){
+},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Polygon":[function(require,module,exports){
+module.exports=require('S3SzPy');
+},{}],"rB+uTR":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1790,18 +1865,116 @@ module.exports = Shape;
 
 },{"obj":"DOFYxp"}],"graphics/Shape":[function(require,module,exports){
 module.exports=require('rB+uTR');
+},{}],"Hli4CA":[function(require,module,exports){
+
+
+// Load dependencies
+
+var obj = require('obj');
+var is = require('is');
+
+var Point = require('graphics/Point');
+
+
+// Constructor
+
+var Constructor = function(a, b){
+
+  if (!is.instanceOf(Point, a) || !is.instanceOf(Point, b)) {
+    throw new Error('Vector constructor takes two Point objects.');
+  }
+
+  this.a = a;
+  this.b = b;
+
+};
+
+
+
+
+
+// Declare object literal
+
+var vector = {};
+
+
+
+
+
+
+//
+
+vector.test = function () {
+
+  console.log(this.a);
+  console.log(this.b);
+
+};
+
+
+
+
+
+// Calculate angle of vector
+
+vector.angle = function () {
+
+  console.log(this.a);
+  console.log(this.b);
+
+};
+
+
+
+
+
+// Calculate distance of vector
+
+vector.distance = function () {
+
+  console.log(this.a);
+  console.log(this.b);
+
+};
+
+
+
+
+
+// Object definition
+
+var Vector = obj.define(Object, Constructor, vector);
+
+
+
+
+
+
+// Export module
+
+module.exports = Vector;
+},{"graphics/Point":"07NHAF","is":"P9m7US","obj":"DOFYxp"}],"graphics/Vector":[function(require,module,exports){
+module.exports=require('Hli4CA');
 },{}],"HKUJiZ":[function(require,module,exports){
 
 },{}],"graphics/trig":[function(require,module,exports){
 module.exports=require('HKUJiZ');
-},{}],"is":[function(require,module,exports){
-module.exports=require('P9m7US');
 },{}],"P9m7US":[function(require,module,exports){
 
 
 // Object declaration
 
 var is = {};
+
+
+
+
+
+//
+
+is.instanceOf = function(type, instance) {
+  return ( false !== instance instanceof type );
+};
 
 
 
@@ -1953,6 +2126,8 @@ is.PlainObject = is.ObjectLiteral;
 
 module.exports = is;
 
+},{}],"is":[function(require,module,exports){
+module.exports=require('P9m7US');
 },{}],"DOFYxp":[function(require,module,exports){
 
 
@@ -2463,4 +2638,4 @@ if(!window.cancelAnimationFrame){
   };
 }
 
-},{}]},{},["vARtDh","+KSpms","AEEx6z","P9m7US","DOFYxp","qkALfs","y3F4VZ","w0x1FX","dE1Bu5","h5AJ9p","HKUJiZ","07NHAF","rB+uTR","S3SzPy","NsksZx","gCPbFZ"])
+},{}]},{},["vARtDh","+KSpms","AEEx6z","P9m7US","DOFYxp","qkALfs","y3F4VZ","w0x1FX","dE1Bu5","h5AJ9p","HKUJiZ","Hli4CA","07NHAF","8SM2KA","rB+uTR","S3SzPy","NsksZx","gCPbFZ","mC3JHL"])

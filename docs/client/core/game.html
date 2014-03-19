@@ -199,7 +199,6 @@ game.setGraphicsObject = <span class="hljs-function"><span class="hljs-keyword">
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> frame = <span class="hljs-number">0</span>;
 <span class="hljs-keyword">var</span> fps = {
   current: <span class="hljs-number">0</span>,
   previous: <span class="hljs-number">0</span>,
@@ -212,7 +211,7 @@ game.setGraphicsObject = <span class="hljs-function"><span class="hljs-keyword">
   set: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> {</span>
     <span class="hljs-keyword">this</span>.last = <span class="hljs-keyword">this</span>.previous;
     <span class="hljs-keyword">this</span>.previous = <span class="hljs-keyword">this</span>.current;
-    <span class="hljs-keyword">this</span>.current = value;
+    <span class="hljs-keyword">this</span>.current = <span class="hljs-number">1000</span>/value;
   }
 };</pre></div></div>
             
@@ -230,7 +229,13 @@ game.setGraphicsObject = <span class="hljs-function"><span class="hljs-keyword">
             </div>
             
             <div class="content"><div class='highlight'><pre>
-game.__defineGetter__(<span class="hljs-string">'fps'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span> <span class="hljs-keyword">return</span> fps.value(); });</pre></div></div>
+game.__defineGetter__(<span class="hljs-string">'fps'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span> <span class="hljs-keyword">return</span> fps.value(); });
+
+
+
+
+
+<span class="hljs-keyword">var</span> frame = <span class="hljs-number">0</span>;</pre></div></div>
             
         </li>
         
@@ -371,7 +376,7 @@ game.render = <span class="hljs-function"><span class="hljs-keyword">function</s
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  fps.set(<span class="hljs-number">1000</span>/delta);</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  fps.set(delta);</pre></div></div>
             
         </li>
         

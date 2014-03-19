@@ -11,17 +11,22 @@ var modules = [
   'is.js',
   'obj.js',
   'dom.js',
+
   'objects/Timer.js',
   'objects/Stack.js',
+
   'core/game.js',
   'core/GameConfig.js',
+
   'graphics/trig.js',
+  'graphics/Vector.js',
   'graphics/Point.js',
+  'graphics/Collision.js',
   'graphics/Shape.js',
   'graphics/Polygon.js',
   'graphics/Camera.js',
   'graphics/Canvas.js',
-  'graphics/gfx.js',
+  'graphics/Graphics.js',
 ];
 
 module.exports = {

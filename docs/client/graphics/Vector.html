@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>Shape.js</title>
+  <title>Vector.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -71,7 +71,7 @@
         
           <li id="title">
               <div class="annotation">
-                  <h1>Shape.js</h1>
+                  <h1>Vector.js</h1>
               </div>
           </li>
         
@@ -100,7 +100,10 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> obj = <span class="hljs-built_in">require</span>(<span class="hljs-string">'obj'</span>);</pre></div></div>
+<span class="hljs-keyword">var</span> obj = <span class="hljs-built_in">require</span>(<span class="hljs-string">'obj'</span>);
+<span class="hljs-keyword">var</span> is = <span class="hljs-built_in">require</span>(<span class="hljs-string">'is'</span>);
+
+<span class="hljs-keyword">var</span> Point = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Point'</span>);</pre></div></div>
             
         </li>
         
@@ -116,9 +119,14 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> Constructor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+<span class="hljs-keyword">var</span> Constructor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a, b)</span>{</span>
 
-  <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"This class isn't meant for direct instantiation"</span>);
+  <span class="hljs-keyword">if</span> (!is.instanceOf(Point, a) || !is.instanceOf(Point, b)) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Vector constructor takes two Point objects.'</span>);
+  }
+
+  <span class="hljs-keyword">this</span>.a = a;
+  <span class="hljs-keyword">this</span>.b = b;
 
 };</pre></div></div>
             
@@ -136,19 +144,7 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> shape = {};
-
-shape.stroke = <span class="hljs-string">'698796'</span>;
-
-shape.fill = <span class="hljs-string">'132132'</span>;
-
-shape.angle = <span class="hljs-built_in">Math</span>.PI*<span class="hljs-number">2</span>;
-
-shape.inShot = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
-  <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-};
-
-shape.render = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>};</pre></div></div>
+<span class="hljs-keyword">var</span> vector = {};</pre></div></div>
             
         </li>
         
@@ -159,12 +155,16 @@ shape.render = <span class="hljs-function"><span class="hljs-keyword">function</
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Object definition</p>
-
+              
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> Shape = obj.define(<span class="hljs-built_in">Object</span>, Constructor, shape);</pre></div></div>
+vector.test = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+
+  console.log(<span class="hljs-keyword">this</span>.a);
+  console.log(<span class="hljs-keyword">this</span>.b);
+
+};</pre></div></div>
             
         </li>
         
@@ -175,12 +175,70 @@ shape.render = <span class="hljs-function"><span class="hljs-keyword">function</
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Expose to other internal modules</p>
+              <p>Calculate angle of vector</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-module.exports = Shape;</pre></div></div>
+vector.angle = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+
+  console.log(<span class="hljs-keyword">this</span>.a);
+  console.log(<span class="hljs-keyword">this</span>.b);
+
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Calculate distance of vector</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+vector.distance = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+
+  console.log(<span class="hljs-keyword">this</span>.a);
+  console.log(<span class="hljs-keyword">this</span>.b);
+
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Object definition</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> Vector = obj.define(<span class="hljs-built_in">Object</span>, Constructor, vector);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Export module</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+module.exports = Vector;</pre></div></div>
             
         </li>
         

@@ -8,6 +8,16 @@ var is = {};
 
 
 
+//
+
+is.instanceOf = function(type, instance) {
+  return ( false !== instance instanceof type );
+};
+
+
+
+
+
 // Returns type of any object passed to it,
 // more reliable implementation of typeof
 

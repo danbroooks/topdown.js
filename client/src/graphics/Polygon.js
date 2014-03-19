@@ -277,7 +277,7 @@ polygon.containsPoint = function(point){
   */
 };
 
-polygon.pointInPolygon = pointInPolygon.containsPoint;
+polygon.pointInPolygon = polygon.containsPoint;
 
 
 
