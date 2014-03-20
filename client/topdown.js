@@ -327,6 +327,8 @@ module.exports = game;
 
 },{"core/GameConfig":"h5AJ9p","is":"P9m7US","objects/Timer":"y3F4VZ"}],"core/game":[function(require,module,exports){
 module.exports=require('dE1Bu5');
+},{}],"dom":[function(require,module,exports){
+module.exports=require('qkALfs');
 },{}],"qkALfs":[function(require,module,exports){
 
 
@@ -636,9 +638,7 @@ DOM.css = DOM.style;
 module.exports = DOM;
 
 
-},{"is":"P9m7US"}],"dom":[function(require,module,exports){
-module.exports=require('qkALfs');
-},{}],"AEEx6z":[function(require,module,exports){
+},{"is":"P9m7US"}],"AEEx6z":[function(require,module,exports){
 
 
 // Object declaration
@@ -699,8 +699,6 @@ module.exports = fn;
 
 },{}],"fn":[function(require,module,exports){
 module.exports=require('AEEx6z');
-},{}],"graphics/Camera":[function(require,module,exports){
-module.exports=require('NsksZx');
 },{}],"NsksZx":[function(require,module,exports){
 
 
@@ -855,7 +853,9 @@ module.exports = Camera;
 
 
 
-},{"graphics/Point":"07NHAF","obj":"DOFYxp"}],"gCPbFZ":[function(require,module,exports){
+},{"graphics/Point":"07NHAF","obj":"DOFYxp"}],"graphics/Camera":[function(require,module,exports){
+module.exports=require('NsksZx');
+},{}],"gCPbFZ":[function(require,module,exports){
 
 // Load dependencies
 
@@ -1018,8 +1018,6 @@ module.exports = Canvas;
 
 },{"dom":"qkALfs","graphics/Camera":"NsksZx","graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Canvas":[function(require,module,exports){
 module.exports=require('gCPbFZ');
-},{}],"graphics/Collision":[function(require,module,exports){
-module.exports=require('8SM2KA');
 },{}],"8SM2KA":[function(require,module,exports){
 
 var obj = require('obj');
@@ -1093,8 +1091,8 @@ var Collision = obj.define(Object, Constructor, collision);
 module.exports = Collision;
 
 
-},{"graphics/Point":"07NHAF","graphics/Vector":"Hli4CA","is":"P9m7US","obj":"DOFYxp"}],"graphics/Graphics":[function(require,module,exports){
-module.exports=require('mC3JHL');
+},{"graphics/Point":"07NHAF","graphics/Vector":"Hli4CA","is":"P9m7US","obj":"DOFYxp"}],"graphics/Collision":[function(require,module,exports){
+module.exports=require('8SM2KA');
 },{}],"mC3JHL":[function(require,module,exports){
 
 
@@ -1221,7 +1219,11 @@ var Graphics = obj.define(Object, Constructor, gfx);
 module.exports = Graphics;
 
 
-},{"graphics/Camera":"NsksZx","graphics/Canvas":"gCPbFZ","graphics/Point":"07NHAF","obj":"DOFYxp","objects/Stack":"w0x1FX"}],"07NHAF":[function(require,module,exports){
+},{"graphics/Camera":"NsksZx","graphics/Canvas":"gCPbFZ","graphics/Point":"07NHAF","obj":"DOFYxp","objects/Stack":"w0x1FX"}],"graphics/Graphics":[function(require,module,exports){
+module.exports=require('mC3JHL');
+},{}],"graphics/Point":[function(require,module,exports){
+module.exports=require('07NHAF');
+},{}],"07NHAF":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1362,8 +1364,8 @@ var Point = obj.define(Object, Constructor, point);
 
 module.exports = Point;
 
-},{"is":"P9m7US","obj":"DOFYxp"}],"graphics/Point":[function(require,module,exports){
-module.exports=require('07NHAF');
+},{"is":"P9m7US","obj":"DOFYxp"}],"graphics/Polygon":[function(require,module,exports){
+module.exports=require('S3SzPy');
 },{}],"S3SzPy":[function(require,module,exports){
 
 
@@ -1806,8 +1808,8 @@ var Polygon = obj.define(Shape, Constructor, polygon);
 module.exports = Polygon;
 
 
-},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Polygon":[function(require,module,exports){
-module.exports=require('S3SzPy');
+},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Shape":[function(require,module,exports){
+module.exports=require('rB+uTR');
 },{}],"rB+uTR":[function(require,module,exports){
 
 
@@ -1863,9 +1865,7 @@ var Shape = obj.define(Object, Constructor, shape);
 
 module.exports = Shape;
 
-},{"obj":"DOFYxp"}],"graphics/Shape":[function(require,module,exports){
-module.exports=require('rB+uTR');
-},{}],"Hli4CA":[function(require,module,exports){
+},{"obj":"DOFYxp"}],"Hli4CA":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1959,6 +1959,8 @@ module.exports=require('Hli4CA');
 
 },{}],"graphics/trig":[function(require,module,exports){
 module.exports=require('HKUJiZ');
+},{}],"is":[function(require,module,exports){
+module.exports=require('P9m7US');
 },{}],"P9m7US":[function(require,module,exports){
 
 
@@ -2126,8 +2128,6 @@ is.PlainObject = is.ObjectLiteral;
 
 module.exports = is;
 
-},{}],"is":[function(require,module,exports){
-module.exports=require('P9m7US');
 },{}],"DOFYxp":[function(require,module,exports){
 
 
@@ -2546,6 +2546,8 @@ module.exports = Timer;
 
 },{"obj":"DOFYxp"}],"objects/Timer":[function(require,module,exports){
 module.exports=require('y3F4VZ');
+},{}],"onload":[function(require,module,exports){
+module.exports=require('+KSpms');
 },{}],"+KSpms":[function(require,module,exports){
 
 
@@ -2566,9 +2568,7 @@ window.onload = function(){
   });
 };
 
-},{"core/game":"dE1Bu5","dom":"qkALfs"}],"onload":[function(require,module,exports){
-module.exports=require('+KSpms');
-},{}],"poly":[function(require,module,exports){
+},{"core/game":"dE1Bu5","dom":"qkALfs"}],"poly":[function(require,module,exports){
 module.exports=require('vARtDh');
 },{}],"vARtDh":[function(require,module,exports){
 
