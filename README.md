@@ -8,7 +8,7 @@ and is effectively just a small collection of client-side modules.
 
 [Core](http://dangerdan.github.io/topdown.js/docs/client/core/game.html)
 
-[Graphics](http://dangerdan.github.io/topdown.js/docs/client/graphics/gfx.html)
+[Graphics](http://dangerdan.github.io/topdown.js/docs/client/graphics/Graphics.html)
 
 [Helpers](http://dangerdan.github.io/topdown.js/docs/client/helpers/dom.html)
 
