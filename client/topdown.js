@@ -131,6 +131,8 @@ module.exports = GameConfig;
 
 },{"graphics/Graphics":"mC3JHL","is":"P9m7US","obj":"DOFYxp"}],"core/GameConfig":[function(require,module,exports){
 module.exports=require('h5AJ9p');
+},{}],"core/game":[function(require,module,exports){
+module.exports=require('dE1Bu5');
 },{}],"dE1Bu5":[function(require,module,exports){
 
 
@@ -325,9 +327,7 @@ var update = function() {
 module.exports = game;
 
 
-},{"core/GameConfig":"h5AJ9p","is":"P9m7US","objects/Timer":"y3F4VZ"}],"core/game":[function(require,module,exports){
-module.exports=require('dE1Bu5');
-},{}],"qkALfs":[function(require,module,exports){
+},{"core/GameConfig":"h5AJ9p","is":"P9m7US","objects/Timer":"y3F4VZ"}],"qkALfs":[function(require,module,exports){
 
 
 // Load dependencies
@@ -699,8 +699,6 @@ module.exports = fn;
 
 },{}],"fn":[function(require,module,exports){
 module.exports=require('AEEx6z');
-},{}],"graphics/Camera":[function(require,module,exports){
-module.exports=require('NsksZx');
 },{}],"NsksZx":[function(require,module,exports){
 
 
@@ -855,7 +853,11 @@ module.exports = Camera;
 
 
 
-},{"graphics/Point":"07NHAF","obj":"DOFYxp"}],"gCPbFZ":[function(require,module,exports){
+},{"graphics/Point":"07NHAF","obj":"DOFYxp"}],"graphics/Camera":[function(require,module,exports){
+module.exports=require('NsksZx');
+},{}],"graphics/Canvas":[function(require,module,exports){
+module.exports=require('gCPbFZ');
+},{}],"gCPbFZ":[function(require,module,exports){
 
 // Load dependencies
 
@@ -1016,9 +1018,7 @@ module.exports = Canvas;
 
 
 
-},{"dom":"qkALfs","graphics/Camera":"NsksZx","graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Canvas":[function(require,module,exports){
-module.exports=require('gCPbFZ');
-},{}],"graphics/Collision":[function(require,module,exports){
+},{"dom":"qkALfs","graphics/Camera":"NsksZx","graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Collision":[function(require,module,exports){
 module.exports=require('8SM2KA');
 },{}],"8SM2KA":[function(require,module,exports){
 
@@ -1093,9 +1093,7 @@ var Collision = obj.define(Object, Constructor, collision);
 module.exports = Collision;
 
 
-},{"graphics/Point":"07NHAF","graphics/Vector":"Hli4CA","is":"P9m7US","obj":"DOFYxp"}],"graphics/Graphics":[function(require,module,exports){
-module.exports=require('mC3JHL');
-},{}],"mC3JHL":[function(require,module,exports){
+},{"graphics/Point":"07NHAF","graphics/Vector":"Hli4CA","is":"P9m7US","obj":"DOFYxp"}],"mC3JHL":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1221,7 +1219,11 @@ var Graphics = obj.define(Object, Constructor, gfx);
 module.exports = Graphics;
 
 
-},{"graphics/Camera":"NsksZx","graphics/Canvas":"gCPbFZ","graphics/Point":"07NHAF","obj":"DOFYxp","objects/Stack":"w0x1FX"}],"07NHAF":[function(require,module,exports){
+},{"graphics/Camera":"NsksZx","graphics/Canvas":"gCPbFZ","graphics/Point":"07NHAF","obj":"DOFYxp","objects/Stack":"w0x1FX"}],"graphics/Graphics":[function(require,module,exports){
+module.exports=require('mC3JHL');
+},{}],"graphics/Point":[function(require,module,exports){
+module.exports=require('07NHAF');
+},{}],"07NHAF":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1362,8 +1364,8 @@ var Point = obj.define(Object, Constructor, point);
 
 module.exports = Point;
 
-},{"is":"P9m7US","obj":"DOFYxp"}],"graphics/Point":[function(require,module,exports){
-module.exports=require('07NHAF');
+},{"is":"P9m7US","obj":"DOFYxp"}],"graphics/Polygon":[function(require,module,exports){
+module.exports=require('S3SzPy');
 },{}],"S3SzPy":[function(require,module,exports){
 
 
@@ -1806,9 +1808,7 @@ var Polygon = obj.define(Shape, Constructor, polygon);
 module.exports = Polygon;
 
 
-},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Polygon":[function(require,module,exports){
-module.exports=require('S3SzPy');
-},{}],"rB+uTR":[function(require,module,exports){
+},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"rB+uTR":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1959,6 +1959,8 @@ module.exports=require('Hli4CA');
 
 },{}],"graphics/trig":[function(require,module,exports){
 module.exports=require('HKUJiZ');
+},{}],"is":[function(require,module,exports){
+module.exports=require('P9m7US');
 },{}],"P9m7US":[function(require,module,exports){
 
 
@@ -2126,8 +2128,8 @@ is.PlainObject = is.ObjectLiteral;
 
 module.exports = is;
 
-},{}],"is":[function(require,module,exports){
-module.exports=require('P9m7US');
+},{}],"obj":[function(require,module,exports){
+module.exports=require('DOFYxp');
 },{}],"DOFYxp":[function(require,module,exports){
 
 
@@ -2345,9 +2347,7 @@ obj.identifier = function(seed){
 
 module.exports = obj;
 
-},{"is":"P9m7US"}],"obj":[function(require,module,exports){
-module.exports=require('DOFYxp');
-},{}],"w0x1FX":[function(require,module,exports){
+},{"is":"P9m7US"}],"w0x1FX":[function(require,module,exports){
 
 
 // Load dependencies
