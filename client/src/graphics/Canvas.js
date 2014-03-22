@@ -68,12 +68,13 @@ canvas.cling = function() {
 
 canvas.clearContext = function() {
   var canvas = this.canvas;
-  var ctx = canvas.getContext();
+  var ctx = this.getContext();
   if (ctx) {
     ctx.clearRect(0,0,canvas.width,canvas.height);
   }
 };
 
+canvas.clear = canvas.clearContext;
 
 
 
@@ -118,6 +119,102 @@ canvas.text = function(text, position){
     ctx.fillStyle = 'FFFFFF';
     ctx.fillText(text, position.x-25, position.y+5);
   }
+};
+
+
+
+
+
+// draw
+
+canvas.drawPoints = function(points, fill, stroke) {
+
+  if (!this.inShot(points)) return false;
+
+  fill = fill || '#FFFFFF';
+  stroke = stroke || '#FFFFFF';
+
+  var ctx = this.getContext();
+  var cam = this.camera;
+
+  ctx.fillStyle = fill;
+  ctx.strokeStyle = stroke;
+  ctx.beginPath();
+
+  for(i = 0; i < points.length; i++) {
+    var point = points[i];
+    var func = i ? 'lineTo' : 'moveTo';
+    ctx[func]( cam.modX(point.x), cam.modY(point.y) );
+  }
+
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+};
+
+canvas.draw = canvas.drawPoints;
+
+
+
+// Iterates over points. If at least one of a shape's points are in shot, then draw.
+// If they're all less than 0 or greater than canvas edge on x or y axis, do not draw.
+
+canvas.inShot = function(points){
+
+  var canvas_size = this.getCanvasSize();
+  var cam = this.camera;
+
+  var modx = cam.modX;
+      mody = cam.modY;
+
+  var viewport = {
+    x:{
+      lt: true, gt: true,
+      min: modx(0),
+      max: modx(canvas_size.x)
+    },
+    y: {
+      lt: true, gt: true,
+      min: mody(0),
+      max: mody(canvas_size.y)
+    }
+  };
+
+  for (var i = 0; i < points.length; i++) {
+    if(points[i].inShot()) return true;
+
+    var point = points[i];
+
+    viewport.x.lt = ( viewport.x.lt && (point.x < viewport.x.min) ) ? true : false;
+    viewport.x.gt = ( viewport.x.gt && (point.x > viewport.x.max) ) ? true : false;
+    viewport.y.lt = ( viewport.y.lt && (point.y < viewport.y.min) ) ? true : false;
+    viewport.y.gt = ( viewport.y.gt && (point.y > viewport.y.max) ) ? true : false;
+  }
+
+  if (viewport.x.lt || viewport.y.lt || viewport.x.gt || viewport.y.gt) return false;
+
+  // consider case when points are off shot but shape is not
+
+  // More complex tests arise when a shape's points are out of the bounds
+  // of camera, but part of the shape will still fall in shot, ie a rotated
+  // square or a triangle.
+
+  //   denom = ((LineB2.Y – LineB1.Y) * (LineA2.X – LineA1.X)) –
+  //     ((LineB2.X – lineB1.X) * (LineA2.Y - LineA1.Y))
+  //   return denom != 0
+
+  // alternatively generate bounding sphere and use that to calculate wether
+  // or not to draw shape, less exact but possibly more efficient.
+
+  // http://devmag.org.za/2009/04/13/basic-collision-detection-in-2d-part-1/
+
+  // see also:
+  //   https://github.com/robhawkes/rawkets/blob/master/public/js/Game.js#L440
+
+  // Without a final algorithm it's worth rendering this
+  // content anyway incase it overlaps into the viewport.
+  return true;
 };
 
 
