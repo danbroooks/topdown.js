@@ -68,65 +68,9 @@ var polygon = {};
 
 
 
-// Iterates over points. If at least one of a shape's points are in shot, then draw.
-// If they're all less than 0 or greater than canvas edge on x or y axis, do not draw.
 
-polygon.inShot = function() {
-  /*
-  canvas_size = topdown.gfx.getCanvasSize();
-
-  var modx = topdown.gfx.camera.mod.x;
-      mody = topdown.gfx.camera.mod.y;
-
-  var viewport = {
-    x:{
-      lt: true, gt: true,
-      min: modx(0),
-      max: modx(canvas_size.x)
-    },
-    y: {
-      lt: true, gt: true,
-      min: mody(0),
-      max: mody(canvas_size.y)
-    }
-  };
-
-  for (var i = 0; i < this.points.length; i++) {
-    if(this.points[i].inShot()) return true;
-
-    var points = this.points[i];
-
-    viewport.x.lt = ( viewport.x.lt && (points.x < viewport.x.min) ) ? true : false;
-    viewport.x.gt = ( viewport.x.gt && (points.x > viewport.x.max) ) ? true : false;
-    viewport.y.lt = ( viewport.y.lt && (points.y < viewport.y.min) ) ? true : false;
-    viewport.y.gt = ( viewport.y.gt && (points.y > viewport.y.max) ) ? true : false;
-  }
-
-  if (viewport.x.lt || viewport.y.lt || viewport.x.gt || viewport.y.gt) return false;
-  */
-
-  // consider case when points are off shot but shape is not
-
-  // More complex tests arise when a shape's points are out of the bounds
-  // of camera, but part of the shape will still fall in shot, ie a rotated
-  // square or a triangle.
-
-  //   denom = ((LineB2.Y – LineB1.Y) * (LineA2.X – LineA1.X)) –
-  //     ((LineB2.X – lineB1.X) * (LineA2.Y - LineA1.Y))
-  //   return denom != 0
-
-  // alternatively generate bounding sphere and use that to calculate wether
-  // or not to draw shape, less exact but possibly more efficient.
-
-  // http://devmag.org.za/2009/04/13/basic-collision-detection-in-2d-part-1/
-
-
-  // see also:
-  //   https://github.com/robhawkes/rawkets/blob/master/public/js/Game.js#L440
-
-  // Without a final algorithm it's worth rendering this
-  // content anyway incase it overlaps into the viewport.
-  return true;
+polygon.inShot = function(gfx) {
+  gfx.getCanvas().inShot(this.shape);
 };
 
 
@@ -136,26 +80,9 @@ polygon.inShot = function() {
 // Calls graphics method to render shape
 
 polygon.render = function (gfx) {
-  /*
-  if (!this.inShot()) return false;
-
-  var ctx = gfx.getContext();
-  var mod = gfx.camera.mod;
-
-  ctx.fillStyle = this.fill;
-  ctx.strokeStyle = this.stroke;
-  ctx.beginPath();
-
-  for(i = 0; i < this.points.length; i++) {
-    var point = this.points[i];
-    var func = i ? 'lineTo' : 'moveTo';
-    ctx[func](mod.x(point.x), mod.y(point.y));
+  if (this.inShot()) {
+    gfx.getCanvas().draw(this.shape);
   }
-
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
-  */
 };
 
 
@@ -169,10 +96,10 @@ polygon.move = function () {
   var args = arguments;
   var vector;
 
-  if(!args.length || args.length > 2) return false;
-  if(args.length == 1) vector = args[0];
+  if (!args.length || args.length > 2) return false;
+  if (args.length == 1) vector = args[0];
 
-  if(args.length == 2) {
+  if (args.length == 2) {
     if( isNaN( args[0] ) || isNaN( args[1] ) ) return false;
     vector = Point(args);
   }

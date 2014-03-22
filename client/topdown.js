@@ -1,6 +1,4 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"core/GameConfig":[function(require,module,exports){
-module.exports=require('h5AJ9p');
-},{}],"h5AJ9p":[function(require,module,exports){
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"h5AJ9p":[function(require,module,exports){
 
 
 // Load dependencies
@@ -131,8 +129,8 @@ var GameConfig = obj.define(Object, Constructor, gameConfig);
 module.exports = GameConfig;
 
 
-},{"graphics/Graphics":"mC3JHL","is":"P9m7US","obj":"DOFYxp"}],"core/game":[function(require,module,exports){
-module.exports=require('dE1Bu5');
+},{"graphics/Graphics":"mC3JHL","is":"P9m7US","obj":"DOFYxp"}],"core/GameConfig":[function(require,module,exports){
+module.exports=require('h5AJ9p');
 },{}],"dE1Bu5":[function(require,module,exports){
 
 
@@ -327,7 +325,9 @@ var update = function() {
 module.exports = game;
 
 
-},{"core/GameConfig":"h5AJ9p","is":"P9m7US","objects/Timer":"y3F4VZ"}],"qkALfs":[function(require,module,exports){
+},{"core/GameConfig":"h5AJ9p","is":"P9m7US","objects/Timer":"y3F4VZ"}],"core/game":[function(require,module,exports){
+module.exports=require('dE1Bu5');
+},{}],"qkALfs":[function(require,module,exports){
 
 
 // Load dependencies
@@ -926,12 +926,13 @@ canvas.cling = function() {
 
 canvas.clearContext = function() {
   var canvas = this.canvas;
-  var ctx = canvas.getContext();
+  var ctx = this.getContext();
   if (ctx) {
     ctx.clearRect(0,0,canvas.width,canvas.height);
   }
 };
 
+canvas.clear = canvas.clearContext;
 
 
 
@@ -982,6 +983,102 @@ canvas.text = function(text, position){
 
 
 
+// draw
+
+canvas.drawPoints = function(points, fill, stroke) {
+
+  if (!this.inShot(points)) return false;
+
+  fill = fill || '#FFFFFF';
+  stroke = stroke || '#FFFFFF';
+
+  var ctx = this.getContext();
+  var cam = this.camera;
+
+  ctx.fillStyle = fill;
+  ctx.strokeStyle = stroke;
+  ctx.beginPath();
+
+  for(i = 0; i < points.length; i++) {
+    var point = points[i];
+    var func = i ? 'lineTo' : 'moveTo';
+    ctx[func]( cam.modX(point.x), cam.modY(point.y) );
+  }
+
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+};
+
+canvas.draw = canvas.drawPoints;
+
+
+
+// Iterates over points. If at least one of a shape's points are in shot, then draw.
+// If they're all less than 0 or greater than canvas edge on x or y axis, do not draw.
+
+canvas.inShot = function(points){
+
+  var canvas_size = this.getCanvasSize();
+  var cam = this.camera;
+
+  var modx = cam.modX;
+      mody = cam.modY;
+
+  var viewport = {
+    x:{
+      lt: true, gt: true,
+      min: modx(0),
+      max: modx(canvas_size.x)
+    },
+    y: {
+      lt: true, gt: true,
+      min: mody(0),
+      max: mody(canvas_size.y)
+    }
+  };
+
+  for (var i = 0; i < points.length; i++) {
+    if(points[i].inShot()) return true;
+
+    var point = points[i];
+
+    viewport.x.lt = ( viewport.x.lt && (point.x < viewport.x.min) ) ? true : false;
+    viewport.x.gt = ( viewport.x.gt && (point.x > viewport.x.max) ) ? true : false;
+    viewport.y.lt = ( viewport.y.lt && (point.y < viewport.y.min) ) ? true : false;
+    viewport.y.gt = ( viewport.y.gt && (point.y > viewport.y.max) ) ? true : false;
+  }
+
+  if (viewport.x.lt || viewport.y.lt || viewport.x.gt || viewport.y.gt) return false;
+
+  // consider case when points are off shot but shape is not
+
+  // More complex tests arise when a shape's points are out of the bounds
+  // of camera, but part of the shape will still fall in shot, ie a rotated
+  // square or a triangle.
+
+  //   denom = ((LineB2.Y – LineB1.Y) * (LineA2.X – LineA1.X)) –
+  //     ((LineB2.X – lineB1.X) * (LineA2.Y - LineA1.Y))
+  //   return denom != 0
+
+  // alternatively generate bounding sphere and use that to calculate wether
+  // or not to draw shape, less exact but possibly more efficient.
+
+  // http://devmag.org.za/2009/04/13/basic-collision-detection-in-2d-part-1/
+
+  // see also:
+  //   https://github.com/robhawkes/rawkets/blob/master/public/js/Game.js#L440
+
+  // Without a final algorithm it's worth rendering this
+  // content anyway incase it overlaps into the viewport.
+  return true;
+};
+
+
+
+
+
 //
 
 // gfx.render = function(shape) {
@@ -1018,8 +1115,6 @@ module.exports = Canvas;
 
 },{"dom":"qkALfs","graphics/Camera":"NsksZx","graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Canvas":[function(require,module,exports){
 module.exports=require('gCPbFZ');
-},{}],"graphics/Collision":[function(require,module,exports){
-module.exports=require('8SM2KA');
 },{}],"8SM2KA":[function(require,module,exports){
 
 var obj = require('obj');
@@ -1093,7 +1188,9 @@ var Collision = obj.define(Object, Constructor, collision);
 module.exports = Collision;
 
 
-},{"graphics/Point":"07NHAF","graphics/Vector":"Hli4CA","is":"P9m7US","obj":"DOFYxp"}],"mC3JHL":[function(require,module,exports){
+},{"graphics/Point":"07NHAF","graphics/Vector":"Hli4CA","is":"P9m7US","obj":"DOFYxp"}],"graphics/Collision":[function(require,module,exports){
+module.exports=require('8SM2KA');
+},{}],"mC3JHL":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1147,6 +1244,18 @@ gfx.createCanvas = function(name) {
 
 
 
+// Gets primary canvas
+
+gfx.getPrimaryCanvas = function() {
+  return this.canvasStack.selected;
+};
+
+gfx.getCanvas = gfx.getPrimaryCanvas;
+
+
+
+
+
 // Sets primary canvas
 
 gfx.setPrimaryCanvas = function(canvasName){
@@ -1181,7 +1290,47 @@ gfx.addCamera = function(name){
 
 
 
-// //
+
+// draw
+
+gfx.draw = function(points, fill, stroke){
+  this.canvasStack.selected.draw(points, fill, stroke);
+};
+
+
+
+
+
+// clears current canvas
+
+gfx.clear = function(){
+  this.canvasStack.selected.clear();
+};
+
+
+
+
+
+// prints text to current canvas
+
+gfx.text = function(text, position){
+  this.canvasStack.selected.text(text, position);
+};
+
+
+
+
+
+//
+
+gfx.clingAll = function() {
+  this.canvasStack.each(function(c){
+    c.cling();
+  });
+};
+
+gfx.cling = gfx.clingAll;
+
 
 // // gfx.loadImage = function(src, callback) {
 // //   var image = new Image();
@@ -1191,7 +1340,6 @@ gfx.addCamera = function(name){
 // //   }
 // //   return image;
 // // };
-
 
 
 gfx.bindCameraToCanvas = function(camera, canvas) {
@@ -1221,8 +1369,6 @@ module.exports = Graphics;
 
 },{"graphics/Camera":"NsksZx","graphics/Canvas":"gCPbFZ","graphics/Point":"07NHAF","obj":"DOFYxp","objects/Stack":"w0x1FX"}],"graphics/Graphics":[function(require,module,exports){
 module.exports=require('mC3JHL');
-},{}],"graphics/Point":[function(require,module,exports){
-module.exports=require('07NHAF');
 },{}],"07NHAF":[function(require,module,exports){
 
 
@@ -1364,7 +1510,11 @@ var Point = obj.define(Object, Constructor, point);
 
 module.exports = Point;
 
-},{"is":"P9m7US","obj":"DOFYxp"}],"S3SzPy":[function(require,module,exports){
+},{"is":"P9m7US","obj":"DOFYxp"}],"graphics/Point":[function(require,module,exports){
+module.exports=require('07NHAF');
+},{}],"graphics/Polygon":[function(require,module,exports){
+module.exports=require('S3SzPy');
+},{}],"S3SzPy":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1435,65 +1585,9 @@ var polygon = {};
 
 
 
-// Iterates over points. If at least one of a shape's points are in shot, then draw.
-// If they're all less than 0 or greater than canvas edge on x or y axis, do not draw.
 
-polygon.inShot = function() {
-  /*
-  canvas_size = topdown.gfx.getCanvasSize();
-
-  var modx = topdown.gfx.camera.mod.x;
-      mody = topdown.gfx.camera.mod.y;
-
-  var viewport = {
-    x:{
-      lt: true, gt: true,
-      min: modx(0),
-      max: modx(canvas_size.x)
-    },
-    y: {
-      lt: true, gt: true,
-      min: mody(0),
-      max: mody(canvas_size.y)
-    }
-  };
-
-  for (var i = 0; i < this.points.length; i++) {
-    if(this.points[i].inShot()) return true;
-
-    var points = this.points[i];
-
-    viewport.x.lt = ( viewport.x.lt && (points.x < viewport.x.min) ) ? true : false;
-    viewport.x.gt = ( viewport.x.gt && (points.x > viewport.x.max) ) ? true : false;
-    viewport.y.lt = ( viewport.y.lt && (points.y < viewport.y.min) ) ? true : false;
-    viewport.y.gt = ( viewport.y.gt && (points.y > viewport.y.max) ) ? true : false;
-  }
-
-  if (viewport.x.lt || viewport.y.lt || viewport.x.gt || viewport.y.gt) return false;
-  */
-
-  // consider case when points are off shot but shape is not
-
-  // More complex tests arise when a shape's points are out of the bounds
-  // of camera, but part of the shape will still fall in shot, ie a rotated
-  // square or a triangle.
-
-  //   denom = ((LineB2.Y – LineB1.Y) * (LineA2.X – LineA1.X)) –
-  //     ((LineB2.X – lineB1.X) * (LineA2.Y - LineA1.Y))
-  //   return denom != 0
-
-  // alternatively generate bounding sphere and use that to calculate wether
-  // or not to draw shape, less exact but possibly more efficient.
-
-  // http://devmag.org.za/2009/04/13/basic-collision-detection-in-2d-part-1/
-
-
-  // see also:
-  //   https://github.com/robhawkes/rawkets/blob/master/public/js/Game.js#L440
-
-  // Without a final algorithm it's worth rendering this
-  // content anyway incase it overlaps into the viewport.
-  return true;
+polygon.inShot = function(gfx) {
+  gfx.getCanvas().inShot(this.shape);
 };
 
 
@@ -1503,26 +1597,9 @@ polygon.inShot = function() {
 // Calls graphics method to render shape
 
 polygon.render = function (gfx) {
-  /*
-  if (!this.inShot()) return false;
-
-  var ctx = gfx.getContext();
-  var mod = gfx.camera.mod;
-
-  ctx.fillStyle = this.fill;
-  ctx.strokeStyle = this.stroke;
-  ctx.beginPath();
-
-  for(i = 0; i < this.points.length; i++) {
-    var point = this.points[i];
-    var func = i ? 'lineTo' : 'moveTo';
-    ctx[func](mod.x(point.x), mod.y(point.y));
+  if (this.inShot()) {
+    gfx.getCanvas().draw(this.shape);
   }
-
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
-  */
 };
 
 
@@ -1536,10 +1613,10 @@ polygon.move = function () {
   var args = arguments;
   var vector;
 
-  if(!args.length || args.length > 2) return false;
-  if(args.length == 1) vector = args[0];
+  if (!args.length || args.length > 2) return false;
+  if (args.length == 1) vector = args[0];
 
-  if(args.length == 2) {
+  if (args.length == 2) {
     if( isNaN( args[0] ) || isNaN( args[1] ) ) return false;
     vector = Point(args);
   }
@@ -1806,8 +1883,8 @@ var Polygon = obj.define(Shape, Constructor, polygon);
 module.exports = Polygon;
 
 
-},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Polygon":[function(require,module,exports){
-module.exports=require('S3SzPy');
+},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Shape":[function(require,module,exports){
+module.exports=require('rB+uTR');
 },{}],"rB+uTR":[function(require,module,exports){
 
 
@@ -1863,9 +1940,7 @@ var Shape = obj.define(Object, Constructor, shape);
 
 module.exports = Shape;
 
-},{"obj":"DOFYxp"}],"graphics/Shape":[function(require,module,exports){
-module.exports=require('rB+uTR');
-},{}],"Hli4CA":[function(require,module,exports){
+},{"obj":"DOFYxp"}],"Hli4CA":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1955,10 +2030,10 @@ var Vector = obj.define(Object, Constructor, vector);
 module.exports = Vector;
 },{"graphics/Point":"07NHAF","is":"P9m7US","obj":"DOFYxp"}],"graphics/Vector":[function(require,module,exports){
 module.exports=require('Hli4CA');
-},{}],"HKUJiZ":[function(require,module,exports){
-
 },{}],"graphics/trig":[function(require,module,exports){
 module.exports=require('HKUJiZ');
+},{}],"HKUJiZ":[function(require,module,exports){
+
 },{}],"is":[function(require,module,exports){
 module.exports=require('P9m7US');
 },{}],"P9m7US":[function(require,module,exports){
@@ -2546,8 +2621,6 @@ module.exports = Timer;
 
 },{"obj":"DOFYxp"}],"objects/Timer":[function(require,module,exports){
 module.exports=require('y3F4VZ');
-},{}],"onload":[function(require,module,exports){
-module.exports=require('+KSpms');
 },{}],"+KSpms":[function(require,module,exports){
 
 
@@ -2568,7 +2641,9 @@ window.onload = function(){
   });
 };
 
-},{"core/game":"dE1Bu5","dom":"qkALfs"}],"poly":[function(require,module,exports){
+},{"core/game":"dE1Bu5","dom":"qkALfs"}],"onload":[function(require,module,exports){
+module.exports=require('+KSpms');
+},{}],"poly":[function(require,module,exports){
 module.exports=require('vARtDh');
 },{}],"vARtDh":[function(require,module,exports){
 

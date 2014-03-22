@@ -51,6 +51,18 @@ gfx.createCanvas = function(name) {
 
 
 
+// Gets primary canvas
+
+gfx.getPrimaryCanvas = function() {
+  return this.canvasStack.selected;
+};
+
+gfx.getCanvas = gfx.getPrimaryCanvas;
+
+
+
+
+
 // Sets primary canvas
 
 gfx.setPrimaryCanvas = function(canvasName){
@@ -85,7 +97,47 @@ gfx.addCamera = function(name){
 
 
 
-// //
+
+// draw
+
+gfx.draw = function(points, fill, stroke){
+  this.canvasStack.selected.draw(points, fill, stroke);
+};
+
+
+
+
+
+// clears current canvas
+
+gfx.clear = function(){
+  this.canvasStack.selected.clear();
+};
+
+
+
+
+
+// prints text to current canvas
+
+gfx.text = function(text, position){
+  this.canvasStack.selected.text(text, position);
+};
+
+
+
+
+
+//
+
+gfx.clingAll = function() {
+  this.canvasStack.each(function(c){
+    c.cling();
+  });
+};
+
+gfx.cling = gfx.clingAll;
+
 
 // // gfx.loadImage = function(src, callback) {
 // //   var image = new Image();
@@ -95,7 +147,6 @@ gfx.addCamera = function(name){
 // //   }
 // //   return image;
 // // };
-
 
 
 gfx.bindCameraToCanvas = function(camera, canvas) {
