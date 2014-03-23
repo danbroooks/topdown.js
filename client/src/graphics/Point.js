@@ -13,7 +13,10 @@ var is = require('is');
 
 var Constructor = function(x, y){
 
-  if (!y && is.Array(x) && x.length == 2) {
+  if (!is.set(x)) {
+    this.x = 0;
+    this.y = 0;
+  } else if (!is.set(y) && is.Array(x) && x.length == 2) {
     this.x = x[0];
     this.y = x[1];
   } else if (is.PlainObject(x) && x.x && x.y) {
@@ -119,7 +122,6 @@ point.sub = function (point, returnNewInstance) {
 point.invert = function () {
   return Point( -this.x, -this.y );
 };
-
 
 
 

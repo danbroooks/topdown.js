@@ -3,6 +3,7 @@
 // Load dependencies
 
 var obj = require('obj');
+var is = require('is');
 var Point = require('graphics/Point');
 
 
@@ -12,6 +13,14 @@ var Point = require('graphics/Point');
 // Constructor
 
 var Constructor = function(x, y){
+
+  if (!is.set(x)) {
+    x = 0;
+  }
+
+  if (!is.set(y)){
+    y = 0;
+  }
 
   // Camera position stored as Point
   this.position = Point(x, y);
@@ -99,23 +108,6 @@ camera.noffset = function(point) {
 
 
 /*
-
-
-// Returns true if point is inside camera
-
-camera.pointInShot = function (point) {
-  var cam = camera.noffset(point);
-
-  var canvas = gfx.getCanvasSize();
-
-  if ( cam.x < 0 || cam.x > canvas.x || cam.y < 0 || cam.y > canvas.y ) {
-    return false;
-  }
-  return true;
-};
-
-
-
 
 // Used for tracking an object with camera, disabled for now.
 

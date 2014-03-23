@@ -89,8 +89,8 @@ gfx.setCamera = function(name){
 
 gfx.addCamera = function(name){
   if (name) {
-    var c = Camera();
-    this.cameraStack.push(name, c);
+    var cam = Camera();
+    this.cameraStack.push(name, cam);
   }
 };
 

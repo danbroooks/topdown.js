@@ -111,7 +111,7 @@ is.String = function(obj) {
 
 // Is variable set? Same as php's `isset`
 
-is.set = function () {
+is.Set = function () {
   var a = arguments,
   l = a.length,
   i = 0,
@@ -129,6 +129,8 @@ is.set = function () {
   }
   return true;
 };
+
+is.set = is.Set;
 
 
 

@@ -93,7 +93,14 @@ canvas.getContext = function(){
 
 canvas.getCanvasSize = function() {
   var canvas = this.canvas;
-  return { x: canvas.width, y: canvas.height };
+
+  return {
+    w: canvas.width,
+    h: canvas.height,
+
+    width: canvas.width,
+    height: canvas.height
+  };
 };
 
 
@@ -129,7 +136,9 @@ canvas.text = function(text, position){
 
 canvas.drawPoints = function(points, fill, stroke) {
 
-  if (!this.inShot(points)) return false;
+  // add check for 'points' containing all points?
+
+  if (!this.pointsInShot(points)) return false;
 
   fill = fill || '#FFFFFF';
   stroke = stroke || '#FFFFFF';
@@ -160,31 +169,28 @@ canvas.draw = canvas.drawPoints;
 // Iterates over points. If at least one of a shape's points are in shot, then draw.
 // If they're all less than 0 or greater than canvas edge on x or y axis, do not draw.
 
-canvas.inShot = function(points){
+canvas.pointsInShot = function(points){
 
   var canvas_size = this.getCanvasSize();
   var cam = this.camera;
 
-  var modx = cam.modX;
-      mody = cam.modY;
-
   var viewport = {
     x:{
       lt: true, gt: true,
-      min: modx(0),
-      max: modx(canvas_size.x)
+      min: cam.modX(0),
+      max: cam.modX(canvas_size.w)
     },
     y: {
       lt: true, gt: true,
-      min: mody(0),
-      max: mody(canvas_size.y)
+      min: cam.modY(0),
+      max: cam.modY(canvas_size.h)
     }
   };
 
   for (var i = 0; i < points.length; i++) {
-    if(points[i].inShot()) return true;
-
     var point = points[i];
+
+    if(this.inShot(point)) return true;
 
     viewport.x.lt = ( viewport.x.lt && (point.x < viewport.x.min) ) ? true : false;
     viewport.x.gt = ( viewport.x.gt && (point.x > viewport.x.max) ) ? true : false;
@@ -221,21 +227,18 @@ canvas.inShot = function(points){
 
 
 
-//
+canvas.inShot = function(point) {
 
-// gfx.render = function(shape) {
-//   if (!shape instanceof Shape) {
-//     throw new Error('Only pass shape objects to render.');
-//   }
+  var canvasSize = this.getCanvasSize();
+  var cam = this.camera;
 
-//   console.log(shape);
-//   if (shape.inShot(this)) {
-//     shape.render(this);
-//   }
+  var pt = cam.noffset(point);
 
-// };
+  var withinX = ( pt.x > 0 && pt.x < canvasSize.w);
+  var withinY = ( pt.y > 0 && pt.y < canvasSize.h);
 
-
+  return ( withinX && withinY );
+};
 
 
 

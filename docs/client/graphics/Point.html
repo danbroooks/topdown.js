@@ -119,7 +119,10 @@
             <div class="content"><div class='highlight'><pre>
 <span class="hljs-keyword">var</span> Constructor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y)</span>{</span>
 
-  <span class="hljs-keyword">if</span> (!y &amp;&amp; is.Array(x) &amp;&amp; x.length == <span class="hljs-number">2</span>) {
+  <span class="hljs-keyword">if</span> (!is.set(x)) {
+    <span class="hljs-keyword">this</span>.x = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">this</span>.y = <span class="hljs-number">0</span>;
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!is.set(y) &amp;&amp; is.Array(x) &amp;&amp; x.length == <span class="hljs-number">2</span>) {
     <span class="hljs-keyword">this</span>.x = x[<span class="hljs-number">0</span>];
     <span class="hljs-keyword">this</span>.y = x[<span class="hljs-number">1</span>];
   } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (is.PlainObject(x) &amp;&amp; x.x &amp;&amp; x.y) {

@@ -101,6 +101,7 @@
             
             <div class="content"><div class='highlight'><pre>
 <span class="hljs-keyword">var</span> obj = <span class="hljs-built_in">require</span>(<span class="hljs-string">'obj'</span>);
+<span class="hljs-keyword">var</span> is = <span class="hljs-built_in">require</span>(<span class="hljs-string">'is'</span>);
 <span class="hljs-keyword">var</span> Point = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Point'</span>);</pre></div></div>
             
         </li>
@@ -117,7 +118,15 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> Constructor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y)</span>{</span></pre></div></div>
+<span class="hljs-keyword">var</span> Constructor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y)</span>{</span>
+
+  <span class="hljs-keyword">if</span> (!is.set(x)) {
+    x = <span class="hljs-number">0</span>;
+  }
+
+  <span class="hljs-keyword">if</span> (!is.set(y)){
+    y = <span class="hljs-number">0</span>;
+  }</pre></div></div>
             
         </li>
         
@@ -282,7 +291,6 @@ camera.noffset = <span class="hljs-function"><span class="hljs-keyword">function
 
 <span class="hljs-comment">/*
 
-
 </span></pre></div></div>
             
         </li>
@@ -293,31 +301,6 @@ camera.noffset = <span class="hljs-function"><span class="hljs-keyword">function
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
-              </div>
-              <p>Returns true if point is inside camera</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>
-camera.pointInShot = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(point)</span> {</span>
-  <span class="hljs-keyword">var</span> cam = camera.noffset(point);
-
-  <span class="hljs-keyword">var</span> canvas = gfx.getCanvasSize();
-
-  <span class="hljs-keyword">if</span> ( cam.x &lt; <span class="hljs-number">0</span> || cam.x &gt; canvas.x || cam.y &lt; <span class="hljs-number">0</span> || cam.y &gt; canvas.y ) {
-    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-  }
-  <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-};</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-14">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>Used for tracking an object with camera, disabled for now.</p>
 
@@ -344,11 +327,11 @@ camera.track = function(object) {
         </li>
         
         
-        <li id="section-15">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>Create definition</p>
 
@@ -360,11 +343,11 @@ camera.track = function(object) {
         </li>
         
         
-        <li id="section-16">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Export module</p>
 

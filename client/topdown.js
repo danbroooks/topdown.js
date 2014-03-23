@@ -699,12 +699,15 @@ module.exports = fn;
 
 },{}],"fn":[function(require,module,exports){
 module.exports=require('AEEx6z');
+},{}],"graphics/Camera":[function(require,module,exports){
+module.exports=require('NsksZx');
 },{}],"NsksZx":[function(require,module,exports){
 
 
 // Load dependencies
 
 var obj = require('obj');
+var is = require('is');
 var Point = require('graphics/Point');
 
 
@@ -714,6 +717,14 @@ var Point = require('graphics/Point');
 // Constructor
 
 var Constructor = function(x, y){
+
+  if (!is.set(x)) {
+    x = 0;
+  }
+
+  if (!is.set(y)){
+    y = 0;
+  }
 
   // Camera position stored as Point
   this.position = Point(x, y);
@@ -802,23 +813,6 @@ camera.noffset = function(point) {
 
 /*
 
-
-// Returns true if point is inside camera
-
-camera.pointInShot = function (point) {
-  var cam = camera.noffset(point);
-
-  var canvas = gfx.getCanvasSize();
-
-  if ( cam.x < 0 || cam.x > canvas.x || cam.y < 0 || cam.y > canvas.y ) {
-    return false;
-  }
-  return true;
-};
-
-
-
-
 // Used for tracking an object with camera, disabled for now.
 
 camera.track = function(object) {
@@ -853,9 +847,7 @@ module.exports = Camera;
 
 
 
-},{"graphics/Point":"07NHAF","obj":"DOFYxp"}],"graphics/Camera":[function(require,module,exports){
-module.exports=require('NsksZx');
-},{}],"gCPbFZ":[function(require,module,exports){
+},{"graphics/Point":"07NHAF","is":"P9m7US","obj":"DOFYxp"}],"gCPbFZ":[function(require,module,exports){
 
 // Load dependencies
 
@@ -951,7 +943,14 @@ canvas.getContext = function(){
 
 canvas.getCanvasSize = function() {
   var canvas = this.canvas;
-  return { x: canvas.width, y: canvas.height };
+
+  return {
+    w: canvas.width,
+    h: canvas.height,
+
+    width: canvas.width,
+    height: canvas.height
+  };
 };
 
 
@@ -987,7 +986,9 @@ canvas.text = function(text, position){
 
 canvas.drawPoints = function(points, fill, stroke) {
 
-  if (!this.inShot(points)) return false;
+  // add check for 'points' containing all points?
+
+  if (!this.pointsInShot(points)) return false;
 
   fill = fill || '#FFFFFF';
   stroke = stroke || '#FFFFFF';
@@ -1018,31 +1019,28 @@ canvas.draw = canvas.drawPoints;
 // Iterates over points. If at least one of a shape's points are in shot, then draw.
 // If they're all less than 0 or greater than canvas edge on x or y axis, do not draw.
 
-canvas.inShot = function(points){
+canvas.pointsInShot = function(points){
 
   var canvas_size = this.getCanvasSize();
   var cam = this.camera;
 
-  var modx = cam.modX;
-      mody = cam.modY;
-
   var viewport = {
     x:{
       lt: true, gt: true,
-      min: modx(0),
-      max: modx(canvas_size.x)
+      min: cam.modX(0),
+      max: cam.modX(canvas_size.w)
     },
     y: {
       lt: true, gt: true,
-      min: mody(0),
-      max: mody(canvas_size.y)
+      min: cam.modY(0),
+      max: cam.modY(canvas_size.h)
     }
   };
 
   for (var i = 0; i < points.length; i++) {
-    if(points[i].inShot()) return true;
-
     var point = points[i];
+
+    if(this.inShot(point)) return true;
 
     viewport.x.lt = ( viewport.x.lt && (point.x < viewport.x.min) ) ? true : false;
     viewport.x.gt = ( viewport.x.gt && (point.x > viewport.x.max) ) ? true : false;
@@ -1079,21 +1077,18 @@ canvas.inShot = function(points){
 
 
 
-//
+canvas.inShot = function(point) {
 
-// gfx.render = function(shape) {
-//   if (!shape instanceof Shape) {
-//     throw new Error('Only pass shape objects to render.');
-//   }
+  var canvasSize = this.getCanvasSize();
+  var cam = this.camera;
 
-//   console.log(shape);
-//   if (shape.inShot(this)) {
-//     shape.render(this);
-//   }
+  var pt = cam.noffset(point);
 
-// };
+  var withinX = ( pt.x > 0 && pt.x < canvasSize.w);
+  var withinY = ( pt.y > 0 && pt.y < canvasSize.h);
 
-
+  return ( withinX && withinY );
+};
 
 
 
@@ -1115,6 +1110,8 @@ module.exports = Canvas;
 
 },{"dom":"qkALfs","graphics/Camera":"NsksZx","graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Canvas":[function(require,module,exports){
 module.exports=require('gCPbFZ');
+},{}],"graphics/Collision":[function(require,module,exports){
+module.exports=require('8SM2KA');
 },{}],"8SM2KA":[function(require,module,exports){
 
 var obj = require('obj');
@@ -1188,8 +1185,8 @@ var Collision = obj.define(Object, Constructor, collision);
 module.exports = Collision;
 
 
-},{"graphics/Point":"07NHAF","graphics/Vector":"Hli4CA","is":"P9m7US","obj":"DOFYxp"}],"graphics/Collision":[function(require,module,exports){
-module.exports=require('8SM2KA');
+},{"graphics/Point":"07NHAF","graphics/Vector":"Hli4CA","is":"P9m7US","obj":"DOFYxp"}],"graphics/Graphics":[function(require,module,exports){
+module.exports=require('mC3JHL');
 },{}],"mC3JHL":[function(require,module,exports){
 
 
@@ -1282,8 +1279,8 @@ gfx.setCamera = function(name){
 
 gfx.addCamera = function(name){
   if (name) {
-    var c = Camera();
-    this.cameraStack.push(name, c);
+    var cam = Camera();
+    this.cameraStack.push(name, cam);
   }
 };
 
@@ -1367,9 +1364,7 @@ var Graphics = obj.define(Object, Constructor, gfx);
 module.exports = Graphics;
 
 
-},{"graphics/Camera":"NsksZx","graphics/Canvas":"gCPbFZ","graphics/Point":"07NHAF","obj":"DOFYxp","objects/Stack":"w0x1FX"}],"graphics/Graphics":[function(require,module,exports){
-module.exports=require('mC3JHL');
-},{}],"07NHAF":[function(require,module,exports){
+},{"graphics/Camera":"NsksZx","graphics/Canvas":"gCPbFZ","graphics/Point":"07NHAF","obj":"DOFYxp","objects/Stack":"w0x1FX"}],"07NHAF":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1385,7 +1380,10 @@ var is = require('is');
 
 var Constructor = function(x, y){
 
-  if (!y && is.Array(x) && x.length == 2) {
+  if (!is.set(x)) {
+    this.x = 0;
+    this.y = 0;
+  } else if (!is.set(y) && is.Array(x) && x.length == 2) {
     this.x = x[0];
     this.y = x[1];
   } else if (is.PlainObject(x) && x.x && x.y) {
@@ -1496,7 +1494,6 @@ point.invert = function () {
 
 
 
-
 // Object definition
 
 var Point = obj.define(Object, Constructor, point);
@@ -1512,8 +1509,6 @@ module.exports = Point;
 
 },{"is":"P9m7US","obj":"DOFYxp"}],"graphics/Point":[function(require,module,exports){
 module.exports=require('07NHAF');
-},{}],"graphics/Polygon":[function(require,module,exports){
-module.exports=require('S3SzPy');
 },{}],"S3SzPy":[function(require,module,exports){
 
 
@@ -1883,8 +1878,8 @@ var Polygon = obj.define(Shape, Constructor, polygon);
 module.exports = Polygon;
 
 
-},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Shape":[function(require,module,exports){
-module.exports=require('rB+uTR');
+},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Polygon":[function(require,module,exports){
+module.exports=require('S3SzPy');
 },{}],"rB+uTR":[function(require,module,exports){
 
 
@@ -1940,7 +1935,11 @@ var Shape = obj.define(Object, Constructor, shape);
 
 module.exports = Shape;
 
-},{"obj":"DOFYxp"}],"Hli4CA":[function(require,module,exports){
+},{"obj":"DOFYxp"}],"graphics/Shape":[function(require,module,exports){
+module.exports=require('rB+uTR');
+},{}],"graphics/Vector":[function(require,module,exports){
+module.exports=require('Hli4CA');
+},{}],"Hli4CA":[function(require,module,exports){
 
 
 // Load dependencies
@@ -2028,14 +2027,10 @@ var Vector = obj.define(Object, Constructor, vector);
 // Export module
 
 module.exports = Vector;
-},{"graphics/Point":"07NHAF","is":"P9m7US","obj":"DOFYxp"}],"graphics/Vector":[function(require,module,exports){
-module.exports=require('Hli4CA');
+},{"graphics/Point":"07NHAF","is":"P9m7US","obj":"DOFYxp"}],"HKUJiZ":[function(require,module,exports){
+
 },{}],"graphics/trig":[function(require,module,exports){
 module.exports=require('HKUJiZ');
-},{}],"HKUJiZ":[function(require,module,exports){
-
-},{}],"is":[function(require,module,exports){
-module.exports=require('P9m7US');
 },{}],"P9m7US":[function(require,module,exports){
 
 
@@ -2150,7 +2145,7 @@ is.String = function(obj) {
 
 // Is variable set? Same as php's `isset`
 
-is.set = function () {
+is.Set = function () {
   var a = arguments,
   l = a.length,
   i = 0,
@@ -2168,6 +2163,8 @@ is.set = function () {
   }
   return true;
 };
+
+is.set = is.Set;
 
 
 
@@ -2203,8 +2200,8 @@ is.PlainObject = is.ObjectLiteral;
 
 module.exports = is;
 
-},{}],"obj":[function(require,module,exports){
-module.exports=require('DOFYxp');
+},{}],"is":[function(require,module,exports){
+module.exports=require('P9m7US');
 },{}],"DOFYxp":[function(require,module,exports){
 
 
@@ -2422,7 +2419,9 @@ obj.identifier = function(seed){
 
 module.exports = obj;
 
-},{"is":"P9m7US"}],"w0x1FX":[function(require,module,exports){
+},{"is":"P9m7US"}],"obj":[function(require,module,exports){
+module.exports=require('DOFYxp');
+},{}],"w0x1FX":[function(require,module,exports){
 
 
 // Load dependencies
