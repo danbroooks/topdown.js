@@ -15,6 +15,7 @@ var modules = [
   'objects/Timer.js',
   'objects/Stack.js',
 
+  'core/FPS.js',
   'core/game.js',
   'core/GameConfig.js',
 

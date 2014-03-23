@@ -4,6 +4,7 @@
 
 var is = require('is');
 var GameConfig = require('core/GameConfig');
+var FPS = require('core/FPS');
 var Timer = require('objects/Timer');
 
 
@@ -72,38 +73,15 @@ game.setGraphicsObject = function(gfxObj) {
 
 // Framerate/FPS object (could be turned into module?)
 
-var fps = {
-  current: 0,
-  previous: 0,
-  last: 0,
-  value: function() {
-    var v = (this.current + this.previous + this.last ) / 3;
-    v = Math.floor(v*10)/10;
-    return v;
-  },
-  set: function(value) {
-    this.last = this.previous;
-    this.previous = this.current;
-    this.current = 1000/value;
-  }
-};
-
-
+var fps = FPS();
 
 // Expose framerate as readonly property
 
 game.__defineGetter__('fps', function(){ return fps.value(); });
 
-
-
-
-
-var frame = 0;
-
-
 // Expose frame as readonly property
 
-game.__defineGetter__('tick', function(){ return frame; });
+game.__defineGetter__('tick', function(){ return fps.tick(); });
 
 
 
@@ -165,7 +143,6 @@ var render = function() {
   // call project render function
   game.render(delta, gfx);
 
-  frame++;
   requestAnimationFrame(render);
 };
 

@@ -1,4 +1,65 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"h5AJ9p":[function(require,module,exports){
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"XqAouS":[function(require,module,exports){
+
+
+// Load dependencies
+
+var obj = require('obj');
+
+
+
+
+
+// Constructor
+
+var FPS = function(){
+  var current = 0;
+  var previous = 0;
+  var last = 0;
+  var frame = 0;
+
+  // Returns average fps based on previous three frames
+
+  this.value = function() {
+    var v = (current + previous + last ) / 3;
+    v = Math.floor(v*10)/10;
+    return v;
+  };
+
+  // Counts a frame
+  // TODO: this whole object could be a lot better.
+
+  this.set = function(value) {
+    frame++;
+    last = previous;
+    previous = current;
+    current = 1000/value;
+  };
+
+  this.frame = function(){
+    return frame;
+  };
+
+  this.tick = function(){
+    return frame;
+  };
+
+};
+
+
+
+
+// Export module
+
+module.exports = function(filter){
+  return new FPS();
+};
+
+
+},{"obj":"DOFYxp"}],"core/FPS":[function(require,module,exports){
+module.exports=require('XqAouS');
+},{}],"core/GameConfig":[function(require,module,exports){
+module.exports=require('h5AJ9p');
+},{}],"h5AJ9p":[function(require,module,exports){
 
 
 // Load dependencies
@@ -129,8 +190,8 @@ var GameConfig = obj.define(Object, Constructor, gameConfig);
 module.exports = GameConfig;
 
 
-},{"graphics/Graphics":"mC3JHL","is":"P9m7US","obj":"DOFYxp"}],"core/GameConfig":[function(require,module,exports){
-module.exports=require('h5AJ9p');
+},{"graphics/Graphics":"mC3JHL","is":"P9m7US","obj":"DOFYxp"}],"core/game":[function(require,module,exports){
+module.exports=require('dE1Bu5');
 },{}],"dE1Bu5":[function(require,module,exports){
 
 
@@ -138,6 +199,7 @@ module.exports=require('h5AJ9p');
 
 var is = require('is');
 var GameConfig = require('core/GameConfig');
+var FPS = require('core/FPS');
 var Timer = require('objects/Timer');
 
 
@@ -206,38 +268,15 @@ game.setGraphicsObject = function(gfxObj) {
 
 // Framerate/FPS object (could be turned into module?)
 
-var fps = {
-  current: 0,
-  previous: 0,
-  last: 0,
-  value: function() {
-    var v = (this.current + this.previous + this.last ) / 3;
-    v = Math.floor(v*10)/10;
-    return v;
-  },
-  set: function(value) {
-    this.last = this.previous;
-    this.previous = this.current;
-    this.current = 1000/value;
-  }
-};
-
-
+var fps = FPS();
 
 // Expose framerate as readonly property
 
 game.__defineGetter__('fps', function(){ return fps.value(); });
 
-
-
-
-
-var frame = 0;
-
-
 // Expose frame as readonly property
 
-game.__defineGetter__('tick', function(){ return frame; });
+game.__defineGetter__('tick', function(){ return fps.tick(); });
 
 
 
@@ -299,7 +338,6 @@ var render = function() {
   // call project render function
   game.render(delta, gfx);
 
-  frame++;
   requestAnimationFrame(render);
 };
 
@@ -325,9 +363,7 @@ var update = function() {
 module.exports = game;
 
 
-},{"core/GameConfig":"h5AJ9p","is":"P9m7US","objects/Timer":"y3F4VZ"}],"core/game":[function(require,module,exports){
-module.exports=require('dE1Bu5');
-},{}],"qkALfs":[function(require,module,exports){
+},{"core/FPS":"XqAouS","core/GameConfig":"h5AJ9p","is":"P9m7US","objects/Timer":"y3F4VZ"}],"qkALfs":[function(require,module,exports){
 
 
 // Load dependencies
@@ -638,6 +674,8 @@ module.exports = DOM;
 
 },{"is":"P9m7US"}],"dom":[function(require,module,exports){
 module.exports=require('qkALfs');
+},{}],"fn":[function(require,module,exports){
+module.exports=require('AEEx6z');
 },{}],"AEEx6z":[function(require,module,exports){
 
 
@@ -697,8 +735,6 @@ fn.fromArray = function (array) {
 
 module.exports = fn;
 
-},{}],"fn":[function(require,module,exports){
-module.exports=require('AEEx6z');
 },{}],"graphics/Camera":[function(require,module,exports){
 module.exports=require('NsksZx');
 },{}],"NsksZx":[function(require,module,exports){
@@ -1509,6 +1545,8 @@ module.exports = Point;
 
 },{"is":"P9m7US","obj":"DOFYxp"}],"graphics/Point":[function(require,module,exports){
 module.exports=require('07NHAF');
+},{}],"graphics/Polygon":[function(require,module,exports){
+module.exports=require('S3SzPy');
 },{}],"S3SzPy":[function(require,module,exports){
 
 
@@ -1878,9 +1916,7 @@ var Polygon = obj.define(Shape, Constructor, polygon);
 module.exports = Polygon;
 
 
-},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Polygon":[function(require,module,exports){
-module.exports=require('S3SzPy');
-},{}],"rB+uTR":[function(require,module,exports){
+},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"rB+uTR":[function(require,module,exports){
 
 
 // Load dependencies
@@ -2027,10 +2063,10 @@ var Vector = obj.define(Object, Constructor, vector);
 // Export module
 
 module.exports = Vector;
-},{"graphics/Point":"07NHAF","is":"P9m7US","obj":"DOFYxp"}],"HKUJiZ":[function(require,module,exports){
-
-},{}],"graphics/trig":[function(require,module,exports){
+},{"graphics/Point":"07NHAF","is":"P9m7US","obj":"DOFYxp"}],"graphics/trig":[function(require,module,exports){
 module.exports=require('HKUJiZ');
+},{}],"HKUJiZ":[function(require,module,exports){
+
 },{}],"P9m7US":[function(require,module,exports){
 
 
@@ -2421,6 +2457,8 @@ module.exports = obj;
 
 },{"is":"P9m7US"}],"obj":[function(require,module,exports){
 module.exports=require('DOFYxp');
+},{}],"objects/Stack":[function(require,module,exports){
+module.exports=require('w0x1FX');
 },{}],"w0x1FX":[function(require,module,exports){
 
 
@@ -2499,9 +2537,7 @@ module.exports = function(filter){
   return new Stack(filter);
 };
 
-},{"obj":"DOFYxp"}],"objects/Stack":[function(require,module,exports){
-module.exports=require('w0x1FX');
-},{}],"y3F4VZ":[function(require,module,exports){
+},{"obj":"DOFYxp"}],"y3F4VZ":[function(require,module,exports){
 
 
 // Load dependencies
@@ -2642,8 +2678,6 @@ window.onload = function(){
 
 },{"core/game":"dE1Bu5","dom":"qkALfs"}],"onload":[function(require,module,exports){
 module.exports=require('+KSpms');
-},{}],"poly":[function(require,module,exports){
-module.exports=require('vARtDh');
 },{}],"vARtDh":[function(require,module,exports){
 
 
@@ -2712,4 +2746,6 @@ if(!window.cancelAnimationFrame){
   };
 }
 
-},{}]},{},["vARtDh","+KSpms","AEEx6z","P9m7US","DOFYxp","qkALfs","y3F4VZ","w0x1FX","dE1Bu5","h5AJ9p","HKUJiZ","Hli4CA","07NHAF","8SM2KA","rB+uTR","S3SzPy","NsksZx","gCPbFZ","mC3JHL"])
+},{}],"poly":[function(require,module,exports){
+module.exports=require('vARtDh');
+},{}]},{},["vARtDh","+KSpms","AEEx6z","P9m7US","DOFYxp","qkALfs","y3F4VZ","w0x1FX","XqAouS","dE1Bu5","h5AJ9p","HKUJiZ","Hli4CA","07NHAF","8SM2KA","rB+uTR","S3SzPy","NsksZx","gCPbFZ","mC3JHL"])
