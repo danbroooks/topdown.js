@@ -103,8 +103,9 @@
 <span class="hljs-keyword">var</span> obj = <span class="hljs-built_in">require</span>(<span class="hljs-string">'obj'</span>);
 <span class="hljs-keyword">var</span> DOM = <span class="hljs-built_in">require</span>(<span class="hljs-string">'dom'</span>);
 <span class="hljs-keyword">var</span> Point = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Point'</span>);
-<span class="hljs-keyword">var</span> Shape = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Shape'</span>);
-<span class="hljs-keyword">var</span> Camera = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Camera'</span>);</pre></div></div>
+<span class="hljs-keyword">var</span> Polygon = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Polygon'</span>);
+<span class="hljs-keyword">var</span> Camera = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Camera'</span>);
+<span class="hljs-keyword">var</span> Collision = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Collision'</span>);</pre></div></div>
             
         </li>
         
@@ -269,6 +270,35 @@ canvas.getCanvasSize = <span class="hljs-function"><span class="hljs-keyword">fu
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
+              <p>Creates a polygon to represent canvas</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+canvas.asShape = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  <span class="hljs-keyword">var</span> size = <span class="hljs-keyword">this</span>.getCanvasSize();
+  <span class="hljs-keyword">var</span> shape = Polygon({
+    points: [
+      [<span class="hljs-number">0</span>, <span class="hljs-number">0</span>],
+      [<span class="hljs-number">0</span>, size.w],
+      [size.h, size.w],
+      [size.h, <span class="hljs-number">0</span>]
+    ],
+    position: [ size.w/<span class="hljs-number">2</span>, size.h/<span class="hljs-number">2</span> ]
+  });
+
+  <span class="hljs-keyword">return</span> shape;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
               
             </div>
             
@@ -281,11 +311,11 @@ canvas.getCanvasCenter = <span class="hljs-function"><span class="hljs-keyword">
         </li>
         
         
-        <li id="section-12">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               
             </div>
@@ -302,11 +332,11 @@ canvas.text = <span class="hljs-function"><span class="hljs-keyword">function</s
         </li>
         
         
-        <li id="section-13">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>draw</p>
 
@@ -318,11 +348,11 @@ canvas.drawPoints = <span class="hljs-function"><span class="hljs-keyword">funct
         </li>
         
         
-        <li id="section-14">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>add check for ‘points’ containing all points?</p>
 
@@ -358,59 +388,14 @@ canvas.draw = canvas.drawPoints;</pre></div></div>
         </li>
         
         
-        <li id="section-15">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
-              </div>
-              <p>Iterates over points. If at least one of a shape’s points are in shot, then draw.
-If they’re all less than 0 or greater than canvas edge on x or y axis, do not draw.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>
-canvas.pointsInShot = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(points)</span>{</span>
-
-  <span class="hljs-keyword">var</span> canvas_size = <span class="hljs-keyword">this</span>.getCanvasSize();
-  <span class="hljs-keyword">var</span> cam = <span class="hljs-keyword">this</span>.camera;
-
-  <span class="hljs-keyword">var</span> viewport = {
-    x:{
-      lt: <span class="hljs-literal">true</span>, gt: <span class="hljs-literal">true</span>,
-      min: cam.modX(<span class="hljs-number">0</span>),
-      max: cam.modX(canvas_size.w)
-    },
-    y: {
-      lt: <span class="hljs-literal">true</span>, gt: <span class="hljs-literal">true</span>,
-      min: cam.modY(<span class="hljs-number">0</span>),
-      max: cam.modY(canvas_size.h)
-    }
-  };
-
-  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; points.length; i++) {
-    <span class="hljs-keyword">var</span> point = points[i];
-
-    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.inShot(point)) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-
-    viewport.x.lt = ( viewport.x.lt &amp;&amp; (point.x &lt; viewport.x.min) ) ? <span class="hljs-literal">true</span> : <span class="hljs-literal">false</span>;
-    viewport.x.gt = ( viewport.x.gt &amp;&amp; (point.x &gt; viewport.x.max) ) ? <span class="hljs-literal">true</span> : <span class="hljs-literal">false</span>;
-    viewport.y.lt = ( viewport.y.lt &amp;&amp; (point.y &lt; viewport.y.min) ) ? <span class="hljs-literal">true</span> : <span class="hljs-literal">false</span>;
-    viewport.y.gt = ( viewport.y.gt &amp;&amp; (point.y &gt; viewport.y.max) ) ? <span class="hljs-literal">true</span> : <span class="hljs-literal">false</span>;
-  }
-
-  <span class="hljs-keyword">if</span> (viewport.x.lt || viewport.y.lt || viewport.x.gt || viewport.y.gt) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;</pre></div></div>
-            
-        </li>
-        
-        
         <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <p>consider case when points are off shot but shape is not</p>
+              <p>Iterates over points. If at least one of a shape’s points are in shot, then draw.
+If they’re all less than 0 or greater than canvas edge on x or y axis, do not draw.</p>
 
             </div>
             
@@ -423,11 +408,48 @@ canvas.pointsInShot = <span class="hljs-function"><span class="hljs-keyword">fun
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <p>More complex tests arise when a shape’s points are out of the bounds
-of camera, but part of the shape will still fall in shot, ie a rotated
-square or a triangle.</p>
+              <p>TODO: re-write with ‘shapes overlap’ algorythm.</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>
+canvas.pointsInShot = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(points)</span>{</span>
+  <span class="hljs-keyword">var</span> shape = <span class="hljs-keyword">this</span>.asShape();
+  shape.move(<span class="hljs-keyword">this</span>.camera.position);
+
+  <span class="hljs-comment">/*
+  Collision.areaContainsPoint
+
+  var canvas_size = this.getCanvasSize();
+  var cam = this.camera;
+
+  var viewport = {
+    x:{
+      lt: true, gt: true,
+      min: cam.modX(0),
+      max: cam.modX(canvas_size.w)
+    },
+    y: {
+      lt: true, gt: true,
+      min: cam.modY(0),
+      max: cam.modY(canvas_size.h)
+    }
+  };
+
+  for (var i = 0; i &lt; points.length; i++) {
+    var point = points[i];
+
+    if(this.inShot(point)) return true;
+
+    viewport.x.lt = ( viewport.x.lt &amp;&amp; (point.x &lt; viewport.x.min) ) ? true : false;
+    viewport.x.gt = ( viewport.x.gt &amp;&amp; (point.x &gt; viewport.x.max) ) ? true : false;
+    viewport.y.lt = ( viewport.y.lt &amp;&amp; (point.y &lt; viewport.y.min) ) ? true : false;
+    viewport.y.gt = ( viewport.y.gt &amp;&amp; (point.y &gt; viewport.y.max) ) ? true : false;
+  }
+
+  if (viewport.x.lt || viewport.y.lt || viewport.x.gt || viewport.y.gt) return false;
+
+</span></pre></div></div>
             
         </li>
         
@@ -438,9 +460,7 @@ square or a triangle.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              <p>  denom = ((LineB2.Y – LineB1.Y) <em> (LineA2.X – LineA1.X)) –
-    ((LineB2.X – lineB1.X) </em> (LineA2.Y - LineA1.Y))
-  return denom != 0</p>
+              <p>consider case when points are off shot but shape is not</p>
 
             </div>
             
@@ -453,8 +473,9 @@ square or a triangle.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <p>alternatively generate bounding sphere and use that to calculate wether
-or not to draw shape, less exact but possibly more efficient.</p>
+              <p>More complex tests arise when a shape’s points are out of the bounds
+of camera, but part of the shape will still fall in shot, ie a rotated
+square or a triangle.</p>
 
             </div>
             
@@ -467,7 +488,9 @@ or not to draw shape, less exact but possibly more efficient.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
-              <p><a href="http://devmag.org.za/2009/04/13/basic-collision-detection-in-2d-part-1/">http://devmag.org.za/2009/04/13/basic-collision-detection-in-2d-part-1/</a></p>
+              <p>  denom = ((LineB2.Y – LineB1.Y) <em> (LineA2.X – LineA1.X)) –
+    ((LineB2.X – lineB1.X) </em> (LineA2.Y - LineA1.Y))
+  return denom != 0</p>
 
             </div>
             
@@ -480,8 +503,8 @@ or not to draw shape, less exact but possibly more efficient.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
-              <p>see also:
-  <a href="https://github.com/robhawkes/rawkets/blob/master/public/js/Game.js#L440">https://github.com/robhawkes/rawkets/blob/master/public/js/Game.js#L440</a></p>
+              <p>alternatively generate bounding sphere and use that to calculate wether
+or not to draw shape, less exact but possibly more efficient.</p>
 
             </div>
             
@@ -494,30 +517,9 @@ or not to draw shape, less exact but possibly more efficient.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              <p>Without a final algorithm it’s worth rendering this
-content anyway incase it overlaps into the viewport.</p>
+              <p><a href="http://devmag.org.za/2009/04/13/basic-collision-detection-in-2d-part-1/">http://devmag.org.za/2009/04/13/basic-collision-detection-in-2d-part-1/</a></p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-};
-
-
-
-
-
-canvas.inShot = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span> {</span>
-
-  <span class="hljs-keyword">var</span> canvasSize = <span class="hljs-keyword">this</span>.getCanvasSize();
-  <span class="hljs-keyword">var</span> cam = <span class="hljs-keyword">this</span>.camera;
-
-  <span class="hljs-keyword">var</span> pt = cam.noffset(point);
-
-  <span class="hljs-keyword">var</span> withinX = ( pt.x &gt; <span class="hljs-number">0</span> &amp;&amp; pt.x &lt; canvasSize.w);
-  <span class="hljs-keyword">var</span> withinY = ( pt.y &gt; <span class="hljs-number">0</span> &amp;&amp; pt.y &lt; canvasSize.h);
-
-  <span class="hljs-keyword">return</span> ( withinX &amp;&amp; withinY );
-};</pre></div></div>
             
         </li>
         
@@ -527,6 +529,55 @@ canvas.inShot = <span class="hljs-function"><span class="hljs-keyword">function<
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>see also:
+  <a href="https://github.com/robhawkes/rawkets/blob/master/public/js/Game.js#L440">https://github.com/robhawkes/rawkets/blob/master/public/js/Game.js#L440</a></p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>Without a final algorithm it’s worth rendering this
+content anyway incase it overlaps into the viewport.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  */
+  return true;
+};
+
+
+
+
+
+canvas.inShot = function(point) {
+
+  var canvasSize = this.getCanvasSize();
+  var cam = this.camera;
+
+  var pt = cam.noffset(point);
+
+  var withinX = ( pt.x &gt; 0 &amp;&amp; pt.x &lt; canvasSize.w);
+  var withinY = ( pt.y &gt; 0 &amp;&amp; pt.y &lt; canvasSize.h);
+
+  return ( withinX &amp;&amp; withinY );
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>Create definition</p>
 
@@ -538,11 +589,11 @@ canvas.inShot = <span class="hljs-function"><span class="hljs-keyword">function<
         </li>
         
         
-        <li id="section-24">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>Export module</p>
 

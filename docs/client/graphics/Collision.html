@@ -90,6 +90,7 @@
 <span class="hljs-keyword">var</span> obj = <span class="hljs-built_in">require</span>(<span class="hljs-string">'obj'</span>);
 <span class="hljs-keyword">var</span> is = <span class="hljs-built_in">require</span>(<span class="hljs-string">'is'</span>);
 
+<span class="hljs-keyword">var</span> Shape = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Shape'</span>);
 <span class="hljs-keyword">var</span> Vector = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Vector'</span>);
 <span class="hljs-keyword">var</span> Point = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Point'</span>);</pre></div></div>
             
@@ -116,9 +117,7 @@
   <span class="hljs-keyword">this</span>.vectorA = vectorA;
   <span class="hljs-keyword">this</span>.vectorB = vectorB;
 
-};
-
-<span class="hljs-keyword">var</span> collision = {};</pre></div></div>
+};</pre></div></div>
             
         </li>
         
@@ -129,11 +128,12 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              
+              <p>Declare object literal</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>
-collision.polygonContainsPoint = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>};</pre></div></div>
+<span class="hljs-keyword">var</span> collision = {};</pre></div></div>
             
         </li>
         
@@ -155,13 +155,13 @@ collision.getIntersectionPoint = <span class="hljs-function"><span class="hljs-k
 
   <span class="hljs-keyword">var</span> s1_x, s1_y, s2_x, s2_y;
 
-  s1_x = vectorA.b.x - vectorA.a.x;
-  s1_y = vectorA.b.y - vectorA.a.y;
-  s2_x = vectorB.b.x - vectorB.a.x;
-  s2_y = vectorB.b.y - vectorB.a.y;
+  s1_x = vectorA.to.x - vectorA.from.x;
+  s1_y = vectorA.to.y - vectorA.from.y;
+  s2_x = vectorB.to.x - vectorB.from.x;
+  s2_y = vectorB.to.y - vectorB.from.y;
 
-  <span class="hljs-keyword">var</span> s = (-s1_y * (vectorA.a.x - vectorB.a.x) + s1_x * (vectorA.a.y - vectorB.a.y)) / (-s2_x * s1_y + s1_x * s2_y);
-  <span class="hljs-keyword">var</span> t = ( s2_x * (vectorA.a.y - vectorB.a.y) - s2_y * (vectorA.a.x - vectorB.a.x)) / (-s2_x * s1_y + s1_x * s2_y);
+  <span class="hljs-keyword">var</span> s = (-s1_y * (vectorA.from.x - vectorB.from.x) + s1_x * (vectorA.from.y - vectorB.from.y)) / (-s2_x * s1_y + s1_x * s2_y);
+  <span class="hljs-keyword">var</span> t = ( s2_x * (vectorA.from.y - vectorB.from.y) - s2_y * (vectorA.from.x - vectorB.from.x)) / (-s2_x * s1_y + s1_x * s2_y);
 
   <span class="hljs-keyword">if</span> (s &gt;= <span class="hljs-number">0</span> &amp;&amp; s &lt;= <span class="hljs-number">1</span> &amp;&amp; t &gt;= <span class="hljs-number">0</span> &amp;&amp; t &lt;= <span class="hljs-number">1</span>) {</pre></div></div>
             
@@ -179,8 +179,8 @@ collision.getIntersectionPoint = <span class="hljs-function"><span class="hljs-k
             </div>
             
             <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">return</span> Point({
-      x: vectorA.a.x + (t * s1_x),
-      y: vectorA.a.y + (t * s1_y)
+      x: vectorA.from.x + (t * s1_x),
+      y: vectorA.from.y + (t * s1_y)
     });
   }</pre></div></div>
             
@@ -231,7 +231,110 @@ collision.doesLineIntersect = <span class="hljs-function"><span class="hljs-keyw
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> Collision = obj.define(<span class="hljs-built_in">Object</span>, Constructor, collision);
+<span class="hljs-keyword">var</span> Collision = obj.define(<span class="hljs-built_in">Object</span>, Constructor, collision);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Static methods</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+Collision.areaContainsPoint = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(area, point)</span>{</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>check point is a Point</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">if</span> (! (point <span class="hljs-keyword">instanceof</span> Point)) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'The point argument for areaContainsPoint should be a Point object.'</span>);
+  }
+
+  <span class="hljs-keyword">var</span> x_inter;
+  <span class="hljs-keyword">var</span> points;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>check area ‘is shape’ || ‘is array of points’</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">if</span> (is.Array(area)) {
+    area.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e, i)</span>{</span>
+      <span class="hljs-keyword">if</span> ( ! (e <span class="hljs-keyword">instanceof</span> Point)) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'The area argument for areaContainsPoint should be either a Shape or an array of points'</span>);
+      }
+    });
+    points = area;
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (area <span class="hljs-keyword">instanceof</span> Shape) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>if shape create an array of points.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    points = area.points;
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">throw</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'The area argument for areaContainsPoint should be either a Shape or an array of points'</span>);
+  }
+
+
+  <span class="hljs-keyword">var</span> counter = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">var</span> p1 = points[<span class="hljs-number">0</span>];
+
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">1</span>, l = points.length; i &lt;= l; i++) {
+    <span class="hljs-keyword">var</span> p2 = points[i%l];
+
+    <span class="hljs-keyword">if</span> (
+      point.y &gt; <span class="hljs-built_in">Math</span>.min(p1.y, p2.y) &amp;&amp;
+      point.y &lt;= <span class="hljs-built_in">Math</span>.max(p1.y, p2.y) &amp;&amp;
+      point.x &lt;= <span class="hljs-built_in">Math</span>.max(p1.x, p2.x) &amp;&amp;
+      p1.y != p2.y
+    ) {
+      x_inter = (point.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
+      <span class="hljs-keyword">if</span> ( p1.x == p2.x || point.x &lt;= x_inter) {
+        counter++;
+      }
+    }
+    p1 = p2;
+  }
+
+  <span class="hljs-keyword">return</span> ( counter % <span class="hljs-number">2</span> == <span class="hljs-number">1</span> );
+};
+
+
+
 
 
 module.exports = Collision;</pre></div></div>

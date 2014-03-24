@@ -3,6 +3,8 @@
 // Load dependencies
 
 var obj = require('obj');
+var is = require('is');
+
 var Shape = require('graphics/Shape');
 var Point = require('graphics/Point');
 
@@ -12,47 +14,71 @@ var Point = require('graphics/Point');
 
 // Constructor
 
-var Constructor = function(options){
-  /*
-  options = obj.extend({
-    points: defaultPoints,
-    position: [20, 20]
-  }, options);
+var Constructor = function(options) {
 
-  var proto = this;
-  while ( (proto = Object.getPrototypeOf(proto)) !== null ) {
-    options = obj.extend(proto, options);
-  }
+  var points;
+  var position;
+  var opts = {};
 
-  function checkPoints(points, size) {
+  function validateRawArray(points) {
+    var size = 2;
     points.forEach(function(point){
-      if (point.length != size) throw new Error('Array contains incorrect amount of points required ('+size+').');
+      if (point.length != size) throw new Error('Array contains incorrect number of values to make a point ('+size+').');
     });
-
     return true;
   }
 
-  var defaultPoints = [
-    [ 20, 20 ],
-    [ 20, 40 ],
-    [ 40, 40 ],
-    [ 40, 20 ]
-  ];
+  function arrayOfPoints(points) {
+    var allPoints = true;
+    points.forEach(function(point){
+      var isPoint = point instanceof Point;
+      if (allPoints && !isPoint ) {
+        allPoints = false;
+      }
+    });
+    return allPoints;
+  }
 
-  var points = options.points;
-  var position = options.position;
+  if (is.Array(options)) {
+    points = options;
+  } else if (is.set(options.points)) {
+    points = options.points;
+  }
 
-  points = (checkPoints(points, 2)) ? points : defaultPoints;
-  this.points = [];
+  if (is.Array(points)) {
+    var tmp;
+    if (!arrayOfPoints(points)) {
+      validateRawArray(points);
+      tmp = [];
+      points.forEach(function(opt){
+        tmp.push(Point(opt));
+      });
+    } else {
+      tmp = points;
+    }
 
-  points.forEach(function(point){
-    this.points.push( Point( point ));
-  });
+    opts.points = tmp;
+  }
+
+
+  // TODO: convert options.position to Point object if array of 2 values
+
+  options = obj.extend({
+    points: [
+      Point( 20, 20 ),
+      Point( 20, 40 ),
+      Point( 40, 40 ),
+      Point( 40, 20 )
+    ],
+    position: Point(20, 20)
+  }, options, opts);
+
+  this.points = options.points;
+  this.position = options.position;
 
   this.move(this.centroid().invert());
-  this.move(Point(position));
+  this.move(this.position);
   this.position = this.centroid();
-  */
 
 };
 
@@ -68,21 +94,10 @@ var polygon = {};
 
 
 
-
-polygon.inShot = function(gfx) {
-  gfx.getCanvas().inShot(this.shape);
-};
-
-
-
-
-
 // Calls graphics method to render shape
 
 polygon.render = function (gfx) {
-  if (this.inShot()) {
-    gfx.getCanvas().draw(this.shape);
-  }
+  gfx.getCanvas().draw(this.shape);
 };
 
 
@@ -176,32 +191,7 @@ polygon.setAngle = function (angle) {
 // Move into collision module?
 
 polygon.containsPoint = function(point){
-  /*
-  var
-  counter = 0,
-  x_inter,
-  points = this.points;
-
-  var p1 = points[0];
-  for (var i = 1, l = points.length; i <= l; i++) {
-    var p2 = points[i%l];
-
-    if (
-      point.y > Math.min(p1.y, p2.y) &&
-      point.y <= Math.max(p1.y, p2.y) &&
-      point.x <= Math.max(p1.x, p2.x) &&
-      p1.y != p2.y
-    ) {
-      x_inter = (point.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
-      if ( p1.x == p2.x || point.x <= x_inter) {
-        counter++;
-      }
-    }
-    p1 = p2;
-  }
-
-  return ( counter % 2 == 1 );
-  */
+  return false;
 };
 
 polygon.pointInPolygon = polygon.containsPoint;
@@ -210,11 +200,12 @@ polygon.pointInPolygon = polygon.containsPoint;
 
 
 
-// Collision algorithm.
-// Move into collision module?
+//
 
 polygon.detectCollision = function () {
-/*
+
+  // TODO: re-write using Collision object
+  /*
   var args = arguments;
 
   if(args.length != 2) {
@@ -250,47 +241,7 @@ polygon.detectCollision = function () {
   }
 
   return collision;
-*/
-};
-
-
-
-
-
-// Move into collision module?
-
-polygon.getLineIntersectionPoint = function(A1, A2, B1, B2) {
-  /*
-  var s1_x, s1_y, s2_x, s2_y;
-  s1_x = A2.x - A1.x;
-  s1_y = A2.y - A1.y;
-  s2_x = B2.x - B1.x;
-  s2_y = B2.y - B1.y;
-  var s, t;
-  s = (-s1_y * (A1.x - B1.x) + s1_x * (A1.y - B1.y)) / (-s2_x * s1_y + s1_x * s2_y);
-  t = ( s2_x * (A1.y - B1.y) - s2_y * (A1.x - B1.x)) / (-s2_x * s1_y + s1_x * s2_y);
-
-  if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
-    // Collision detected
-    return Point({
-      x: A1.x + (t * s1_x),
-      y: A1.y + (t * s1_y)
-    });
-  }
-
-  // No collision
-  return false;
   */
-};
-
-
-
-
-
-//
-
-polygon.doesLineIntersect = function(A1, A2, B1, B2) {
-  // return this.getLineIntersectionPoint(A1, A2, B1, B2) !== false;
 };
 
 
@@ -298,29 +249,34 @@ polygon.doesLineIntersect = function(A1, A2, B1, B2) {
 
 
 // Returns the center point of shape.
-// TODO: doesnt calculate with only two points (ie straight line)
 
 polygon.centroid = function() {
-  /*
+
   var pts  = this.points;
   var nPts = pts.length;
-  var x = 0; var y = 0;
-  var f;
-  var j = nPts - 1;
-  var p1; var p2;
 
-  for (var i = 0; i < nPts; j = i++) {
-    p1 = pts[i];
-    p2 = pts[j];
-    f  = p1.x * p2.y - p2.x * p1.y;
-    x += (p1.x + p2.x) * f;
-    y += (p1.y + p2.y) * f;
+
+  if (nPts < 3) {
+    // TODO: doesnt calculate with only two points (ie straight line)
+    throw Error('Centroid for two point shape not implemented yet.');
+  } else {
+    var x = 0;
+    var y = 0;
+    var j = nPts - 1;
+    var f, p1, p2;
+
+    for (var i = 0; i < nPts; j = i++) {
+      p1 = pts[i];
+      p2 = pts[j];
+      f  = p1.x * p2.y - p2.x * p1.y;
+      x += (p1.x + p2.x) * f;
+      y += (p1.y + p2.y) * f;
+    }
+
+    f = this.area() * 6;
+
+    return Point([ x/f, y/f ]);
   }
-
-  f = this.area() * 6;
-
-  return Point([ x/f, y/f ]);
-  */
 };
 
 
@@ -330,11 +286,9 @@ polygon.centroid = function() {
 // Returns area of shape
 
 polygon.area = function() {
-  /*
-  var
-  area = 0,
-  pts = this.points,
-  p1, p2;
+  var p1, p2;
+  var area = 0;
+  var pts = this.points;
 
   for (var i=0, nPts = pts.length, j = nPts - 1; i < nPts; j = i++) {
     p1 = pts[i];
@@ -346,7 +300,6 @@ polygon.area = function() {
   area /= 2;
 
   return area;
-  */
 };
 
 

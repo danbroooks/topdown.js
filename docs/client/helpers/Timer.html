@@ -216,12 +216,28 @@ timer.delta = <span class="hljs-function"><span class="hljs-keyword">function</s
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
+              <p>Create definition</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> Timer = obj.define(<span class="hljs-built_in">Object</span>, Constructor, timer);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
               <p>Static method converts string to ms</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-module.exports.str2ms = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(time)</span>{</span>
+Timer.str2ms = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(time)</span>{</span>
   <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span>(time) == <span class="hljs-string">'string'</span>) {
     <span class="hljs-keyword">var</span> ms, lastChar, stripped;
 
@@ -234,11 +250,11 @@ module.exports.str2ms = <span class="hljs-function"><span class="hljs-keyword">f
         </li>
         
         
-        <li id="section-10">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>ms is ignored because final number is in ms anyway</p>
 
@@ -255,22 +271,6 @@ module.exports.str2ms = <span class="hljs-function"><span class="hljs-keyword">f
     <span class="hljs-keyword">return</span> time;
   }
 };</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-11">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
-              </div>
-              <p>Create definition</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> Timer = obj.define(<span class="hljs-built_in">Object</span>, Constructor, timer);</pre></div></div>
             
         </li>
         

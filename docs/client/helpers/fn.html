@@ -144,14 +144,16 @@ fn.randNum = <span class="hljs-function"><span class="hljs-keyword">function</sp
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Returns true at odds 1/<code>oneIn</code>, so there would be a one in three chance of
-<code>fn.chanceIn(3)</code> returning true. Could do with some better names here.</p>
+              <p>Executes callback at odds 1/<code>oneIn</code>, so there would be a one in three chance of
+<code>fn.chanceIn(3)</code> executing the callback.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-fn.chanceIn = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(oneIn)</span> {</span>
-  <span class="hljs-keyword">return</span> fn.randNum(oneIn) == <span class="hljs-number">1</span> ? <span class="hljs-literal">false</span> : <span class="hljs-literal">true</span>;
+fn.chanceIn = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(oneIn, callback)</span> {</span>
+  <span class="hljs-keyword">if</span> (fn.randNum(oneIn) == <span class="hljs-number">1</span>) {
+    callback();
+  }
 };</pre></div></div>
             
         </li>

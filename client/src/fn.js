@@ -30,11 +30,13 @@ fn.randNum = function (max) {
 
 
 
-// Returns true at odds 1/`oneIn`, so there would be a one in three chance of
-// `fn.chanceIn(3)` returning true. Could do with some better names here.
+// Executes callback at odds 1/`oneIn`, so there would be a one in three chance of
+// `fn.chanceIn(3)` executing the callback.
 
-fn.chanceIn = function (oneIn) {
-  return fn.randNum(oneIn) == 1 ? false : true;
+fn.chanceIn = function (oneIn, callback) {
+  if (fn.randNum(oneIn) == 1) {
+    callback();
+  }
 };
 
 

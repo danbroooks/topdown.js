@@ -4,20 +4,20 @@
 
 var obj = require('obj');
 var is = require('is');
-
 var Point = require('graphics/Point');
+
 
 
 // Constructor
 
-var Constructor = function(a, b){
+var Constructor = function(from, to){
 
-  if (!is.instanceOf(Point, a) || !is.instanceOf(Point, b)) {
+  if (!is.instanceOf(Point, from) || !is.instanceOf(Point, to)) {
     throw new Error('Vector constructor takes two Point objects.');
   }
 
-  this.a = a;
-  this.b = b;
+  this.from = from;
+  this.to = to;
 
 };
 
@@ -29,19 +29,6 @@ var Constructor = function(a, b){
 
 var vector = {};
 
-
-
-
-
-
-//
-
-vector.test = function () {
-
-  console.log(this.a);
-  console.log(this.b);
-
-};
 
 
 

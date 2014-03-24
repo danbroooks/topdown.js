@@ -101,6 +101,8 @@
             
             <div class="content"><div class='highlight'><pre>
 <span class="hljs-keyword">var</span> obj = <span class="hljs-built_in">require</span>(<span class="hljs-string">'obj'</span>);
+<span class="hljs-keyword">var</span> is = <span class="hljs-built_in">require</span>(<span class="hljs-string">'is'</span>);
+
 <span class="hljs-keyword">var</span> Shape = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Shape'</span>);
 <span class="hljs-keyword">var</span> Point = <span class="hljs-built_in">require</span>(<span class="hljs-string">'graphics/Point'</span>);</pre></div></div>
             
@@ -118,49 +120,51 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> Constructor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span>{</span>
-  <span class="hljs-comment">/*
-  options = obj.extend({
-    points: defaultPoints,
-    position: [20, 20]
-  }, options);
+<span class="hljs-keyword">var</span> Constructor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span> {</span>
 
-  var proto = this;
-  while ( (proto = Object.getPrototypeOf(proto)) !== null ) {
-    options = obj.extend(proto, options);
-  }
+  <span class="hljs-keyword">var</span> points;
+  <span class="hljs-keyword">var</span> position;
+  <span class="hljs-keyword">var</span> opts = {};
 
-  function checkPoints(points, size) {
-    points.forEach(function(point){
-      if (point.length != size) throw new Error('Array contains incorrect amount of points required ('+size+').');
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">validateRawArray</span><span class="hljs-params">(points)</span> {</span>
+    <span class="hljs-keyword">var</span> size = <span class="hljs-number">2</span>;
+    points.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span>{</span>
+      <span class="hljs-keyword">if</span> (point.length != size) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Array contains incorrect number of values to make a point ('</span>+size+<span class="hljs-string">').'</span>);
     });
-
-    return true;
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
   }
 
-  var defaultPoints = [
-    [ 20, 20 ],
-    [ 20, 40 ],
-    [ 40, 40 ],
-    [ 40, 20 ]
-  ];
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">arrayOfPoints</span><span class="hljs-params">(points)</span> {</span>
+    <span class="hljs-keyword">var</span> allPoints = <span class="hljs-literal">true</span>;
+    points.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span>{</span>
+      <span class="hljs-keyword">var</span> isPoint = point <span class="hljs-keyword">instanceof</span> Point;
+      <span class="hljs-keyword">if</span> (allPoints &amp;&amp; !isPoint ) {
+        allPoints = <span class="hljs-literal">false</span>;
+      }
+    });
+    <span class="hljs-keyword">return</span> allPoints;
+  }
 
-  var points = options.points;
-  var position = options.position;
+  <span class="hljs-keyword">if</span> (is.Array(options)) {
+    points = options;
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (is.set(options.points)) {
+    points = options.points;
+  }
 
-  points = (checkPoints(points, 2)) ? points : defaultPoints;
-  this.points = [];
+  <span class="hljs-keyword">if</span> (is.Array(points)) {
+    <span class="hljs-keyword">var</span> tmp;
+    <span class="hljs-keyword">if</span> (!arrayOfPoints(points)) {
+      validateRawArray(points);
+      tmp = [];
+      points.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(opt)</span>{</span>
+        tmp.push(Point(opt));
+      });
+    } <span class="hljs-keyword">else</span> {
+      tmp = points;
+    }
 
-  points.forEach(function(point){
-    this.points.push( Point( point ));
-  });
-
-  this.move(this.centroid().invert());
-  this.move(Point(position));
-  this.position = this.centroid();
-  */</span>
-
-};</pre></div></div>
+    opts.points = tmp;
+  }</pre></div></div>
             
         </li>
         
@@ -171,20 +175,28 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Declare object literal</p>
+              <p>TODO: convert options.position to Point object if array of 2 values</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> polygon = {};
+  options = obj.extend({
+    points: [
+      Point( <span class="hljs-number">20</span>, <span class="hljs-number">20</span> ),
+      Point( <span class="hljs-number">20</span>, <span class="hljs-number">40</span> ),
+      Point( <span class="hljs-number">40</span>, <span class="hljs-number">40</span> ),
+      Point( <span class="hljs-number">40</span>, <span class="hljs-number">20</span> )
+    ],
+    position: Point(<span class="hljs-number">20</span>, <span class="hljs-number">20</span>)
+  }, options, opts);
 
+  <span class="hljs-keyword">this</span>.points = options.points;
+  <span class="hljs-keyword">this</span>.position = options.position;
 
+  <span class="hljs-keyword">this</span>.move(<span class="hljs-keyword">this</span>.centroid().invert());
+  <span class="hljs-keyword">this</span>.move(<span class="hljs-keyword">this</span>.position);
+  <span class="hljs-keyword">this</span>.position = <span class="hljs-keyword">this</span>.centroid();
 
-
-
-
-polygon.inShot = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(gfx)</span> {</span>
-  gfx.getCanvas().inShot(<span class="hljs-keyword">this</span>.shape);
 };</pre></div></div>
             
         </li>
@@ -196,16 +208,12 @@ polygon.inShot = <span class="hljs-function"><span class="hljs-keyword">function
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Calls graphics method to render shape</p>
+              <p>Declare object literal</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-polygon.render = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(gfx)</span> {</span>
-  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.inShot()) {
-    gfx.getCanvas().draw(<span class="hljs-keyword">this</span>.shape);
-  }
-};</pre></div></div>
+<span class="hljs-keyword">var</span> polygon = {};</pre></div></div>
             
         </li>
         
@@ -215,6 +223,24 @@ polygon.render = <span class="hljs-function"><span class="hljs-keyword">function
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Calls graphics method to render shape</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+polygon.render = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(gfx)</span> {</span>
+  gfx.getCanvas().draw(<span class="hljs-keyword">this</span>.shape);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <p>Iterates over points to move them by vector supplied in argument</p>
 
@@ -248,11 +274,11 @@ polygon.move = <span class="hljs-function"><span class="hljs-keyword">function</
         </li>
         
         
-        <li id="section-7">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               
             </div>
@@ -268,11 +294,11 @@ polygon.teleport = <span class="hljs-function"><span class="hljs-keyword">functi
         </li>
         
         
-        <li id="section-8">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>Iterates over points to rotate them by angle supplied in argument</p>
 
@@ -298,11 +324,11 @@ polygon.rotate = <span class="hljs-function"><span class="hljs-keyword">function
         </li>
         
         
-        <li id="section-9">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               
             </div>
@@ -324,11 +350,11 @@ polygon.setAngle = <span class="hljs-function"><span class="hljs-keyword">functi
         </li>
         
         
-        <li id="section-10">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>Move into collision module?</p>
 
@@ -336,32 +362,7 @@ polygon.setAngle = <span class="hljs-function"><span class="hljs-keyword">functi
             
             <div class="content"><div class='highlight'><pre>
 polygon.containsPoint = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span>{</span>
-  <span class="hljs-comment">/*
-  var
-  counter = 0,
-  x_inter,
-  points = this.points;
-
-  var p1 = points[0];
-  for (var i = 1, l = points.length; i &lt;= l; i++) {
-    var p2 = points[i%l];
-
-    if (
-      point.y &gt; Math.min(p1.y, p2.y) &amp;&amp;
-      point.y &lt;= Math.max(p1.y, p2.y) &amp;&amp;
-      point.x &lt;= Math.max(p1.x, p2.x) &amp;&amp;
-      p1.y != p2.y
-    ) {
-      x_inter = (point.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
-      if ( p1.x == p2.x || point.x &lt;= x_inter) {
-        counter++;
-      }
-    }
-    p1 = p2;
-  }
-
-  return ( counter % 2 == 1 );
-  */</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
 };
 
 polygon.pointInPolygon = polygon.containsPoint;</pre></div></div>
@@ -369,20 +370,32 @@ polygon.pointInPolygon = polygon.containsPoint;</pre></div></div>
         </li>
         
         
-        <li id="section-11">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <p>Collision algorithm.
-Move into collision module?</p>
-
+              
             </div>
             
             <div class="content"><div class='highlight'><pre>
-polygon.detectCollision = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
-<span class="hljs-comment">/*
+polygon.detectCollision = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>TODO: re-write using Collision object</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/*
   var args = arguments;
 
   if(args.length != 2) {
@@ -418,55 +431,8 @@ polygon.detectCollision = <span class="hljs-function"><span class="hljs-keyword"
   }
 
   return collision;
-*/</span>
+  */</span>
 };</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-12">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
-              </div>
-              <p>Move into collision module?</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>
-polygon.getLineIntersectionPoint = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(A1, A2, B1, B2)</span> {</span>
-  <span class="hljs-comment">/*
-  var s1_x, s1_y, s2_x, s2_y;
-  s1_x = A2.x - A1.x;
-  s1_y = A2.y - A1.y;
-  s2_x = B2.x - B1.x;
-  s2_y = B2.y - B1.y;
-  var s, t;
-  s = (-s1_y * (A1.x - B1.x) + s1_x * (A1.y - B1.y)) / (-s2_x * s1_y + s1_x * s2_y);
-  t = ( s2_x * (A1.y - B1.y) - s2_y * (A1.x - B1.x)) / (-s2_x * s1_y + s1_x * s2_y);
-
-  if (s &gt;= 0 &amp;&amp; s &lt;= 1 &amp;&amp; t &gt;= 0 &amp;&amp; t &lt;= 1) {
-</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-13">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
-              </div>
-              <p>Collision detected</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">return</span> Point({
-      x: A1.x + (t * s1_x),
-      y: A1.y + (t * s1_y)
-    });
-  }</pre></div></div>
             
         </li>
         
@@ -477,13 +443,18 @@ polygon.getLineIntersectionPoint = <span class="hljs-function"><span class="hljs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <p>No collision</p>
+              <p>Returns the center point of shape.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  return false;
-  */
-};</pre></div></div>
+            <div class="content"><div class='highlight'><pre>
+polygon.centroid = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+
+  <span class="hljs-keyword">var</span> pts  = <span class="hljs-keyword">this</span>.points;
+  <span class="hljs-keyword">var</span> nPts = pts.length;
+
+
+  <span class="hljs-keyword">if</span> (nPts &lt; <span class="hljs-number">3</span>) {</pre></div></div>
             
         </li>
         
@@ -494,11 +465,30 @@ polygon.getLineIntersectionPoint = <span class="hljs-function"><span class="hljs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              
+              <p>TODO: doesnt calculate with only two points (ie straight line)</p>
+
             </div>
             
-            <div class="content"><div class='highlight'><pre>
-polygon.doesLineIntersect = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(A1, A2, B1, B2)</span> {</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">throw</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Centroid for two point shape not implemented yet.'</span>);
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">var</span> x = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">var</span> y = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">var</span> j = nPts - <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">var</span> f, p1, p2;
+
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; nPts; j = i++) {
+      p1 = pts[i];
+      p2 = pts[j];
+      f  = p1.x * p2.y - p2.x * p1.y;
+      x += (p1.x + p2.x) * f;
+      y += (p1.y + p2.y) * f;
+    }
+
+    f = <span class="hljs-keyword">this</span>.area() * <span class="hljs-number">6</span>;
+
+    <span class="hljs-keyword">return</span> Point([ x/f, y/f ]);
+  }
+};</pre></div></div>
             
         </li>
         
@@ -509,11 +499,27 @@ polygon.doesLineIntersect = <span class="hljs-function"><span class="hljs-keywor
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <p>return this.getLineIntersectionPoint(A1, A2, B1, B2) !== false;</p>
+              <p>Returns area of shape</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>};</pre></div></div>
+            <div class="content"><div class='highlight'><pre>
+polygon.area = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  <span class="hljs-keyword">var</span> p1, p2;
+  <span class="hljs-keyword">var</span> area = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">var</span> pts = <span class="hljs-keyword">this</span>.points;
+
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>, nPts = pts.length, j = nPts - <span class="hljs-number">1</span>; i &lt; nPts; j = i++) {
+    p1 = pts[i];
+    p2 = pts[j];
+    area += p1.x * p2.y;
+    area -= p1.y * p2.x;
+  }
+
+  area /= <span class="hljs-number">2</span>;
+
+  <span class="hljs-keyword">return</span> area;
+};</pre></div></div>
             
         </li>
         
@@ -523,78 +529,6 @@ polygon.doesLineIntersect = <span class="hljs-function"><span class="hljs-keywor
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
-              </div>
-              <p>Returns the center point of shape.
-TODO: doesnt calculate with only two points (ie straight line)</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>
-polygon.centroid = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
-  <span class="hljs-comment">/*
-  var pts  = this.points;
-  var nPts = pts.length;
-  var x = 0; var y = 0;
-  var f;
-  var j = nPts - 1;
-  var p1; var p2;
-
-  for (var i = 0; i &lt; nPts; j = i++) {
-    p1 = pts[i];
-    p2 = pts[j];
-    f  = p1.x * p2.y - p2.x * p1.y;
-    x += (p1.x + p2.x) * f;
-    y += (p1.y + p2.y) * f;
-  }
-
-  f = this.area() * 6;
-
-  return Point([ x/f, y/f ]);
-  */</span>
-};</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-18">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
-              </div>
-              <p>Returns area of shape</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>
-polygon.area = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
-  <span class="hljs-comment">/*
-  var
-  area = 0,
-  pts = this.points,
-  p1, p2;
-
-  for (var i=0, nPts = pts.length, j = nPts - 1; i &lt; nPts; j = i++) {
-    p1 = pts[i];
-    p2 = pts[j];
-    area += p1.x * p2.y;
-    area -= p1.y * p2.x;
-  }
-
-  area /= 2;
-
-  return area;
-  */</span>
-};</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-19">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>Object definition</p>
 
@@ -606,11 +540,11 @@ polygon.area = <span class="hljs-function"><span class="hljs-keyword">function</
         </li>
         
         
-        <li id="section-20">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>Expose to other internal modules</p>
 

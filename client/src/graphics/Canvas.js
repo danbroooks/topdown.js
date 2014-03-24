@@ -4,8 +4,9 @@
 var obj = require('obj');
 var DOM = require('dom');
 var Point = require('graphics/Point');
-var Shape = require('graphics/Shape');
+var Polygon = require('graphics/Polygon');
 var Camera = require('graphics/Camera');
+var Collision = require('graphics/Collision');
 
 
 
@@ -107,6 +108,28 @@ canvas.getCanvasSize = function() {
 
 
 
+// Creates a polygon to represent canvas
+
+canvas.asShape = function() {
+  var size = this.getCanvasSize();
+  var shape = Polygon({
+    points: [
+      [0, 0],
+      [0, size.w],
+      [size.h, size.w],
+      [size.h, 0]
+    ],
+    position: [ size.w/2, size.h/2 ]
+  });
+
+  return shape;
+};
+
+
+
+
+
+
 //
 
 canvas.getCanvasCenter = function(){
@@ -169,7 +192,14 @@ canvas.draw = canvas.drawPoints;
 // Iterates over points. If at least one of a shape's points are in shot, then draw.
 // If they're all less than 0 or greater than canvas edge on x or y axis, do not draw.
 
+// TODO: re-write with 'shapes overlap' algorythm.
+
 canvas.pointsInShot = function(points){
+  var shape = this.asShape();
+  shape.move(this.camera.position);
+
+  /*
+  Collision.areaContainsPoint
 
   var canvas_size = this.getCanvasSize();
   var cam = this.camera;
@@ -220,6 +250,7 @@ canvas.pointsInShot = function(points){
 
   // Without a final algorithm it's worth rendering this
   // content anyway incase it overlaps into the viewport.
+  */
   return true;
 };
 

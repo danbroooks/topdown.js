@@ -1,4 +1,6 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"XqAouS":[function(require,module,exports){
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"core/FPS":[function(require,module,exports){
+module.exports=require('XqAouS');
+},{}],"XqAouS":[function(require,module,exports){
 
 
 // Load dependencies
@@ -55,9 +57,7 @@ module.exports = function(filter){
 };
 
 
-},{"obj":"DOFYxp"}],"core/FPS":[function(require,module,exports){
-module.exports=require('XqAouS');
-},{}],"core/GameConfig":[function(require,module,exports){
+},{"obj":"DOFYxp"}],"core/GameConfig":[function(require,module,exports){
 module.exports=require('h5AJ9p');
 },{}],"h5AJ9p":[function(require,module,exports){
 
@@ -190,9 +190,7 @@ var GameConfig = obj.define(Object, Constructor, gameConfig);
 module.exports = GameConfig;
 
 
-},{"graphics/Graphics":"mC3JHL","is":"P9m7US","obj":"DOFYxp"}],"core/game":[function(require,module,exports){
-module.exports=require('dE1Bu5');
-},{}],"dE1Bu5":[function(require,module,exports){
+},{"graphics/Graphics":"mC3JHL","is":"P9m7US","obj":"DOFYxp"}],"dE1Bu5":[function(require,module,exports){
 
 
 // Load dependencies
@@ -363,7 +361,9 @@ var update = function() {
 module.exports = game;
 
 
-},{"core/FPS":"XqAouS","core/GameConfig":"h5AJ9p","is":"P9m7US","objects/Timer":"y3F4VZ"}],"qkALfs":[function(require,module,exports){
+},{"core/FPS":"XqAouS","core/GameConfig":"h5AJ9p","is":"P9m7US","objects/Timer":"y3F4VZ"}],"core/game":[function(require,module,exports){
+module.exports=require('dE1Bu5');
+},{}],"qkALfs":[function(require,module,exports){
 
 
 // Load dependencies
@@ -674,8 +674,6 @@ module.exports = DOM;
 
 },{"is":"P9m7US"}],"dom":[function(require,module,exports){
 module.exports=require('qkALfs');
-},{}],"fn":[function(require,module,exports){
-module.exports=require('AEEx6z');
 },{}],"AEEx6z":[function(require,module,exports){
 
 
@@ -709,11 +707,13 @@ fn.randNum = function (max) {
 
 
 
-// Returns true at odds 1/`oneIn`, so there would be a one in three chance of
-// `fn.chanceIn(3)` returning true. Could do with some better names here.
+// Executes callback at odds 1/`oneIn`, so there would be a one in three chance of
+// `fn.chanceIn(3)` executing the callback.
 
-fn.chanceIn = function (oneIn) {
-  return fn.randNum(oneIn) == 1 ? false : true;
+fn.chanceIn = function (oneIn, callback) {
+  if (fn.randNum(oneIn) == 1) {
+    callback();
+  }
 };
 
 
@@ -735,6 +735,8 @@ fn.fromArray = function (array) {
 
 module.exports = fn;
 
+},{}],"fn":[function(require,module,exports){
+module.exports=require('AEEx6z');
 },{}],"graphics/Camera":[function(require,module,exports){
 module.exports=require('NsksZx');
 },{}],"NsksZx":[function(require,module,exports){
@@ -883,15 +885,18 @@ module.exports = Camera;
 
 
 
-},{"graphics/Point":"07NHAF","is":"P9m7US","obj":"DOFYxp"}],"gCPbFZ":[function(require,module,exports){
+},{"graphics/Point":"07NHAF","is":"P9m7US","obj":"DOFYxp"}],"graphics/Canvas":[function(require,module,exports){
+module.exports=require('gCPbFZ');
+},{}],"gCPbFZ":[function(require,module,exports){
 
 // Load dependencies
 
 var obj = require('obj');
 var DOM = require('dom');
 var Point = require('graphics/Point');
-var Shape = require('graphics/Shape');
+var Polygon = require('graphics/Polygon');
 var Camera = require('graphics/Camera');
+var Collision = require('graphics/Collision');
 
 
 
@@ -993,6 +998,28 @@ canvas.getCanvasSize = function() {
 
 
 
+// Creates a polygon to represent canvas
+
+canvas.asShape = function() {
+  var size = this.getCanvasSize();
+  var shape = Polygon({
+    points: [
+      [0, 0],
+      [0, size.w],
+      [size.h, size.w],
+      [size.h, 0]
+    ],
+    position: [ size.w/2, size.h/2 ]
+  });
+
+  return shape;
+};
+
+
+
+
+
+
 //
 
 canvas.getCanvasCenter = function(){
@@ -1055,7 +1082,14 @@ canvas.draw = canvas.drawPoints;
 // Iterates over points. If at least one of a shape's points are in shot, then draw.
 // If they're all less than 0 or greater than canvas edge on x or y axis, do not draw.
 
+// TODO: re-write with 'shapes overlap' algorythm.
+
 canvas.pointsInShot = function(points){
+  var shape = this.asShape();
+  shape.move(this.camera.position);
+
+  /*
+  Collision.areaContainsPoint
 
   var canvas_size = this.getCanvasSize();
   var cam = this.camera;
@@ -1106,6 +1140,7 @@ canvas.pointsInShot = function(points){
 
   // Without a final algorithm it's worth rendering this
   // content anyway incase it overlaps into the viewport.
+  */
   return true;
 };
 
@@ -1144,15 +1179,12 @@ module.exports = Canvas;
 
 
 
-},{"dom":"qkALfs","graphics/Camera":"NsksZx","graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"graphics/Canvas":[function(require,module,exports){
-module.exports=require('gCPbFZ');
-},{}],"graphics/Collision":[function(require,module,exports){
-module.exports=require('8SM2KA');
-},{}],"8SM2KA":[function(require,module,exports){
+},{"dom":"qkALfs","graphics/Camera":"NsksZx","graphics/Collision":"8SM2KA","graphics/Point":"07NHAF","graphics/Polygon":"S3SzPy","obj":"DOFYxp"}],"8SM2KA":[function(require,module,exports){
 
 var obj = require('obj');
 var is = require('is');
 
+var Shape = require('graphics/Shape');
 var Vector = require('graphics/Vector');
 var Point = require('graphics/Point');
 
@@ -1171,11 +1203,17 @@ var Constructor = function(vectorA, vectorB){
 
 };
 
+
+
+
+
+// Declare object literal
+
 var collision = {};
 
-//
 
-collision.polygonContainsPoint = function(){};
+
+
 
 //
 
@@ -1186,25 +1224,29 @@ collision.getIntersectionPoint = function() {
 
   var s1_x, s1_y, s2_x, s2_y;
 
-  s1_x = vectorA.b.x - vectorA.a.x;
-  s1_y = vectorA.b.y - vectorA.a.y;
-  s2_x = vectorB.b.x - vectorB.a.x;
-  s2_y = vectorB.b.y - vectorB.a.y;
+  s1_x = vectorA.to.x - vectorA.from.x;
+  s1_y = vectorA.to.y - vectorA.from.y;
+  s2_x = vectorB.to.x - vectorB.from.x;
+  s2_y = vectorB.to.y - vectorB.from.y;
 
-  var s = (-s1_y * (vectorA.a.x - vectorB.a.x) + s1_x * (vectorA.a.y - vectorB.a.y)) / (-s2_x * s1_y + s1_x * s2_y);
-  var t = ( s2_x * (vectorA.a.y - vectorB.a.y) - s2_y * (vectorA.a.x - vectorB.a.x)) / (-s2_x * s1_y + s1_x * s2_y);
+  var s = (-s1_y * (vectorA.from.x - vectorB.from.x) + s1_x * (vectorA.from.y - vectorB.from.y)) / (-s2_x * s1_y + s1_x * s2_y);
+  var t = ( s2_x * (vectorA.from.y - vectorB.from.y) - s2_y * (vectorA.from.x - vectorB.from.x)) / (-s2_x * s1_y + s1_x * s2_y);
 
   if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
     // Collision detected
     return Point({
-      x: vectorA.a.x + (t * s1_x),
-      y: vectorA.a.y + (t * s1_y)
+      x: vectorA.from.x + (t * s1_x),
+      y: vectorA.from.y + (t * s1_y)
     });
   }
 
   // No collision
   return false;
 };
+
+
+
+
 
 //
 
@@ -1213,16 +1255,77 @@ collision.doesLineIntersect = function() {
 };
 
 
+
+
+
 // Object definition
 
 var Collision = obj.define(Object, Constructor, collision);
 
 
+
+
+
+// Static methods
+
+Collision.areaContainsPoint = function(area, point){
+
+  // check point is a Point
+  if (! (point instanceof Point)) {
+    throw Error('The point argument for areaContainsPoint should be a Point object.');
+  }
+
+  var x_inter;
+  var points;
+
+  // check area 'is shape' || 'is array of points'
+  if (is.Array(area)) {
+    area.forEach(function(e, i){
+      if ( ! (e instanceof Point)) {
+        throw Error('The area argument for areaContainsPoint should be either a Shape or an array of points');
+      }
+    });
+    points = area;
+  } else if (area instanceof Shape) {
+    // if shape create an array of points.
+    points = area.points;
+  } else {
+    throw Error('The area argument for areaContainsPoint should be either a Shape or an array of points');
+  }
+
+
+  var counter = 0;
+  var p1 = points[0];
+
+  for (var i = 1, l = points.length; i <= l; i++) {
+    var p2 = points[i%l];
+
+    if (
+      point.y > Math.min(p1.y, p2.y) &&
+      point.y <= Math.max(p1.y, p2.y) &&
+      point.x <= Math.max(p1.x, p2.x) &&
+      p1.y != p2.y
+    ) {
+      x_inter = (point.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
+      if ( p1.x == p2.x || point.x <= x_inter) {
+        counter++;
+      }
+    }
+    p1 = p2;
+  }
+
+  return ( counter % 2 == 1 );
+};
+
+
+
+
+
 module.exports = Collision;
 
 
-},{"graphics/Point":"07NHAF","graphics/Vector":"Hli4CA","is":"P9m7US","obj":"DOFYxp"}],"graphics/Graphics":[function(require,module,exports){
-module.exports=require('mC3JHL');
+},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","graphics/Vector":"Hli4CA","is":"P9m7US","obj":"DOFYxp"}],"graphics/Collision":[function(require,module,exports){
+module.exports=require('8SM2KA');
 },{}],"mC3JHL":[function(require,module,exports){
 
 
@@ -1400,7 +1503,11 @@ var Graphics = obj.define(Object, Constructor, gfx);
 module.exports = Graphics;
 
 
-},{"graphics/Camera":"NsksZx","graphics/Canvas":"gCPbFZ","graphics/Point":"07NHAF","obj":"DOFYxp","objects/Stack":"w0x1FX"}],"07NHAF":[function(require,module,exports){
+},{"graphics/Camera":"NsksZx","graphics/Canvas":"gCPbFZ","graphics/Point":"07NHAF","obj":"DOFYxp","objects/Stack":"w0x1FX"}],"graphics/Graphics":[function(require,module,exports){
+module.exports=require('mC3JHL');
+},{}],"graphics/Point":[function(require,module,exports){
+module.exports=require('07NHAF');
+},{}],"07NHAF":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1543,16 +1650,14 @@ var Point = obj.define(Object, Constructor, point);
 
 module.exports = Point;
 
-},{"is":"P9m7US","obj":"DOFYxp"}],"graphics/Point":[function(require,module,exports){
-module.exports=require('07NHAF');
-},{}],"graphics/Polygon":[function(require,module,exports){
-module.exports=require('S3SzPy');
-},{}],"S3SzPy":[function(require,module,exports){
+},{"is":"P9m7US","obj":"DOFYxp"}],"S3SzPy":[function(require,module,exports){
 
 
 // Load dependencies
 
 var obj = require('obj');
+var is = require('is');
+
 var Shape = require('graphics/Shape');
 var Point = require('graphics/Point');
 
@@ -1562,47 +1667,71 @@ var Point = require('graphics/Point');
 
 // Constructor
 
-var Constructor = function(options){
-  /*
-  options = obj.extend({
-    points: defaultPoints,
-    position: [20, 20]
-  }, options);
+var Constructor = function(options) {
 
-  var proto = this;
-  while ( (proto = Object.getPrototypeOf(proto)) !== null ) {
-    options = obj.extend(proto, options);
-  }
+  var points;
+  var position;
+  var opts = {};
 
-  function checkPoints(points, size) {
+  function validateRawArray(points) {
+    var size = 2;
     points.forEach(function(point){
-      if (point.length != size) throw new Error('Array contains incorrect amount of points required ('+size+').');
+      if (point.length != size) throw new Error('Array contains incorrect number of values to make a point ('+size+').');
     });
-
     return true;
   }
 
-  var defaultPoints = [
-    [ 20, 20 ],
-    [ 20, 40 ],
-    [ 40, 40 ],
-    [ 40, 20 ]
-  ];
+  function arrayOfPoints(points) {
+    var allPoints = true;
+    points.forEach(function(point){
+      var isPoint = point instanceof Point;
+      if (allPoints && !isPoint ) {
+        allPoints = false;
+      }
+    });
+    return allPoints;
+  }
 
-  var points = options.points;
-  var position = options.position;
+  if (is.Array(options)) {
+    points = options;
+  } else if (is.set(options.points)) {
+    points = options.points;
+  }
 
-  points = (checkPoints(points, 2)) ? points : defaultPoints;
-  this.points = [];
+  if (is.Array(points)) {
+    var tmp;
+    if (!arrayOfPoints(points)) {
+      validateRawArray(points);
+      tmp = [];
+      points.forEach(function(opt){
+        tmp.push(Point(opt));
+      });
+    } else {
+      tmp = points;
+    }
 
-  points.forEach(function(point){
-    this.points.push( Point( point ));
-  });
+    opts.points = tmp;
+  }
+
+
+  // TODO: convert options.position to Point object if array of 2 values
+
+  options = obj.extend({
+    points: [
+      Point( 20, 20 ),
+      Point( 20, 40 ),
+      Point( 40, 40 ),
+      Point( 40, 20 )
+    ],
+    position: Point(20, 20)
+  }, options, opts);
+
+  this.points = options.points;
+  this.position = options.position;
 
   this.move(this.centroid().invert());
-  this.move(Point(position));
+  this.move(this.position);
   this.position = this.centroid();
-  */
 
 };
 
@@ -1618,21 +1747,10 @@ var polygon = {};
 
 
 
-
-polygon.inShot = function(gfx) {
-  gfx.getCanvas().inShot(this.shape);
-};
-
-
-
-
-
 // Calls graphics method to render shape
 
 polygon.render = function (gfx) {
-  if (this.inShot()) {
-    gfx.getCanvas().draw(this.shape);
-  }
+  gfx.getCanvas().draw(this.shape);
 };
 
 
@@ -1726,32 +1844,7 @@ polygon.setAngle = function (angle) {
 // Move into collision module?
 
 polygon.containsPoint = function(point){
-  /*
-  var
-  counter = 0,
-  x_inter,
-  points = this.points;
-
-  var p1 = points[0];
-  for (var i = 1, l = points.length; i <= l; i++) {
-    var p2 = points[i%l];
-
-    if (
-      point.y > Math.min(p1.y, p2.y) &&
-      point.y <= Math.max(p1.y, p2.y) &&
-      point.x <= Math.max(p1.x, p2.x) &&
-      p1.y != p2.y
-    ) {
-      x_inter = (point.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
-      if ( p1.x == p2.x || point.x <= x_inter) {
-        counter++;
-      }
-    }
-    p1 = p2;
-  }
-
-  return ( counter % 2 == 1 );
-  */
+  return false;
 };
 
 polygon.pointInPolygon = polygon.containsPoint;
@@ -1760,11 +1853,12 @@ polygon.pointInPolygon = polygon.containsPoint;
 
 
 
-// Collision algorithm.
-// Move into collision module?
+//
 
 polygon.detectCollision = function () {
-/*
+
+  // TODO: re-write using Collision object
+  /*
   var args = arguments;
 
   if(args.length != 2) {
@@ -1800,47 +1894,7 @@ polygon.detectCollision = function () {
   }
 
   return collision;
-*/
-};
-
-
-
-
-
-// Move into collision module?
-
-polygon.getLineIntersectionPoint = function(A1, A2, B1, B2) {
-  /*
-  var s1_x, s1_y, s2_x, s2_y;
-  s1_x = A2.x - A1.x;
-  s1_y = A2.y - A1.y;
-  s2_x = B2.x - B1.x;
-  s2_y = B2.y - B1.y;
-  var s, t;
-  s = (-s1_y * (A1.x - B1.x) + s1_x * (A1.y - B1.y)) / (-s2_x * s1_y + s1_x * s2_y);
-  t = ( s2_x * (A1.y - B1.y) - s2_y * (A1.x - B1.x)) / (-s2_x * s1_y + s1_x * s2_y);
-
-  if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
-    // Collision detected
-    return Point({
-      x: A1.x + (t * s1_x),
-      y: A1.y + (t * s1_y)
-    });
-  }
-
-  // No collision
-  return false;
   */
-};
-
-
-
-
-
-//
-
-polygon.doesLineIntersect = function(A1, A2, B1, B2) {
-  // return this.getLineIntersectionPoint(A1, A2, B1, B2) !== false;
 };
 
 
@@ -1848,29 +1902,34 @@ polygon.doesLineIntersect = function(A1, A2, B1, B2) {
 
 
 // Returns the center point of shape.
-// TODO: doesnt calculate with only two points (ie straight line)
 
 polygon.centroid = function() {
-  /*
+
   var pts  = this.points;
   var nPts = pts.length;
-  var x = 0; var y = 0;
-  var f;
-  var j = nPts - 1;
-  var p1; var p2;
 
-  for (var i = 0; i < nPts; j = i++) {
-    p1 = pts[i];
-    p2 = pts[j];
-    f  = p1.x * p2.y - p2.x * p1.y;
-    x += (p1.x + p2.x) * f;
-    y += (p1.y + p2.y) * f;
+
+  if (nPts < 3) {
+    // TODO: doesnt calculate with only two points (ie straight line)
+    throw Error('Centroid for two point shape not implemented yet.');
+  } else {
+    var x = 0;
+    var y = 0;
+    var j = nPts - 1;
+    var f, p1, p2;
+
+    for (var i = 0; i < nPts; j = i++) {
+      p1 = pts[i];
+      p2 = pts[j];
+      f  = p1.x * p2.y - p2.x * p1.y;
+      x += (p1.x + p2.x) * f;
+      y += (p1.y + p2.y) * f;
+    }
+
+    f = this.area() * 6;
+
+    return Point([ x/f, y/f ]);
   }
-
-  f = this.area() * 6;
-
-  return Point([ x/f, y/f ]);
-  */
 };
 
 
@@ -1880,11 +1939,9 @@ polygon.centroid = function() {
 // Returns area of shape
 
 polygon.area = function() {
-  /*
-  var
-  area = 0,
-  pts = this.points,
-  p1, p2;
+  var p1, p2;
+  var area = 0;
+  var pts = this.points;
 
   for (var i=0, nPts = pts.length, j = nPts - 1; i < nPts; j = i++) {
     p1 = pts[i];
@@ -1896,7 +1953,6 @@ polygon.area = function() {
   area /= 2;
 
   return area;
-  */
 };
 
 
@@ -1916,7 +1972,11 @@ var Polygon = obj.define(Shape, Constructor, polygon);
 module.exports = Polygon;
 
 
-},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","obj":"DOFYxp"}],"rB+uTR":[function(require,module,exports){
+},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","is":"P9m7US","obj":"DOFYxp"}],"graphics/Polygon":[function(require,module,exports){
+module.exports=require('S3SzPy');
+},{}],"graphics/Shape":[function(require,module,exports){
+module.exports=require('rB+uTR');
+},{}],"rB+uTR":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1971,31 +2031,27 @@ var Shape = obj.define(Object, Constructor, shape);
 
 module.exports = Shape;
 
-},{"obj":"DOFYxp"}],"graphics/Shape":[function(require,module,exports){
-module.exports=require('rB+uTR');
-},{}],"graphics/Vector":[function(require,module,exports){
-module.exports=require('Hli4CA');
-},{}],"Hli4CA":[function(require,module,exports){
+},{"obj":"DOFYxp"}],"Hli4CA":[function(require,module,exports){
 
 
 // Load dependencies
 
 var obj = require('obj');
 var is = require('is');
-
 var Point = require('graphics/Point');
+
 
 
 // Constructor
 
-var Constructor = function(a, b){
+var Constructor = function(from, to){
 
-  if (!is.instanceOf(Point, a) || !is.instanceOf(Point, b)) {
+  if (!is.instanceOf(Point, from) || !is.instanceOf(Point, to)) {
     throw new Error('Vector constructor takes two Point objects.');
   }
 
-  this.a = a;
-  this.b = b;
+  this.from = from;
+  this.to = to;
 
 };
 
@@ -2007,19 +2063,6 @@ var Constructor = function(a, b){
 
 var vector = {};
 
-
-
-
-
-
-//
-
-vector.test = function () {
-
-  console.log(this.a);
-  console.log(this.b);
-
-};
 
 
 
@@ -2063,10 +2106,12 @@ var Vector = obj.define(Object, Constructor, vector);
 // Export module
 
 module.exports = Vector;
-},{"graphics/Point":"07NHAF","is":"P9m7US","obj":"DOFYxp"}],"graphics/trig":[function(require,module,exports){
-module.exports=require('HKUJiZ');
+},{"graphics/Point":"07NHAF","is":"P9m7US","obj":"DOFYxp"}],"graphics/Vector":[function(require,module,exports){
+module.exports=require('Hli4CA');
 },{}],"HKUJiZ":[function(require,module,exports){
 
+},{}],"graphics/trig":[function(require,module,exports){
+module.exports=require('HKUJiZ');
 },{}],"P9m7US":[function(require,module,exports){
 
 
@@ -2457,8 +2502,6 @@ module.exports = obj;
 
 },{"is":"P9m7US"}],"obj":[function(require,module,exports){
 module.exports=require('DOFYxp');
-},{}],"objects/Stack":[function(require,module,exports){
-module.exports=require('w0x1FX');
 },{}],"w0x1FX":[function(require,module,exports){
 
 
@@ -2537,7 +2580,9 @@ module.exports = function(filter){
   return new Stack(filter);
 };
 
-},{"obj":"DOFYxp"}],"y3F4VZ":[function(require,module,exports){
+},{"obj":"DOFYxp"}],"objects/Stack":[function(require,module,exports){
+module.exports=require('w0x1FX');
+},{}],"y3F4VZ":[function(require,module,exports){
 
 
 // Load dependencies
@@ -2610,9 +2655,17 @@ timer.delta = function(){
 
 
 
+// Create definition
+
+var Timer = obj.define(Object, Constructor, timer);
+
+
+
+
+
 // Static method converts string to ms
 
-module.exports.str2ms = function(time){
+Timer.str2ms = function(time){
   if (typeof(time) == 'string') {
     var ms, lastChar, stripped;
 
@@ -2634,14 +2687,6 @@ module.exports.str2ms = function(time){
     return time;
   }
 };
-
-
-
-
-
-// Create definition
-
-var Timer = obj.define(Object, Constructor, timer);
 
 
 
@@ -2678,6 +2723,8 @@ window.onload = function(){
 
 },{"core/game":"dE1Bu5","dom":"qkALfs"}],"onload":[function(require,module,exports){
 module.exports=require('+KSpms');
+},{}],"poly":[function(require,module,exports){
+module.exports=require('vARtDh');
 },{}],"vARtDh":[function(require,module,exports){
 
 
@@ -2746,6 +2793,4 @@ if(!window.cancelAnimationFrame){
   };
 }
 
-},{}],"poly":[function(require,module,exports){
-module.exports=require('vARtDh');
 },{}]},{},["vARtDh","+KSpms","AEEx6z","P9m7US","DOFYxp","qkALfs","y3F4VZ","w0x1FX","XqAouS","dE1Bu5","h5AJ9p","HKUJiZ","Hli4CA","07NHAF","8SM2KA","rB+uTR","S3SzPy","NsksZx","gCPbFZ","mC3JHL"])

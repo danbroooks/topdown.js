@@ -70,9 +70,17 @@ timer.delta = function(){
 
 
 
+// Create definition
+
+var Timer = obj.define(Object, Constructor, timer);
+
+
+
+
+
 // Static method converts string to ms
 
-module.exports.str2ms = function(time){
+Timer.str2ms = function(time){
   if (typeof(time) == 'string') {
     var ms, lastChar, stripped;
 
@@ -94,14 +102,6 @@ module.exports.str2ms = function(time){
     return time;
   }
 };
-
-
-
-
-
-// Create definition
-
-var Timer = obj.define(Object, Constructor, timer);
 
 
 
