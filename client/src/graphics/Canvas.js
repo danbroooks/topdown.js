@@ -196,7 +196,7 @@ canvas.draw = canvas.drawPoints;
 
 canvas.pointsInShot = function(points){
   var shape = this.asShape();
-  shape.move(this.camera.position);
+  // shape.move(this.camera.position);
 
   /*
   Collision.areaContainsPoint

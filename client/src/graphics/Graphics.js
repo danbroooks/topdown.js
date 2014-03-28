@@ -3,7 +3,7 @@
 // Load dependencies
 
 var obj = require('obj');
-var Stack = require('objects/Stack');
+var Stack = require('core/Stack');
 var Camera = require('graphics/Camera');
 var Point = require('graphics/Point');
 var Canvas = require('graphics/Canvas');

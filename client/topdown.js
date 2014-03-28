@@ -1,4 +1,202 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"core/FPS":[function(require,module,exports){
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"kQeSyx":[function(require,module,exports){
+
+
+/*
+ * Use this object to inherit from in your game objects.
+ * Provides all the boiler plate functionality you can use to
+ * call methods directly on your game objects (such as `render`).
+ *
+ * Note that constructors are not inherited!
+ */
+
+
+// Load dependencies
+
+var obj = require('obj');
+var Polygon = require('graphics/Polygon');
+
+
+
+
+
+// Constructor
+
+var Constructor = function(options){
+
+  this.shape = Polygon(options);
+
+};
+
+
+
+
+
+// Declare object literal
+
+var actor = {};
+
+
+
+
+
+//
+
+actor.move = function(x, y) {
+
+  if (this.shape) {
+    this.shape.move(x, y);
+  }
+
+};
+
+
+
+
+
+//
+
+actor.rotate = function(r) {
+
+  if (this.shape) {
+    this.shape.rotate(r);
+  }
+
+};
+
+
+
+
+
+//
+
+actor.render = function(gfx) {
+
+  if (this.shape) {
+    this.shape.render(gfx);
+  }
+
+};
+
+
+
+
+
+//
+
+actor.teleport = function(x, y) {
+
+  if (this.shape) {
+    this.shape.teleport(x, y);
+  }
+
+};
+
+
+
+
+
+// Create definition
+
+var Actor = obj.define(Object, Constructor, actor);
+
+
+
+
+
+
+// Export module
+
+module.exports = Actor;
+
+
+},{"graphics/Polygon":"S3SzPy","obj":"DOFYxp"}],"core/Actor":[function(require,module,exports){
+module.exports=require('kQeSyx');
+},{}],"g9Hroc":[function(require,module,exports){
+
+
+// Load dependencies
+
+var obj = require('obj');
+var is = require('is');
+
+
+
+
+
+// Constructor
+
+var Constructor = function(){
+  document.oncontextmenu = function() { return false; };
+
+};
+
+
+
+
+
+// Create definition
+
+var controls = {};
+
+
+
+
+
+// control codes
+
+var codeFor = {
+  'lshift'  : 16, 'space'  : 32,
+  'up'      : 38, 'down'   : 40,
+  'left'    : 37, 'right'  : 39,
+  'q' : 81, 'w' : 87, 'e' : 69, 'r' : 82, 't' :  0, 'y' :  0, 'u' :  0, 'i' : 76, 'o' : 79, 'p' : 80,
+  'a' : 65, 's' : 83, 'd' : 68, 'f' :  0, 'g' :  0, 'h' :  0, 'j' :  0, 'k' :  0, 'l' : 76,
+  'z' : 90, 'x' : 88, 'c' : 67, 'v' :  0, 'b' :  0, 'n' :  0, 'm' :  0,
+  '0' : 48, '1' : 49, '2' : 50, '3' : 51, '4' : 52,
+  '5' : 53, '6' : 54, '7' : 55, '8' : 56, '9' : 57
+};
+
+
+
+
+
+// Create definition
+
+controls.mouse = function(){
+
+};
+
+
+window.onmousemove  = function(e){
+  console.log(e);
+};
+
+
+controls.on = function(){
+  console.log('a');
+};
+
+
+
+
+
+
+
+// Create definition
+
+var Controls = obj.define(Object, Constructor, controls);
+
+
+
+
+
+
+// Export module
+
+module.exports = Controls;
+
+},{"is":"P9m7US","obj":"DOFYxp"}],"core/Controls":[function(require,module,exports){
+module.exports=require('g9Hroc');
+},{}],"core/FPS":[function(require,module,exports){
 module.exports=require('XqAouS');
 },{}],"XqAouS":[function(require,module,exports){
 
@@ -57,9 +255,7 @@ module.exports = function(filter){
 };
 
 
-},{"obj":"DOFYxp"}],"core/GameConfig":[function(require,module,exports){
-module.exports=require('h5AJ9p');
-},{}],"h5AJ9p":[function(require,module,exports){
+},{"obj":"DOFYxp"}],"h5AJ9p":[function(require,module,exports){
 
 
 // Load dependencies
@@ -190,7 +386,208 @@ var GameConfig = obj.define(Object, Constructor, gameConfig);
 module.exports = GameConfig;
 
 
-},{"graphics/Graphics":"mC3JHL","is":"P9m7US","obj":"DOFYxp"}],"dE1Bu5":[function(require,module,exports){
+},{"graphics/Graphics":"mC3JHL","is":"P9m7US","obj":"DOFYxp"}],"core/GameConfig":[function(require,module,exports){
+module.exports=require('h5AJ9p');
+},{}],"core/Stack":[function(require,module,exports){
+module.exports=require('nCd0q1');
+},{}],"nCd0q1":[function(require,module,exports){
+
+
+// Load dependencies
+
+var obj = require('obj');
+
+
+
+
+var Stack = function(filter){
+
+
+  //
+  var stack = {};
+  var selected;
+
+
+
+  this.push = function(key, value){
+    if (filter(value)) {
+      stack[key] = value;
+    }
+  };
+
+
+
+  this.get = function(key){
+    if (this.hasKey(key)) {
+      return stack[key];
+    }
+  };
+
+
+
+  this.select = function(select) {
+    if (this.hasKey(select)) {
+      selected = select;
+    } else {
+      console.log('Stack does not contain key ' + select + '!');
+    }
+  };
+
+
+
+  this.__defineGetter__('selected', function(){
+    if (stack[selected]) {
+      return stack[selected];
+    }
+  });
+
+
+
+  this.each = function(func) {
+    obj.keys(stack).forEach(function(key, i) {
+      func(stack[key]);
+    });
+  };
+
+
+
+  this.hasKey = function(key) {
+    return stack[key] ? true : false;
+  };
+
+};
+
+
+
+
+
+// Export module
+
+module.exports = function(filter){
+  filter = filter || function(o){ return o; };
+  return new Stack(filter);
+};
+
+},{"obj":"DOFYxp"}],"core/Timer":[function(require,module,exports){
+module.exports=require('TedyOD');
+},{}],"TedyOD":[function(require,module,exports){
+
+
+// Load dependencies
+
+var obj = require('obj');
+
+
+
+
+
+// Constructor
+
+var Constructor = function(){
+  this.start = new Date().getTime();
+};
+
+
+
+
+
+// Declare object literal
+
+var timer = {};
+
+
+
+
+
+// Reset the timer
+
+timer.restart = function(){
+  this.start = new Date().getTime();
+};
+
+
+
+
+
+// Returns time elapsed since timer was started
+
+timer.elapsed = function () {
+  return new Date().getTime() - this.start;
+};
+
+
+
+
+
+// As above but rounded down to seconds
+
+timer.secondsElapsed = function() {
+  return Math.floor(this.elapsed()/100)/10;
+};
+
+
+
+
+
+// Length of time since delta was last called
+
+timer.delta = function(){
+  if (!this.delta.last) this.delta.last = this.start;
+  var now = new Date().getTime();
+  var delta = now - this.delta.last;
+  this.delta.last = now;
+  return delta;
+};
+
+
+
+
+
+// Create definition
+
+var Timer = obj.define(Object, Constructor, timer);
+
+
+
+
+
+// Static method converts string to ms
+
+Timer.str2ms = function(time){
+  if (typeof(time) == 'string') {
+    var ms, lastChar, stripped;
+
+    ms = time.substring(time.length - 2) == 'ms';
+    lastChar = time.substring(time.length - 1);
+    stripped = parseInt(time.replace(/[^0-9]/g, ''), 10);
+
+    number = (typeof(stripped) === 'number' && !isNaN(stripped)) ? stripped : 0;
+
+    // ms is ignored because final number is in ms anyway
+    if (lastChar == 'm' && !ms) {
+      time = number * 1000 * 60;
+    } else if (lastChar == 's' && !ms) {
+      time = number * 1000;
+    } else {
+      time = number;
+    }
+
+    return time;
+  }
+};
+
+
+
+
+
+
+// Export module
+
+module.exports = Timer;
+
+
+
+},{"obj":"DOFYxp"}],"dE1Bu5":[function(require,module,exports){
 
 
 // Load dependencies
@@ -198,7 +595,8 @@ module.exports = GameConfig;
 var is = require('is');
 var GameConfig = require('core/GameConfig');
 var FPS = require('core/FPS');
-var Timer = require('objects/Timer');
+var Timer = require('core/Timer');
+var Controls = require('core/Controls' );
 
 
 
@@ -216,11 +614,6 @@ var game = {};
 
 var gameConfig;
 
-
-
-
-
-
 // Expose game configuration object with read only exposure
 
 game.__defineGetter__('config', function(){ return gameConfig; });
@@ -232,10 +625,6 @@ game.__defineGetter__('config', function(){ return gameConfig; });
 // Private variable for game timer
 
 var time;
-
-
-
-
 
 // Expose time elapsed as readonly property
 
@@ -249,10 +638,6 @@ game.__defineGetter__('time', function(){ return time.secondsElapsed(); });
 
 var gfx;
 
-
-
-
-
 // Setter method for setting private gfx variable, can only be set once.
 
 game.setGraphicsObject = function(gfxObj) {
@@ -264,7 +649,7 @@ game.setGraphicsObject = function(gfxObj) {
 
 
 
-// Framerate/FPS object (could be turned into module?)
+// Framerate/FPS object
 
 var fps = FPS();
 
@@ -280,15 +665,21 @@ game.__defineGetter__('tick', function(){ return fps.tick(); });
 
 
 
+// Control object
+
+game.controls = Controls();
+
+
+
+
+
 // Game initializer
 
 var init = function(){
   gameConfig = GameConfig();
 
   game.beforeInit(gameConfig);
-
   gameConfig.setUp(this);
-
   game.afterInit(gfx);
 
   time = Timer();
@@ -297,10 +688,6 @@ var init = function(){
   // Fixed interval update 20 times a second
   setInterval(update, 50);
 };
-
-
-
-
 
 // expose as readonly
 
@@ -361,7 +748,7 @@ var update = function() {
 module.exports = game;
 
 
-},{"core/FPS":"XqAouS","core/GameConfig":"h5AJ9p","is":"P9m7US","objects/Timer":"y3F4VZ"}],"core/game":[function(require,module,exports){
+},{"core/Controls":"g9Hroc","core/FPS":"XqAouS","core/GameConfig":"h5AJ9p","core/Timer":"TedyOD","is":"P9m7US"}],"core/game":[function(require,module,exports){
 module.exports=require('dE1Bu5');
 },{}],"qkALfs":[function(require,module,exports){
 
@@ -674,6 +1061,8 @@ module.exports = DOM;
 
 },{"is":"P9m7US"}],"dom":[function(require,module,exports){
 module.exports=require('qkALfs');
+},{}],"fn":[function(require,module,exports){
+module.exports=require('AEEx6z');
 },{}],"AEEx6z":[function(require,module,exports){
 
 
@@ -735,10 +1124,6 @@ fn.fromArray = function (array) {
 
 module.exports = fn;
 
-},{}],"fn":[function(require,module,exports){
-module.exports=require('AEEx6z');
-},{}],"graphics/Camera":[function(require,module,exports){
-module.exports=require('NsksZx');
 },{}],"NsksZx":[function(require,module,exports){
 
 
@@ -885,8 +1270,8 @@ module.exports = Camera;
 
 
 
-},{"graphics/Point":"07NHAF","is":"P9m7US","obj":"DOFYxp"}],"graphics/Canvas":[function(require,module,exports){
-module.exports=require('gCPbFZ');
+},{"graphics/Point":"07NHAF","is":"P9m7US","obj":"DOFYxp"}],"graphics/Camera":[function(require,module,exports){
+module.exports=require('NsksZx');
 },{}],"gCPbFZ":[function(require,module,exports){
 
 // Load dependencies
@@ -1086,7 +1471,7 @@ canvas.draw = canvas.drawPoints;
 
 canvas.pointsInShot = function(points){
   var shape = this.asShape();
-  shape.move(this.camera.position);
+  // shape.move(this.camera.position);
 
   /*
   Collision.areaContainsPoint
@@ -1179,7 +1564,11 @@ module.exports = Canvas;
 
 
 
-},{"dom":"qkALfs","graphics/Camera":"NsksZx","graphics/Collision":"8SM2KA","graphics/Point":"07NHAF","graphics/Polygon":"S3SzPy","obj":"DOFYxp"}],"8SM2KA":[function(require,module,exports){
+},{"dom":"qkALfs","graphics/Camera":"NsksZx","graphics/Collision":"8SM2KA","graphics/Point":"07NHAF","graphics/Polygon":"S3SzPy","obj":"DOFYxp"}],"graphics/Canvas":[function(require,module,exports){
+module.exports=require('gCPbFZ');
+},{}],"graphics/Collision":[function(require,module,exports){
+module.exports=require('8SM2KA');
+},{}],"8SM2KA":[function(require,module,exports){
 
 var obj = require('obj');
 var is = require('is');
@@ -1324,15 +1713,13 @@ Collision.areaContainsPoint = function(area, point){
 module.exports = Collision;
 
 
-},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","graphics/Vector":"Hli4CA","is":"P9m7US","obj":"DOFYxp"}],"graphics/Collision":[function(require,module,exports){
-module.exports=require('8SM2KA');
-},{}],"mC3JHL":[function(require,module,exports){
+},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","graphics/Vector":"Hli4CA","is":"P9m7US","obj":"DOFYxp"}],"mC3JHL":[function(require,module,exports){
 
 
 // Load dependencies
 
 var obj = require('obj');
-var Stack = require('objects/Stack');
+var Stack = require('core/Stack');
 var Camera = require('graphics/Camera');
 var Point = require('graphics/Point');
 var Canvas = require('graphics/Canvas');
@@ -1503,7 +1890,7 @@ var Graphics = obj.define(Object, Constructor, gfx);
 module.exports = Graphics;
 
 
-},{"graphics/Camera":"NsksZx","graphics/Canvas":"gCPbFZ","graphics/Point":"07NHAF","obj":"DOFYxp","objects/Stack":"w0x1FX"}],"graphics/Graphics":[function(require,module,exports){
+},{"core/Stack":"nCd0q1","graphics/Camera":"NsksZx","graphics/Canvas":"gCPbFZ","graphics/Point":"07NHAF","obj":"DOFYxp"}],"graphics/Graphics":[function(require,module,exports){
 module.exports=require('mC3JHL');
 },{}],"graphics/Point":[function(require,module,exports){
 module.exports=require('07NHAF');
@@ -1750,7 +2137,7 @@ var polygon = {};
 // Calls graphics method to render shape
 
 polygon.render = function (gfx) {
-  gfx.getCanvas().draw(this.shape);
+  gfx.getCanvas().draw(this.points);
 };
 
 
@@ -1760,27 +2147,29 @@ polygon.render = function (gfx) {
 // Iterates over points to move them by vector supplied in argument
 
 polygon.move = function () {
-  /*
   var args = arguments;
   var vector;
 
-  if (!args.length || args.length > 2) return false;
-  if (args.length == 1) vector = args[0];
-
-  if (args.length == 2) {
-    if( isNaN( args[0] ) || isNaN( args[1] ) ) return false;
-    vector = Point(args);
+  if (!args.length || args.length > 2) {
+    return false;
+  } else if (args[0] instanceof Point) {
+    vector = args[0];
+  } else if (args.length == 2) {
+    if( isNaN( args[0] ) || isNaN( args[1] ) ) {
+      return false;
+    }
+    vector = Point(args[0], args[1]);
   }
 
-  if (false === vector instanceof Point)
+  if (false === vector instanceof Point) {
     throw new Error('You can only move a point by the vector of another Point.');
+  }
 
   this.points.forEach(function(point){
     point.add(vector);
   });
 
   this.position = this.centroid();
-  */
 };
 
 
@@ -1789,11 +2178,17 @@ polygon.move = function () {
 
 //
 
-polygon.teleport = function (point) {
-  /*
+polygon.teleport = function (x, y) {
+  var point;
+
+  if (x instanceof Point) {
+    point = x;
+  } else {
+    point = Point(x, y);
+  }
+
   var current = this.centroid();
   this.move(point.sub(current));
-  */
 };
 
 
@@ -1803,7 +2198,6 @@ polygon.teleport = function (point) {
 // Iterates over points to rotate them by angle supplied in argument
 
 polygon.rotate = function (theta) {
-  /*
   var axis = this.position;
 
   this.points.forEach(function(point){
@@ -1815,7 +2209,6 @@ polygon.rotate = function (theta) {
   while(angle < 0) angle += (Math.PI*2);
 
   this.angle = angle;
-  */
 };
 
 
@@ -2031,7 +2424,9 @@ var Shape = obj.define(Object, Constructor, shape);
 
 module.exports = Shape;
 
-},{"obj":"DOFYxp"}],"Hli4CA":[function(require,module,exports){
+},{"obj":"DOFYxp"}],"graphics/Vector":[function(require,module,exports){
+module.exports=require('Hli4CA');
+},{}],"Hli4CA":[function(require,module,exports){
 
 
 // Load dependencies
@@ -2106,12 +2501,12 @@ var Vector = obj.define(Object, Constructor, vector);
 // Export module
 
 module.exports = Vector;
-},{"graphics/Point":"07NHAF","is":"P9m7US","obj":"DOFYxp"}],"graphics/Vector":[function(require,module,exports){
-module.exports=require('Hli4CA');
-},{}],"HKUJiZ":[function(require,module,exports){
+},{"graphics/Point":"07NHAF","is":"P9m7US","obj":"DOFYxp"}],"HKUJiZ":[function(require,module,exports){
 
 },{}],"graphics/trig":[function(require,module,exports){
 module.exports=require('HKUJiZ');
+},{}],"is":[function(require,module,exports){
+module.exports=require('P9m7US');
 },{}],"P9m7US":[function(require,module,exports){
 
 
@@ -2281,8 +2676,8 @@ is.PlainObject = is.ObjectLiteral;
 
 module.exports = is;
 
-},{}],"is":[function(require,module,exports){
-module.exports=require('P9m7US');
+},{}],"obj":[function(require,module,exports){
+module.exports=require('DOFYxp');
 },{}],"DOFYxp":[function(require,module,exports){
 
 
@@ -2500,208 +2895,7 @@ obj.identifier = function(seed){
 
 module.exports = obj;
 
-},{"is":"P9m7US"}],"obj":[function(require,module,exports){
-module.exports=require('DOFYxp');
-},{}],"w0x1FX":[function(require,module,exports){
-
-
-// Load dependencies
-
-var obj = require('obj');
-
-
-
-
-var Stack = function(filter){
-
-
-  //
-  var stack = {};
-  var selected;
-
-
-
-  this.push = function(key, value){
-    if (filter(value)) {
-      stack[key] = value;
-    }
-  };
-
-
-
-  this.get = function(key){
-    if (this.hasKey(key)) {
-      return stack[key];
-    }
-  };
-
-
-
-  this.select = function(select) {
-    if (this.hasKey(select)) {
-      selected = select;
-    } else {
-      console.log('Stack does not contain key ' + select + '!');
-    }
-  };
-
-
-
-  this.__defineGetter__('selected', function(){
-    if (stack[selected]) {
-      return stack[selected];
-    }
-  });
-
-
-
-  this.each = function(func) {
-    obj.keys(stack).forEach(function(key, i) {
-      func(stack[key]);
-    });
-  };
-
-
-
-  this.hasKey = function(key) {
-    return stack[key] ? true : false;
-  };
-
-};
-
-
-
-
-
-// Export module
-
-module.exports = function(filter){
-  filter = filter || function(o){ return o; };
-  return new Stack(filter);
-};
-
-},{"obj":"DOFYxp"}],"objects/Stack":[function(require,module,exports){
-module.exports=require('w0x1FX');
-},{}],"y3F4VZ":[function(require,module,exports){
-
-
-// Load dependencies
-
-var obj = require('obj');
-
-
-
-
-
-// Constructor
-
-var Constructor = function(){
-  this.start = new Date().getTime();
-};
-
-
-
-
-
-// Declare object literal
-
-var timer = {};
-
-
-
-
-
-// Reset the timer
-
-timer.restart = function(){
-  this.start = new Date().getTime();
-};
-
-
-
-
-
-// Returns time elapsed since timer was started
-
-timer.elapsed = function () {
-  return new Date().getTime() - this.start;
-};
-
-
-
-
-
-// As above but rounded down to seconds
-
-timer.secondsElapsed = function() {
-  return Math.floor(this.elapsed()/100)/10;
-};
-
-
-
-
-
-// Length of time since delta was last called
-
-timer.delta = function(){
-  if (!this.delta.last) this.delta.last = this.start;
-  var now = new Date().getTime();
-  var delta = now - this.delta.last;
-  this.delta.last = now;
-  return delta;
-};
-
-
-
-
-
-// Create definition
-
-var Timer = obj.define(Object, Constructor, timer);
-
-
-
-
-
-// Static method converts string to ms
-
-Timer.str2ms = function(time){
-  if (typeof(time) == 'string') {
-    var ms, lastChar, stripped;
-
-    ms = time.substring(time.length - 2) == 'ms';
-    lastChar = time.substring(time.length - 1);
-    stripped = parseInt(time.replace(/[^0-9]/g, ''), 10);
-
-    number = (typeof(stripped) === 'number' && !isNaN(stripped)) ? stripped : 0;
-
-    // ms is ignored because final number is in ms anyway
-    if (lastChar == 'm' && !ms) {
-      time = number * 1000 * 60;
-    } else if (lastChar == 's' && !ms) {
-      time = number * 1000;
-    } else {
-      time = number;
-    }
-
-    return time;
-  }
-};
-
-
-
-
-
-
-// Export module
-
-module.exports = Timer;
-
-
-
-},{"obj":"DOFYxp"}],"objects/Timer":[function(require,module,exports){
-module.exports=require('y3F4VZ');
-},{}],"+KSpms":[function(require,module,exports){
+},{"is":"P9m7US"}],"+KSpms":[function(require,module,exports){
 
 
 // Load dependencies
@@ -2793,4 +2987,4 @@ if(!window.cancelAnimationFrame){
   };
 }
 
-},{}]},{},["vARtDh","+KSpms","AEEx6z","P9m7US","DOFYxp","qkALfs","y3F4VZ","w0x1FX","XqAouS","dE1Bu5","h5AJ9p","HKUJiZ","Hli4CA","07NHAF","8SM2KA","rB+uTR","S3SzPy","NsksZx","gCPbFZ","mC3JHL"])
+},{}]},{},["vARtDh","+KSpms","AEEx6z","P9m7US","DOFYxp","qkALfs","kQeSyx","TedyOD","nCd0q1","XqAouS","dE1Bu5","h5AJ9p","HKUJiZ","Hli4CA","07NHAF","8SM2KA","rB+uTR","S3SzPy","NsksZx","gCPbFZ","mC3JHL"])

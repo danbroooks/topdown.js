@@ -97,7 +97,7 @@ var polygon = {};
 // Calls graphics method to render shape
 
 polygon.render = function (gfx) {
-  gfx.getCanvas().draw(this.shape);
+  gfx.getCanvas().draw(this.points);
 };
 
 
@@ -107,27 +107,29 @@ polygon.render = function (gfx) {
 // Iterates over points to move them by vector supplied in argument
 
 polygon.move = function () {
-  /*
   var args = arguments;
   var vector;
 
-  if (!args.length || args.length > 2) return false;
-  if (args.length == 1) vector = args[0];
-
-  if (args.length == 2) {
-    if( isNaN( args[0] ) || isNaN( args[1] ) ) return false;
-    vector = Point(args);
+  if (!args.length || args.length > 2) {
+    return false;
+  } else if (args[0] instanceof Point) {
+    vector = args[0];
+  } else if (args.length == 2) {
+    if( isNaN( args[0] ) || isNaN( args[1] ) ) {
+      return false;
+    }
+    vector = Point(args[0], args[1]);
   }
 
-  if (false === vector instanceof Point)
+  if (false === vector instanceof Point) {
     throw new Error('You can only move a point by the vector of another Point.');
+  }
 
   this.points.forEach(function(point){
     point.add(vector);
   });
 
   this.position = this.centroid();
-  */
 };
 
 
@@ -136,11 +138,17 @@ polygon.move = function () {
 
 //
 
-polygon.teleport = function (point) {
-  /*
+polygon.teleport = function (x, y) {
+  var point;
+
+  if (x instanceof Point) {
+    point = x;
+  } else {
+    point = Point(x, y);
+  }
+
   var current = this.centroid();
   this.move(point.sub(current));
-  */
 };
 
 
@@ -150,7 +158,6 @@ polygon.teleport = function (point) {
 // Iterates over points to rotate them by angle supplied in argument
 
 polygon.rotate = function (theta) {
-  /*
   var axis = this.position;
 
   this.points.forEach(function(point){
@@ -162,7 +169,6 @@ polygon.rotate = function (theta) {
   while(angle < 0) angle += (Math.PI*2);
 
   this.angle = angle;
-  */
 };
 
 

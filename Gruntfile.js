@@ -42,12 +42,12 @@ module.exports = function(grunt) {
       },
     },
     docco: {
-      helpers: {
-        src: [ 'client/src/*.js', 'client/src/objects/**/*.js'],
-        options: {
-          output: 'docs/client/helpers'
-        }
-      },
+      // helpers: {
+      //   src: [ 'client/src/*.js', 'client/src/objects/**/*.js'],
+      //   options: {
+      //     output: 'docs/client/helpers'
+      //   }
+      // },
       core: {
         src: ['client/src/core/**/*.js'],
         options: {

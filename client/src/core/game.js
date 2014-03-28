@@ -5,7 +5,8 @@
 var is = require('is');
 var GameConfig = require('core/GameConfig');
 var FPS = require('core/FPS');
-var Timer = require('objects/Timer');
+var Timer = require('core/Timer');
+var Controls = require('core/Controls' );
 
 
 
@@ -23,11 +24,6 @@ var game = {};
 
 var gameConfig;
 
-
-
-
-
-
 // Expose game configuration object with read only exposure
 
 game.__defineGetter__('config', function(){ return gameConfig; });
@@ -39,10 +35,6 @@ game.__defineGetter__('config', function(){ return gameConfig; });
 // Private variable for game timer
 
 var time;
-
-
-
-
 
 // Expose time elapsed as readonly property
 
@@ -56,10 +48,6 @@ game.__defineGetter__('time', function(){ return time.secondsElapsed(); });
 
 var gfx;
 
-
-
-
-
 // Setter method for setting private gfx variable, can only be set once.
 
 game.setGraphicsObject = function(gfxObj) {
@@ -71,7 +59,7 @@ game.setGraphicsObject = function(gfxObj) {
 
 
 
-// Framerate/FPS object (could be turned into module?)
+// Framerate/FPS object
 
 var fps = FPS();
 
@@ -87,15 +75,21 @@ game.__defineGetter__('tick', function(){ return fps.tick(); });
 
 
 
+// Control object
+
+game.controls = Controls();
+
+
+
+
+
 // Game initializer
 
 var init = function(){
   gameConfig = GameConfig();
 
   game.beforeInit(gameConfig);
-
   gameConfig.setUp(this);
-
   game.afterInit(gfx);
 
   time = Timer();
@@ -104,10 +98,6 @@ var init = function(){
   // Fixed interval update 20 times a second
   setInterval(update, 50);
 };
-
-
-
-
 
 // expose as readonly
 

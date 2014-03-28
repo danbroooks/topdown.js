@@ -230,7 +230,7 @@
             
             <div class="content"><div class='highlight'><pre>
 polygon.render = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(gfx)</span> {</span>
-  gfx.getCanvas().draw(<span class="hljs-keyword">this</span>.shape);
+  gfx.getCanvas().draw(<span class="hljs-keyword">this</span>.points);
 };</pre></div></div>
             
         </li>
@@ -248,27 +248,29 @@ polygon.render = <span class="hljs-function"><span class="hljs-keyword">function
             
             <div class="content"><div class='highlight'><pre>
 polygon.move = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
-  <span class="hljs-comment">/*
-  var args = arguments;
-  var vector;
+  <span class="hljs-keyword">var</span> args = <span class="hljs-built_in">arguments</span>;
+  <span class="hljs-keyword">var</span> vector;
 
-  if (!args.length || args.length &gt; 2) return false;
-  if (args.length == 1) vector = args[0];
-
-  if (args.length == 2) {
-    if( isNaN( args[0] ) || isNaN( args[1] ) ) return false;
-    vector = Point(args);
+  <span class="hljs-keyword">if</span> (!args.length || args.length &gt; <span class="hljs-number">2</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (args[<span class="hljs-number">0</span>] <span class="hljs-keyword">instanceof</span> Point) {
+    vector = args[<span class="hljs-number">0</span>];
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (args.length == <span class="hljs-number">2</span>) {
+    <span class="hljs-keyword">if</span>( <span class="hljs-built_in">isNaN</span>( args[<span class="hljs-number">0</span>] ) || <span class="hljs-built_in">isNaN</span>( args[<span class="hljs-number">1</span>] ) ) {
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+    vector = Point(args[<span class="hljs-number">0</span>], args[<span class="hljs-number">1</span>]);
   }
 
-  if (false === vector instanceof Point)
-    throw new Error('You can only move a point by the vector of another Point.');
+  <span class="hljs-keyword">if</span> (<span class="hljs-literal">false</span> === vector <span class="hljs-keyword">instanceof</span> Point) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'You can only move a point by the vector of another Point.'</span>);
+  }
 
-  this.points.forEach(function(point){
+  <span class="hljs-keyword">this</span>.points.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span>{</span>
     point.add(vector);
   });
 
-  this.position = this.centroid();
-  */</span>
+  <span class="hljs-keyword">this</span>.position = <span class="hljs-keyword">this</span>.centroid();
 };</pre></div></div>
             
         </li>
@@ -284,11 +286,17 @@ polygon.move = <span class="hljs-function"><span class="hljs-keyword">function</
             </div>
             
             <div class="content"><div class='highlight'><pre>
-polygon.teleport = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(point)</span> {</span>
-  <span class="hljs-comment">/*
-  var current = this.centroid();
-  this.move(point.sub(current));
-  */</span>
+polygon.teleport = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(x, y)</span> {</span>
+  <span class="hljs-keyword">var</span> point;
+
+  <span class="hljs-keyword">if</span> (x <span class="hljs-keyword">instanceof</span> Point) {
+    point = x;
+  } <span class="hljs-keyword">else</span> {
+    point = Point(x, y);
+  }
+
+  <span class="hljs-keyword">var</span> current = <span class="hljs-keyword">this</span>.centroid();
+  <span class="hljs-keyword">this</span>.move(point.sub(current));
 };</pre></div></div>
             
         </li>
@@ -306,19 +314,17 @@ polygon.teleport = <span class="hljs-function"><span class="hljs-keyword">functi
             
             <div class="content"><div class='highlight'><pre>
 polygon.rotate = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(theta)</span> {</span>
-  <span class="hljs-comment">/*
-  var axis = this.position;
+  <span class="hljs-keyword">var</span> axis = <span class="hljs-keyword">this</span>.position;
 
-  this.points.forEach(function(point){
+  <span class="hljs-keyword">this</span>.points.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span>{</span>
     point.rotate(axis, theta);
   });
 
-  angle = (this.angle + theta) % (Math.PI*2);
+  angle = (<span class="hljs-keyword">this</span>.angle + theta) % (<span class="hljs-built_in">Math</span>.PI*<span class="hljs-number">2</span>);
 
-  while(angle &lt; 0) angle += (Math.PI*2);
+  <span class="hljs-keyword">while</span>(angle &lt; <span class="hljs-number">0</span>) angle += (<span class="hljs-built_in">Math</span>.PI*<span class="hljs-number">2</span>);
 
-  this.angle = angle;
-  */</span>
+  <span class="hljs-keyword">this</span>.angle = angle;
 };</pre></div></div>
             
         </li>

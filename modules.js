@@ -12,9 +12,9 @@ var modules = [
   'obj.js',
   'dom.js',
 
-  'objects/Timer.js',
-  'objects/Stack.js',
-
+  'core/Actor.js',
+  'core/Timer.js',
+  'core/Stack.js',
   'core/FPS.js',
   'core/game.js',
   'core/GameConfig.js',

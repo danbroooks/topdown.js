@@ -19,6 +19,16 @@
           <div id="jump_page">
             
               
+              <a class="source" href="Actor.html">
+                Actor.js
+              </a>
+            
+              
+              <a class="source" href="Controls.html">
+                Controls.js
+              </a>
+            
+              
               <a class="source" href="FPS.html">
                 FPS.js
               </a>
@@ -26,6 +36,16 @@
               
               <a class="source" href="GameConfig.html">
                 GameConfig.js
+              </a>
+            
+              
+              <a class="source" href="Stack.html">
+                Stack.js
+              </a>
+            
+              
+              <a class="source" href="Timer.html">
+                Timer.js
               </a>
             
               
@@ -73,7 +93,8 @@
 <span class="hljs-keyword">var</span> is = <span class="hljs-built_in">require</span>(<span class="hljs-string">'is'</span>);
 <span class="hljs-keyword">var</span> GameConfig = <span class="hljs-built_in">require</span>(<span class="hljs-string">'core/GameConfig'</span>);
 <span class="hljs-keyword">var</span> FPS = <span class="hljs-built_in">require</span>(<span class="hljs-string">'core/FPS'</span>);
-<span class="hljs-keyword">var</span> Timer = <span class="hljs-built_in">require</span>(<span class="hljs-string">'objects/Timer'</span>);</pre></div></div>
+<span class="hljs-keyword">var</span> Timer = <span class="hljs-built_in">require</span>(<span class="hljs-string">'core/Timer'</span>);
+<span class="hljs-keyword">var</span> Controls = <span class="hljs-built_in">require</span>(<span class="hljs-string">'core/Controls'</span> );</pre></div></div>
             
         </li>
         
@@ -200,7 +221,7 @@ game.setGraphicsObject = <span class="hljs-function"><span class="hljs-keyword">
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>Framerate/FPS object (could be turned into module?)</p>
+              <p>Framerate/FPS object</p>
 
             </div>
             
@@ -248,22 +269,12 @@ game.__defineGetter__(<span class="hljs-string">'tick'</span>, <span class="hljs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>Game initializer</p>
+              <p>Control object</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> init = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
-  gameConfig = GameConfig();
-
-  game.beforeInit(gameConfig);
-
-  gameConfig.setUp(<span class="hljs-keyword">this</span>);
-
-  game.afterInit(gfx);
-
-  time = Timer();
-  render();</pre></div></div>
+game.controls = Controls();</pre></div></div>
             
         </li>
         
@@ -273,6 +284,30 @@ game.__defineGetter__(<span class="hljs-string">'tick'</span>, <span class="hljs
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Game initializer</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> init = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span>
+  gameConfig = GameConfig();
+
+  game.beforeInit(gameConfig);
+  gameConfig.setUp(<span class="hljs-keyword">this</span>);
+  game.afterInit(gfx);
+
+  time = Timer();
+  render();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Fixed interval update 20 times a second</p>
 
@@ -284,11 +319,11 @@ game.__defineGetter__(<span class="hljs-string">'tick'</span>, <span class="hljs
         </li>
         
         
-        <li id="section-15">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>expose as readonly</p>
 
@@ -300,11 +335,11 @@ game.__defineGetter__(<span class="hljs-string">'init'</span>, <span class="hljs
         </li>
         
         
-        <li id="section-16">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>Public methods for hooking into the main <code>game.init</code> method,
 to allow for setup routine specific to project</p>
@@ -318,11 +353,11 @@ game.afterInit = <span class="hljs-function"><span class="hljs-keyword">function
         </li>
         
         
-        <li id="section-17">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>Function called every frame. <code>game.render</code> should be defined in project as
 a way to hook into the main loop</p>
@@ -337,11 +372,11 @@ game.render = <span class="hljs-function"><span class="hljs-keyword">function</s
         </li>
         
         
-        <li id="section-18">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>get time since render was last called</p>
 
@@ -352,11 +387,11 @@ game.render = <span class="hljs-function"><span class="hljs-keyword">function</s
         </li>
         
         
-        <li id="section-19">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>set current framerate based on that time</p>
 
@@ -367,11 +402,11 @@ game.render = <span class="hljs-function"><span class="hljs-keyword">function</s
         </li>
         
         
-        <li id="section-20">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>call project render function</p>
 
@@ -385,11 +420,11 @@ game.render = <span class="hljs-function"><span class="hljs-keyword">function</s
         </li>
         
         
-        <li id="section-21">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>Function called every 50ms interval. <code>game.update</code> should be defined in project as
 a way to hook into the main loop, like <code>game.render</code></p>
@@ -406,11 +441,11 @@ game.update = <span class="hljs-function"><span class="hljs-keyword">function</s
         </li>
         
         
-        <li id="section-22">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>Export module</p>
 
