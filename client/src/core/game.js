@@ -127,6 +127,9 @@ var render = function() {
   // get time since render was last called
   var delta = time.delta();
 
+  // execute control based events.
+  game.controls.update();
+
   // set current framerate based on that time
   fps.set(delta);
 

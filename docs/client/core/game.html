@@ -393,11 +393,11 @@ game.render = <span class="hljs-function"><span class="hljs-keyword">function</s
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
-              <p>set current framerate based on that time</p>
+              <p>execute control based events.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  fps.set(delta);</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  game.controls.update();</pre></div></div>
             
         </li>
         
@@ -407,6 +407,21 @@ game.render = <span class="hljs-function"><span class="hljs-keyword">function</s
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>set current framerate based on that time</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  fps.set(delta);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>call project render function</p>
 
@@ -420,11 +435,11 @@ game.render = <span class="hljs-function"><span class="hljs-keyword">function</s
         </li>
         
         
-        <li id="section-22">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>Function called every 50ms interval. <code>game.update</code> should be defined in project as
 a way to hook into the main loop, like <code>game.render</code></p>
@@ -441,11 +456,11 @@ game.update = <span class="hljs-function"><span class="hljs-keyword">function</s
         </li>
         
         
-        <li id="section-23">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>Export module</p>
 

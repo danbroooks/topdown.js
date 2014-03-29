@@ -4,31 +4,13 @@
 
 var obj = require('obj');
 var is = require('is');
+var Point = require('graphics/Point');
 
 
 
 
 
-// Constructor
-
-var Constructor = function(){
-  document.oncontextmenu = function() { return false; };
-
-};
-
-
-
-
-
-// Create definition
-
-var controls = {};
-
-
-
-
-
-// control codes
+// key codes for onkey event
 
 var codeFor = {
   'lshift'  : 16, 'space'  : 32,
@@ -45,32 +27,77 @@ var codeFor = {
 
 
 
-// Create definition
+// 
 
-controls.mouse = function(){
+var Controls = function(){
+
+  document.oncontextmenu = function() { return false; };
+
+  var mouse = Point(0, 0);
+  var onkeyup = [];
+  var onkeydown = [];
+  var pressed = {};
+
+  function cycleActions(event, key) {
+    for (var i = 0; i < event.length; i++) {
+      if (event[i].key == key) {
+        event[i].action();
+      }
+    }
+  }
+
+  window.onmousemove = function(e){
+    mouse = Point(e.offsetX, e.offsetY);
+  };
+
+  window.onkeydown = function (key) {
+    pressed[key.which] = null;
+  };
+
+  window.onkeyup = function (key) {
+    cycleActions(onkeyup, key.which);
+    delete pressed[key.which];
+  };
+
+
+  this.__defineGetter__('mouse', function(){
+    return mouse;
+  });
+
+  this.on = function(key){
+
+    if (is.String(key)) {
+      key = codeFor[key];
+    }
+
+    var _on = {};
+
+    _on.down = function(action){
+      onkeydown.push({
+        key: key,
+        action: action
+      });
+      return this;
+    };
+
+    _on.up = function(action){
+      onkeyup.push({
+        key: key,
+        action: action
+      });
+      return this;
+    };
+
+    return _on;
+  };
+
+  this.update = function(){
+    for (var key in pressed) {
+      cycleActions(onkeydown, key);
+    }
+  };
 
 };
-
-
-window.onmousemove  = function(e){
-  console.log(e);
-};
-
-
-controls.on = function(){
-  console.log('a');
-};
-
-
-
-
-
-
-
-// Create definition
-
-var Controls = obj.define(Object, Constructor, controls);
-
 
 
 
@@ -78,4 +105,6 @@ var Controls = obj.define(Object, Constructor, controls);
 
 // Export module
 
-module.exports = Controls;
+module.exports = function(){
+  return new Controls();
+};

@@ -111,6 +111,8 @@ module.exports = Actor;
 
 },{"graphics/Polygon":"S3SzPy","obj":"DOFYxp"}],"core/Actor":[function(require,module,exports){
 module.exports=require('kQeSyx');
+},{}],"core/Controls":[function(require,module,exports){
+module.exports=require('g9Hroc');
 },{}],"g9Hroc":[function(require,module,exports){
 
 
@@ -118,31 +120,13 @@ module.exports=require('kQeSyx');
 
 var obj = require('obj');
 var is = require('is');
+var Point = require('graphics/Point');
 
 
 
 
 
-// Constructor
-
-var Constructor = function(){
-  document.oncontextmenu = function() { return false; };
-
-};
-
-
-
-
-
-// Create definition
-
-var controls = {};
-
-
-
-
-
-// control codes
+// key codes for onkey event
 
 var codeFor = {
   'lshift'  : 16, 'space'  : 32,
@@ -159,32 +143,77 @@ var codeFor = {
 
 
 
-// Create definition
+// 
 
-controls.mouse = function(){
+var Controls = function(){
+
+  document.oncontextmenu = function() { return false; };
+
+  var mouse = Point(0, 0);
+  var onkeyup = [];
+  var onkeydown = [];
+  var pressed = {};
+
+  function cycleActions(event, key) {
+    for (var i = 0; i < event.length; i++) {
+      if (event[i].key == key) {
+        event[i].action();
+      }
+    }
+  }
+
+  window.onmousemove = function(e){
+    mouse = Point(e.offsetX, e.offsetY);
+  };
+
+  window.onkeydown = function (key) {
+    pressed[key.which] = null;
+  };
+
+  window.onkeyup = function (key) {
+    cycleActions(onkeyup, key.which);
+    delete pressed[key.which];
+  };
+
+
+  this.__defineGetter__('mouse', function(){
+    return mouse;
+  });
+
+  this.on = function(key){
+
+    if (is.String(key)) {
+      key = codeFor[key];
+    }
+
+    var _on = {};
+
+    _on.down = function(action){
+      onkeydown.push({
+        key: key,
+        action: action
+      });
+      return this;
+    };
+
+    _on.up = function(action){
+      onkeyup.push({
+        key: key,
+        action: action
+      });
+      return this;
+    };
+
+    return _on;
+  };
+
+  this.update = function(){
+    for (var key in pressed) {
+      cycleActions(onkeydown, key);
+    }
+  };
 
 };
-
-
-window.onmousemove  = function(e){
-  console.log(e);
-};
-
-
-controls.on = function(){
-  console.log('a');
-};
-
-
-
-
-
-
-
-// Create definition
-
-var Controls = obj.define(Object, Constructor, controls);
-
 
 
 
@@ -192,13 +221,11 @@ var Controls = obj.define(Object, Constructor, controls);
 
 // Export module
 
-module.exports = Controls;
+module.exports = function(){
+  return new Controls();
+};
 
-},{"is":"P9m7US","obj":"DOFYxp"}],"core/Controls":[function(require,module,exports){
-module.exports=require('g9Hroc');
-},{}],"core/FPS":[function(require,module,exports){
-module.exports=require('XqAouS');
-},{}],"XqAouS":[function(require,module,exports){
+},{"graphics/Point":"07NHAF","is":"P9m7US","obj":"DOFYxp"}],"XqAouS":[function(require,module,exports){
 
 
 // Load dependencies
@@ -255,7 +282,9 @@ module.exports = function(filter){
 };
 
 
-},{"obj":"DOFYxp"}],"h5AJ9p":[function(require,module,exports){
+},{"obj":"DOFYxp"}],"core/FPS":[function(require,module,exports){
+module.exports=require('XqAouS');
+},{}],"h5AJ9p":[function(require,module,exports){
 
 
 // Load dependencies
@@ -388,8 +417,6 @@ module.exports = GameConfig;
 
 },{"graphics/Graphics":"mC3JHL","is":"P9m7US","obj":"DOFYxp"}],"core/GameConfig":[function(require,module,exports){
 module.exports=require('h5AJ9p');
-},{}],"core/Stack":[function(require,module,exports){
-module.exports=require('nCd0q1');
 },{}],"nCd0q1":[function(require,module,exports){
 
 
@@ -468,7 +495,9 @@ module.exports = function(filter){
   return new Stack(filter);
 };
 
-},{"obj":"DOFYxp"}],"core/Timer":[function(require,module,exports){
+},{"obj":"DOFYxp"}],"core/Stack":[function(require,module,exports){
+module.exports=require('nCd0q1');
+},{}],"core/Timer":[function(require,module,exports){
 module.exports=require('TedyOD');
 },{}],"TedyOD":[function(require,module,exports){
 
@@ -587,7 +616,9 @@ module.exports = Timer;
 
 
 
-},{"obj":"DOFYxp"}],"dE1Bu5":[function(require,module,exports){
+},{"obj":"DOFYxp"}],"core/game":[function(require,module,exports){
+module.exports=require('dE1Bu5');
+},{}],"dE1Bu5":[function(require,module,exports){
 
 
 // Load dependencies
@@ -717,6 +748,9 @@ var render = function() {
   // get time since render was last called
   var delta = time.delta();
 
+  // execute control based events.
+  game.controls.update();
+
   // set current framerate based on that time
   fps.set(delta);
 
@@ -748,9 +782,7 @@ var update = function() {
 module.exports = game;
 
 
-},{"core/Controls":"g9Hroc","core/FPS":"XqAouS","core/GameConfig":"h5AJ9p","core/Timer":"TedyOD","is":"P9m7US"}],"core/game":[function(require,module,exports){
-module.exports=require('dE1Bu5');
-},{}],"qkALfs":[function(require,module,exports){
+},{"core/Controls":"g9Hroc","core/FPS":"XqAouS","core/GameConfig":"h5AJ9p","core/Timer":"TedyOD","is":"P9m7US"}],"qkALfs":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1713,7 +1745,9 @@ Collision.areaContainsPoint = function(area, point){
 module.exports = Collision;
 
 
-},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","graphics/Vector":"Hli4CA","is":"P9m7US","obj":"DOFYxp"}],"mC3JHL":[function(require,module,exports){
+},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","graphics/Vector":"Hli4CA","is":"P9m7US","obj":"DOFYxp"}],"graphics/Graphics":[function(require,module,exports){
+module.exports=require('mC3JHL');
+},{}],"mC3JHL":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1890,9 +1924,7 @@ var Graphics = obj.define(Object, Constructor, gfx);
 module.exports = Graphics;
 
 
-},{"core/Stack":"nCd0q1","graphics/Camera":"NsksZx","graphics/Canvas":"gCPbFZ","graphics/Point":"07NHAF","obj":"DOFYxp"}],"graphics/Graphics":[function(require,module,exports){
-module.exports=require('mC3JHL');
-},{}],"graphics/Point":[function(require,module,exports){
+},{"core/Stack":"nCd0q1","graphics/Camera":"NsksZx","graphics/Canvas":"gCPbFZ","graphics/Point":"07NHAF","obj":"DOFYxp"}],"graphics/Point":[function(require,module,exports){
 module.exports=require('07NHAF');
 },{}],"07NHAF":[function(require,module,exports){
 
@@ -2037,7 +2069,9 @@ var Point = obj.define(Object, Constructor, point);
 
 module.exports = Point;
 
-},{"is":"P9m7US","obj":"DOFYxp"}],"S3SzPy":[function(require,module,exports){
+},{"is":"P9m7US","obj":"DOFYxp"}],"graphics/Polygon":[function(require,module,exports){
+module.exports=require('S3SzPy');
+},{}],"S3SzPy":[function(require,module,exports){
 
 
 // Load dependencies
@@ -2365,9 +2399,7 @@ var Polygon = obj.define(Shape, Constructor, polygon);
 module.exports = Polygon;
 
 
-},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","is":"P9m7US","obj":"DOFYxp"}],"graphics/Polygon":[function(require,module,exports){
-module.exports=require('S3SzPy');
-},{}],"graphics/Shape":[function(require,module,exports){
+},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","is":"P9m7US","obj":"DOFYxp"}],"graphics/Shape":[function(require,module,exports){
 module.exports=require('rB+uTR');
 },{}],"rB+uTR":[function(require,module,exports){
 
@@ -2424,9 +2456,7 @@ var Shape = obj.define(Object, Constructor, shape);
 
 module.exports = Shape;
 
-},{"obj":"DOFYxp"}],"graphics/Vector":[function(require,module,exports){
-module.exports=require('Hli4CA');
-},{}],"Hli4CA":[function(require,module,exports){
+},{"obj":"DOFYxp"}],"Hli4CA":[function(require,module,exports){
 
 
 // Load dependencies
@@ -2501,7 +2531,9 @@ var Vector = obj.define(Object, Constructor, vector);
 // Export module
 
 module.exports = Vector;
-},{"graphics/Point":"07NHAF","is":"P9m7US","obj":"DOFYxp"}],"HKUJiZ":[function(require,module,exports){
+},{"graphics/Point":"07NHAF","is":"P9m7US","obj":"DOFYxp"}],"graphics/Vector":[function(require,module,exports){
+module.exports=require('Hli4CA');
+},{}],"HKUJiZ":[function(require,module,exports){
 
 },{}],"graphics/trig":[function(require,module,exports){
 module.exports=require('HKUJiZ');
@@ -2895,7 +2927,9 @@ obj.identifier = function(seed){
 
 module.exports = obj;
 
-},{"is":"P9m7US"}],"+KSpms":[function(require,module,exports){
+},{"is":"P9m7US"}],"onload":[function(require,module,exports){
+module.exports=require('+KSpms');
+},{}],"+KSpms":[function(require,module,exports){
 
 
 // Load dependencies
@@ -2915,9 +2949,7 @@ window.onload = function(){
   });
 };
 
-},{"core/game":"dE1Bu5","dom":"qkALfs"}],"onload":[function(require,module,exports){
-module.exports=require('+KSpms');
-},{}],"poly":[function(require,module,exports){
+},{"core/game":"dE1Bu5","dom":"qkALfs"}],"poly":[function(require,module,exports){
 module.exports=require('vARtDh');
 },{}],"vARtDh":[function(require,module,exports){
 
