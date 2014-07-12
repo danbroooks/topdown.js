@@ -186,15 +186,24 @@
       Point( <span class="hljs-number">20</span>, <span class="hljs-number">40</span> ),
       Point( <span class="hljs-number">40</span>, <span class="hljs-number">40</span> ),
       Point( <span class="hljs-number">40</span>, <span class="hljs-number">20</span> )
-    ],
-    position: Point(<span class="hljs-number">20</span>, <span class="hljs-number">20</span>)
+    ]
   }, options, opts);
 
   <span class="hljs-keyword">this</span>.points = options.points;
-  <span class="hljs-keyword">this</span>.position = options.position;
+
+  options = obj.extend({
+    position: <span class="hljs-keyword">this</span>.centroid()
+  }, options, opts);
+
+  <span class="hljs-keyword">var</span> pos = options.position;
+
+  <span class="hljs-keyword">if</span> (is.Array(pos)) {
+    pos = Point(pos);
+  }
 
   <span class="hljs-keyword">this</span>.move(<span class="hljs-keyword">this</span>.centroid().invert());
-  <span class="hljs-keyword">this</span>.move(<span class="hljs-keyword">this</span>.position);
+  <span class="hljs-keyword">this</span>.move(pos);
+
   <span class="hljs-keyword">this</span>.position = <span class="hljs-keyword">this</span>.centroid();
 
 };</pre></div></div>
@@ -282,7 +291,8 @@ polygon.move = <span class="hljs-function"><span class="hljs-keyword">function</
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              
+              <p>TODO: basically just alias of move ?</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>

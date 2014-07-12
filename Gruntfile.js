@@ -4,7 +4,7 @@ var mod = require('./modules');
 module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    sass: {
+    scss: {
       dev: {
         files: [{
           'public/styles.css': 'client/styles.scss'
@@ -69,12 +69,12 @@ module.exports = function(grunt) {
       },
       styles: {
         files: ['client/*.scss'],
-        tasks: 'sass'
+        tasks: 'scss'
       },
     }
   });
 
-  grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-contrib-scss');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -83,7 +83,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.registerTask('default', 'def', [
-    'sass', 'jshint', 'browserify', 'uglify', 'clean', 'docco', 'watch'
+    'scss', 'jshint', 'browserify', 'uglify', 'clean', 'docco', 'watch'
   ]);
 
 };

@@ -111,7 +111,6 @@ Collision.areaContainsPoint = function(area, point){
     throw Error('The area argument for areaContainsPoint should be either a Shape or an array of points');
   }
 
-
   var counter = 0;
   var p1 = points[0];
 

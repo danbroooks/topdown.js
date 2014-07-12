@@ -1,4 +1,6 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"kQeSyx":[function(require,module,exports){
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"core/Actor":[function(require,module,exports){
+module.exports=require('kQeSyx');
+},{}],"kQeSyx":[function(require,module,exports){
 
 
 /*
@@ -109,9 +111,7 @@ var Actor = obj.define(Object, Constructor, actor);
 module.exports = Actor;
 
 
-},{"graphics/Polygon":"S3SzPy","obj":"DOFYxp"}],"core/Actor":[function(require,module,exports){
-module.exports=require('kQeSyx');
-},{}],"core/Controls":[function(require,module,exports){
+},{"graphics/Polygon":"S3SzPy","obj":"DOFYxp"}],"core/Controls":[function(require,module,exports){
 module.exports=require('g9Hroc');
 },{}],"g9Hroc":[function(require,module,exports){
 
@@ -284,6 +284,8 @@ module.exports = function(filter){
 
 },{"obj":"DOFYxp"}],"core/FPS":[function(require,module,exports){
 module.exports=require('XqAouS');
+},{}],"core/GameConfig":[function(require,module,exports){
+module.exports=require('h5AJ9p');
 },{}],"h5AJ9p":[function(require,module,exports){
 
 
@@ -415,8 +417,8 @@ var GameConfig = obj.define(Object, Constructor, gameConfig);
 module.exports = GameConfig;
 
 
-},{"graphics/Graphics":"mC3JHL","is":"P9m7US","obj":"DOFYxp"}],"core/GameConfig":[function(require,module,exports){
-module.exports=require('h5AJ9p');
+},{"graphics/Graphics":"mC3JHL","is":"P9m7US","obj":"DOFYxp"}],"core/Stack":[function(require,module,exports){
+module.exports=require('nCd0q1');
 },{}],"nCd0q1":[function(require,module,exports){
 
 
@@ -495,9 +497,7 @@ module.exports = function(filter){
   return new Stack(filter);
 };
 
-},{"obj":"DOFYxp"}],"core/Stack":[function(require,module,exports){
-module.exports=require('nCd0q1');
-},{}],"core/Timer":[function(require,module,exports){
+},{"obj":"DOFYxp"}],"core/Timer":[function(require,module,exports){
 module.exports=require('TedyOD');
 },{}],"TedyOD":[function(require,module,exports){
 
@@ -782,7 +782,9 @@ var update = function() {
 module.exports = game;
 
 
-},{"core/Controls":"g9Hroc","core/FPS":"XqAouS","core/GameConfig":"h5AJ9p","core/Timer":"TedyOD","is":"P9m7US"}],"qkALfs":[function(require,module,exports){
+},{"core/Controls":"g9Hroc","core/FPS":"XqAouS","core/GameConfig":"h5AJ9p","core/Timer":"TedyOD","is":"P9m7US"}],"dom":[function(require,module,exports){
+module.exports=require('qkALfs');
+},{}],"qkALfs":[function(require,module,exports){
 
 
 // Load dependencies
@@ -1091,9 +1093,7 @@ DOM.css = DOM.style;
 module.exports = DOM;
 
 
-},{"is":"P9m7US"}],"dom":[function(require,module,exports){
-module.exports=require('qkALfs');
-},{}],"fn":[function(require,module,exports){
+},{"is":"P9m7US"}],"fn":[function(require,module,exports){
 module.exports=require('AEEx6z');
 },{}],"AEEx6z":[function(require,module,exports){
 
@@ -1156,6 +1156,8 @@ fn.fromArray = function (array) {
 
 module.exports = fn;
 
+},{}],"graphics/Camera":[function(require,module,exports){
+module.exports=require('NsksZx');
 },{}],"NsksZx":[function(require,module,exports){
 
 
@@ -1302,8 +1304,8 @@ module.exports = Camera;
 
 
 
-},{"graphics/Point":"07NHAF","is":"P9m7US","obj":"DOFYxp"}],"graphics/Camera":[function(require,module,exports){
-module.exports=require('NsksZx');
+},{"graphics/Point":"07NHAF","is":"P9m7US","obj":"DOFYxp"}],"graphics/Canvas":[function(require,module,exports){
+module.exports=require('gCPbFZ');
 },{}],"gCPbFZ":[function(require,module,exports){
 
 // Load dependencies
@@ -1596,11 +1598,7 @@ module.exports = Canvas;
 
 
 
-},{"dom":"qkALfs","graphics/Camera":"NsksZx","graphics/Collision":"8SM2KA","graphics/Point":"07NHAF","graphics/Polygon":"S3SzPy","obj":"DOFYxp"}],"graphics/Canvas":[function(require,module,exports){
-module.exports=require('gCPbFZ');
-},{}],"graphics/Collision":[function(require,module,exports){
-module.exports=require('8SM2KA');
-},{}],"8SM2KA":[function(require,module,exports){
+},{"dom":"qkALfs","graphics/Camera":"NsksZx","graphics/Collision":"8SM2KA","graphics/Point":"07NHAF","graphics/Polygon":"S3SzPy","obj":"DOFYxp"}],"8SM2KA":[function(require,module,exports){
 
 var obj = require('obj');
 var is = require('is');
@@ -1714,7 +1712,6 @@ Collision.areaContainsPoint = function(area, point){
     throw Error('The area argument for areaContainsPoint should be either a Shape or an array of points');
   }
 
-
   var counter = 0;
   var p1 = points[0];
 
@@ -1745,8 +1742,8 @@ Collision.areaContainsPoint = function(area, point){
 module.exports = Collision;
 
 
-},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","graphics/Vector":"Hli4CA","is":"P9m7US","obj":"DOFYxp"}],"graphics/Graphics":[function(require,module,exports){
-module.exports=require('mC3JHL');
+},{"graphics/Point":"07NHAF","graphics/Shape":"rB+uTR","graphics/Vector":"Hli4CA","is":"P9m7US","obj":"DOFYxp"}],"graphics/Collision":[function(require,module,exports){
+module.exports=require('8SM2KA');
 },{}],"mC3JHL":[function(require,module,exports){
 
 
@@ -1924,8 +1921,8 @@ var Graphics = obj.define(Object, Constructor, gfx);
 module.exports = Graphics;
 
 
-},{"core/Stack":"nCd0q1","graphics/Camera":"NsksZx","graphics/Canvas":"gCPbFZ","graphics/Point":"07NHAF","obj":"DOFYxp"}],"graphics/Point":[function(require,module,exports){
-module.exports=require('07NHAF');
+},{"core/Stack":"nCd0q1","graphics/Camera":"NsksZx","graphics/Canvas":"gCPbFZ","graphics/Point":"07NHAF","obj":"DOFYxp"}],"graphics/Graphics":[function(require,module,exports){
+module.exports=require('mC3JHL');
 },{}],"07NHAF":[function(require,module,exports){
 
 
@@ -2069,7 +2066,9 @@ var Point = obj.define(Object, Constructor, point);
 
 module.exports = Point;
 
-},{"is":"P9m7US","obj":"DOFYxp"}],"graphics/Polygon":[function(require,module,exports){
+},{"is":"P9m7US","obj":"DOFYxp"}],"graphics/Point":[function(require,module,exports){
+module.exports=require('07NHAF');
+},{}],"graphics/Polygon":[function(require,module,exports){
 module.exports=require('S3SzPy');
 },{}],"S3SzPy":[function(require,module,exports){
 
@@ -2134,7 +2133,6 @@ var Constructor = function(options) {
     opts.points = tmp;
   }
 
-
   // TODO: convert options.position to Point object if array of 2 values
 
   options = obj.extend({
@@ -2143,15 +2141,24 @@ var Constructor = function(options) {
       Point( 20, 40 ),
       Point( 40, 40 ),
       Point( 40, 20 )
-    ],
-    position: Point(20, 20)
+    ]
   }, options, opts);
 
   this.points = options.points;
-  this.position = options.position;
+
+  options = obj.extend({
+    position: this.centroid()
+  }, options, opts);
+
+  var pos = options.position;
+
+  if (is.Array(pos)) {
+    pos = Point(pos);
+  }
 
   this.move(this.centroid().invert());
-  this.move(this.position);
+  this.move(pos);
+
   this.position = this.centroid();
 
 };
@@ -2210,7 +2217,7 @@ polygon.move = function () {
 
 
 
-//
+// TODO: basically just alias of move ?
 
 polygon.teleport = function (x, y) {
   var point;
@@ -2927,9 +2934,7 @@ obj.identifier = function(seed){
 
 module.exports = obj;
 
-},{"is":"P9m7US"}],"onload":[function(require,module,exports){
-module.exports=require('+KSpms');
-},{}],"+KSpms":[function(require,module,exports){
+},{"is":"P9m7US"}],"+KSpms":[function(require,module,exports){
 
 
 // Load dependencies
@@ -2949,7 +2954,9 @@ window.onload = function(){
   });
 };
 
-},{"core/game":"dE1Bu5","dom":"qkALfs"}],"poly":[function(require,module,exports){
+},{"core/game":"dE1Bu5","dom":"qkALfs"}],"onload":[function(require,module,exports){
+module.exports=require('+KSpms');
+},{}],"poly":[function(require,module,exports){
 module.exports=require('vARtDh');
 },{}],"vARtDh":[function(require,module,exports){
 

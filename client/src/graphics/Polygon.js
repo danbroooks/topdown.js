@@ -60,7 +60,6 @@ var Constructor = function(options) {
     opts.points = tmp;
   }
 
-
   // TODO: convert options.position to Point object if array of 2 values
 
   options = obj.extend({
@@ -69,15 +68,24 @@ var Constructor = function(options) {
       Point( 20, 40 ),
       Point( 40, 40 ),
       Point( 40, 20 )
-    ],
-    position: Point(20, 20)
+    ]
   }, options, opts);
 
   this.points = options.points;
-  this.position = options.position;
+
+  options = obj.extend({
+    position: this.centroid()
+  }, options, opts);
+
+  var pos = options.position;
+
+  if (is.Array(pos)) {
+    pos = Point(pos);
+  }
 
   this.move(this.centroid().invert());
-  this.move(this.position);
+  this.move(pos);
+
   this.position = this.centroid();
 
 };
@@ -136,7 +144,7 @@ polygon.move = function () {
 
 
 
-//
+// TODO: basically just alias of move ?
 
 polygon.teleport = function (x, y) {
   var point;
