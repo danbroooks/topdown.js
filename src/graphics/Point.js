@@ -15,7 +15,7 @@ Point.prototype.shift = function(x, y){
     this.x += x.x;
     this.y += x.y;
   } else {
-    throw Error('Invalid arguments passed to point.shift');
+    throw new Error('Invalid arguments passed to point.shift');
   }
 
   return this;
@@ -37,17 +37,17 @@ Point.prototype.invert = function(){
 var Factory = function(x, y){
 
   if (arguments.length > 2) {
-    throw Error('Point was passed invalid arguments');
+    throw new Error('Point was passed invalid arguments');
   }
 
   if (_.isNumber(x) && _.isUndefined(y)) {
-    throw Error('Point was passed invalid arguments');
+    throw new Error('Point was passed invalid arguments');
   }
 
   if (!y && _.isArray(x)) {
 
     if (x.length != 2) {
-      throw Error('Point was passed invalid arguments');
+      throw new Error('Point was passed invalid arguments');
     }
 
     return new Point(x[0], x[1]);
@@ -70,7 +70,7 @@ Factory.Clone = function(inst) {
   if (inst instanceof Point) {
     return Factory(inst.x, inst.y);
   } else {
-    throw Error('Point.Clone must be passed an instance of Point');
+    throw new Error('Point.Clone must be passed an instance of Point');
   }
 }
 
