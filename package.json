@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Top-down game engine based for node.js",
   "devDependencies": {
+    "lodash": "^3.10.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
